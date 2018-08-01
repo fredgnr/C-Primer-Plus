@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+		<title>黄柏河流域综合执法信息管理系统</title>
+		<link rel="stylesheet" href="../jquery.mobile-1.4.5/jquery.mobile-1.4.5.css">
+		<link rel="stylesheet" href="../nativeDroid2/vendor/waves/waves.min.css">
+		<link rel="stylesheet" href="../nativeDroid2/vendor/wow/animate.css">
+		<link rel="stylesheet" href="../nativeDroid2/css/nativedroid2.css" />
+		<link rel="stylesheet" href="../nativeDroid2/css/nativedroid2.color.green.css" />
+		<script src="../jquery.mobile-1.4.5/jquery-2.1.4.min.js"></script>
+		<script src="../nativeDroid2/jquery-ui.min.js"></script>
+		<script src="../jquery.mobile-1.4.5/jquery.mobile-1.4.5.js"></script>
+		<script src="../nativeDroid2/vendor/waves/waves.min.js"></script>
+		<script src="../nativeDroid2/vendor/wow/wow.min.js"></script>
+		<script src="../nativeDroid2/js/nativedroid2.js"></script>
+		<style type="text/css">
+			.ui-field-contain {
+				border-bottom-width: 0px;
+			}
+			
+			.item-title {
+				font-weight: bold;
+			}
+		</style>
+		<script src="../js/auth.js"></script>
+		<script>
+			auth("daily", "add", window.location.pathname.replace("add", "").substr(1));
+		</script>
+	</head>
+
+	<body>
+		<div id="main" data-role="page">
+			<div data-role="header" data-position="fixed" data-tap-toggle="false">
+				<a href="#" onclick="back()" class="ui-btn"><i class="zmdi zmdi-arrow-back"></i></a>
+				<h1>新建巡查</h1>
+			</div>
+			<div class="ui-content" data-role="main">
+				<h4>编号：{{ form.dins_id }}</h4>
+				<form action="#">
+					<div class="ui-field-contain">
+						<label for="dins_date">巡查日期</label>
+						<input type="date" name="dins_date" id="dins_date" v-model="form.dins_date">
+					</div>
+					<div class="ui-field-contain">
+						<label for="dins_person">巡查人员</label>
+						<input type="text" name="dins_person" id="dins_person" v-model="form.dins_person">
+					</div>
+					<div class="ui-field-contain">
+						<label for="dins_depart">巡查部门</label>
+						<select name="dins_depart" id="dins_depart" v-model="form.dins_depart">
+							<option v-for="depart in depart_options" v-bind:value="depart">{{ depart }}</option>
+						</select>
+					</div>
+					<div class="ui-field-contain">
+						<label for="dins_zone">巡查区域</label>
+						<input type="text" name="dins_zone" id="dins_zone" v-model="form.dins_zone">
+					</div>
+					<div class="ui-field-contain">
+						<label for="dins_content">巡查情况</label>
+						<textarea name="dins_content" id="dins_content" v-model="form.dins_content"></textarea>
+					</div>
+					<div class="ui-field-contain">
+						<label for="dins_other">其他内容</label>
+						<textarea name="dins_other" id="dins_other" v-model="form.dins_other"></textarea>
+					</div>
+					<div class="ui-field-contain">
+						<label for="dins_record">记录人员</label>
+						<input type="text" name="dins_record" id="dins_record" v-model="form.dins_record">
+					</div>
+				</form>
+				<div class="align-center">
+					<a href="#" class="ui-btn ui-btn-inline ui-btn-raised clr-primary" v-on:click="submit()">提交</a>
+					<a href="#" class="ui-btn ui-btn-inline" v-on:click="clean()">清空</a>
+				</div>
+			</div>
+		</div>
+		<script type="text/javascript" src="../datejs/date-zh-CN.js"></script>
+		<script type="text/javascript" src="../vuejs/vue.min.js"></script>
+		
+		<script type="text/javascript">
+			var content = new Vue({
+				el: "#main",
+				data: {
+					form: {
+						dins_id: "rcjc-" + new Date().toString("yyyyMMddHHmmss"),
+						dins_date: new Date().toString("yyyy-MM-dd"),
+						dins_zone: "",
+						dins_person: "",
+						dins_depart: "",
+						dins_content: "",
+						dins_other: "",
+						dins_record: ""
+					},
+					depart_options: [
+						"局与支队领导",
+						"执法一大队",
+						"执法二大队",
+						"执法三大队",
+						"支队办公室",
+						"其他",
+					]
+				},
+				methods: {
+					submit: function () {
+						content.form.dins_date = Date.parse(content.form.dins_date).toString("yyyy年MM月dd日")
+						$.ajax({
+							type: "post",
+							url: "http://61.136.146.172:8080/huangbaihe/DInspec/save",
+							data: content.form,
+							success: function() {
+								new $.nd2Toast({
+									message : "提交成功", // Required
+								});
+							},
+							error: function() {
+								new $.nd2Toast({
+									message : "提交失败", // Required
+								});
+							}
+						});
+					}
+				}
+			})
+
+			function back() {
+				window.location = "daily.html";
+			}
+
+			function gotomain(name) {
+				window.location = "../company/main.html" + name;
+			}
+
+			function clean() {
+				for(key in content.form) {
+					if(content.form.hasOwnProperty(key)) {
+						content.form[key] = ""
+					}
+				}
+			}
+		</script>
+	</body>
+</html>

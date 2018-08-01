@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <link rel="stylesheet" type="text/css" href="../../statics/jquery-easyui-1.5.3/themes/icon.css">
+        <link rel="stylesheet" type="text/css" href="../../statics/jquery-easyui-1.5.3/themes/gray/easyui.css">
+        <script src="../../statics/jquery-easyui-1.5.3/jquery.min.js"></script>
+        <script src="../../statics/jquery-easyui-1.5.3/jquery.easyui.min.js"></script>
+        <title>Insert title here</title>
+        <style type="text/css">
+            .textbox {
+                border: none
+            }
+
+            hr {
+                width: 70%;
+                float: left;
+            }
+	</style>
+        </head>
+        <body onload="getCaseInfo()">
+            <div style="width:100%;text-align:center">
+                <h1>不予立案呈批表</h1>
+            </div>
+            <table style="width:100%">
+                <tr>
+                    <td style="width:25%;text-align:center;">
+                        <label>案件编号</label>
+                    </td>
+                    <td style="width:75%">
+                        <label id="caseID"></label>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:25%;text-align:center;"></td>
+                    <td>
+                        <hr/>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:25%;text-align:center;">
+                        <label>来源类型</label>
+                    </td>
+                    <td style="width:75%">
+                        <label id="sourceID"></label>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:25%;text-align:center;"></td>
+                    <td>
+                        <hr/>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:25%;text-align:center;">
+                        <label>举报时间</label>
+                    </td>
+                    <td style="width:75%">
+                        <label id="reportDate"></label>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:25%;text-align:center;"></td>
+                    <td>
+                        <hr/>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:25%;text-align:center;">
+                        <label>举报人姓名</label>
+                    </td>
+                    <td style="width:75%">
+                        <label id="informantName"></label>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:25%;text-align:center;"></td>
+                    <td>
+                        <hr/>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:25%;text-align:center;">
+                        <label>举报人证件号</label>
+                    </td>
+                    <td style="width:75%">
+                        <label id="informantID"></label>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:25%;text-align:center;"></td>
+                    <td>
+                        <hr/>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:25%;text-align:center;">
+                        <label>举报人地址、单位</label>
+                    </td>
+                    <td style="width:75%">
+                        <label id="informantAdress"></label>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:25%;text-align:center;"></td>
+                    <td>
+                        <hr/>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:25%;text-align:center;">
+                        <label>举报人性别</label>
+                    </td>
+                    <td style="width:75%">
+                        <select id="informantSex" style="width:240px;border:none;">
+                            <option value="1">男</option>
+                            <option value="0">女</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:25%;text-align:center;"></td>
+                    <td>
+                        <hr/>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:25%;text-align:center;">
+                        <label>举报人年龄</label>
+                    </td>
+                    <td style="width:75%">
+                        <input style="width:70%" id="informantAge" class="easyui-textbox" type="text"></input>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:25%;text-align:center;"></td>
+                    <td>
+                        <hr/>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:25%;text-align:center;">
+                        <label>案件内容</label>
+                    </td>
+                    <td style="width:75%">
+                        <input style="width:70%" id="content" class="easyui-textbox"></input>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:25%;text-align:center;"></td>
+                    <td>
+                        <hr/>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:25%;text-align:center;">
+                        <label>当事人行为</label>
+                    </td>
+                    <td style="width:75%">
+                        <input style="width:70%" id="suggestion" class="easyui-textbox"></input>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:25%;text-align:center;"></td>
+                    <td>
+                        <hr/>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:25%;text-align:center;">
+                        <label>负责人</label>
+                    </td>
+                    <td style="width:75%">
+                        <input class="easyui-textbox" type="text" id="responsible">
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:25%;text-align:center;"></td>
+                    <td>
+                        <hr/>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:25%;text-align:center;">
+                        <label>经办人1</label>
+                    </td>
+                    <td style="width:75%">
+                        <input class="easyui-textbox" type="text" id="excutor1">
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:25%;text-align:center;"></td>
+                    <td>
+                        <hr/>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:25%;text-align:center;">
+                        <label>经办人2</label>
+                    </td>
+                    <td style="width:75%">
+                        <input class="easyui-textbox" type="text" id="excutor2">
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:25%;text-align:center;"></td>
+                    <td>
+                        <hr/>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:25%;text-align:center;">
+                        <label>办理日期</label>
+                    </td>
+                    <td style="width:75%">
+                        <input class="easyui-datebox" id="excuteDate">
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:25%;text-align:center;"></td>
+                    <td>
+                        <hr/>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:25%;text-align:center;">
+                        <label>审核意见</label>
+                    </td>
+                    <td style="width:75%">
+                        <input style="width:70%" id="examSuggestion" class="easyui-textbox"></input>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:25%;text-align:center;"></td>
+                    <td>
+                        <hr/>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:25%;text-align:center;">
+                        <label>综合执法支队负责人</label>
+                    </td>
+                    <td style="width:75%">
+                        <select id="reponsible" name="dept" style="width:200px;border:none;">
+                            <option>执法支队负责人</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:25%;text-align:center;"></td>
+                    <td>
+                        <hr/>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:25%;text-align:center;">
+                        <label>审核日期</label>
+                    </td>
+                    <td style="width:75%">
+                        <input class="easyui-datebox" id="examDate">
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:25%;text-align:center;"></td>
+                    <td>
+                        <hr/>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:25%;text-align:center;">
+                        <label>审批意见</label>
+                    </td>
+                    <td style="width:75%">
+                        <textarea class="easyui-textbox" id="reExamSuggestion"></textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:25%;text-align:center;"></td>
+                    <td>
+                        <hr/>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:25%;text-align:center;">
+                        <label>主管领导</label>
+                    </td>
+                    <td style="width:75%">
+                        <select id="leader" name="dept" style="width:200px;border:none;">
+                            <option></option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:25%;text-align:center;"></td>
+                    <td>
+                        <hr/>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:25%;text-align:center;">
+                        <label>审批日期</label>
+                    </td>
+                    <td style="width:75%">
+                        <input type="datetime" class="easyui-datebox" id="reExamDate">
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:25%;text-align:center;"></td>
+                    <td>
+                        <hr/>
+                    </td>
+                </tr>
+            </table>
+            <a style="width:100px;float:right;" class="easyui-linkbutton" id="submit">提交</a>
+            <a style="width:100px;float:right;" class="easyui-linkbutton" id="exam">审核</a>
+            <a style="width:100px;float:right;" class="easyui-linkbutton" id="reExam">审批</a>
+        </body>
+        <script>
+            var thisURL = document.URL;
+            var caseId = thisURL.split('?')[1];
+
+            var au;
+            var user;
+            var sourceType;
+            var sourceID;
+            var reportTime;
+            var caseDescription;
+            var informantID;
+            var informantAdress;
+            var informantAge;
+            var informantName;
+            var informantSex;
+            var allResponsibles = new Array();
+            var allLeaders = new Array()
+            var lNum = 0;
+            var rNum = 0;
+            var existForm = new Object();
+            var caseInfoMap = new Object();
+
+            $.fn.datebox.defaults.formatter = function(date) {
+                var y = date.getFullYear();
+                var m = date.getMonth() + 1;
+                var d = date.getDate();
+                return y + '-' + (m < 10 ? ('0' + m) : m) + '-' + (d < 10 ? ('0' + d) : d);
+            }
+
+            function checkExamUser() {
+                if (user.userName.toString() == existForm['reponsible'])
+                    return true;
+            }
+
+            function checkreExamUser() {
+                if (user.userName.toString() == existForm['leader'])
+                    return true;
+            }
+
+            function getCaseInfo() {
+                function getCookie(name) {
+                    var arr, reg = new RegExp("(^| )" + name + "=([^;]*)(;|$)");
+
+                    if (arr = document.cookie.match(reg))
+
+                        return unescape(arr[2]);
+                    else
+                        return null;
+                }
+
+                au = getCookie('au');
+                user = JSON.parse(au);
+
+                if (!checkExamUser()) {
+                    $("#exam").hide();
+                }
+                if (!checkreExamUser()) {
+                    $("#reExam").hide();
+                }
+                var testMap = {
+                    "caseID": caseId
+                };
+                // 案件信息
+                if (caseId == null) {
+                    return;
+                }
+                $.ajax({
+                    async: false,
+                    cache: false,
+                    type: 'POST',
+                    url: '../../getInfoCaseController/getCaseInfo',
+                    data: JSON.stringify(testMap),
+                    contentType: 'application/json;charset=utf-8',
+                    dataType: 'json',
+                    success: function(data) {
+                        if (data == null) {
+                            return;
+                        }
+                        caseInfoMap = data;
+                    }
+                })
+                $.ajax({
+                    url: "../../login/getAllUser",
+                    async: false,
+                    dataType: 'json',
+                    type: 'Get',
+                    contentType: 'application/json;charset=UTF-8',
+                    success: function(data) {
+                        for (var i = 0; i < data.length; i++) {
+                            x = data[i];
+                            if (x.role != null && x.role != "") {
+                                if (x.role.toString() == "支队负责人") {
+                                    //审核
+                                    console.log(x.UserName.toString());
+                                    allResponsibles[rNum] = x;
+                                    rNum++;
+                                }
+                                if (x.role.toString() == "局内负责人") {
+                                    //审批
+                                    console.log(x.UserName.toString());
+                                    allLeaders[lNum] = x;
+                                    lNum++;
+                                }
+                            }
+
+                        }
+
+                    },
+                    error: function() {
+                        debugger ;alert("产生未知错误");
+                    }
+                });
+                for (i = 0; i < allResponsibles.length; i++) {
+                    $("#reponsible").append("<option value=" + allResponsibles[i].UserName.toString() + ">" + allResponsibles[i].UserName.toString() + "</option>");
+                }
+                for (i = 0; i < allLeaders.length; i++) {
+                    $("#leader").append("<option value='" + allLeaders[i].UserName.toString() + "'>" + allLeaders[i].UserName.toString() + "</option>");
+                }
+
+                $("#caseID").html(caseId);
+                //显示来源类型
+                sourceID = caseInfoMap["sourceID"];
+                switch (sourceID) {
+                case "1":
+                    sourceType = "群众举报";
+                    break;
+                case "2":
+                    sourceType = "巡查发现";
+                    break;
+                case "3":
+                    sourceType = "媒体发现";
+                    break;
+                case "4":
+                    sourceType = "部门转办";
+                    break;
+                default:
+                    break;
+                }
+                //alert(sourceType);
+                $("#sourceID").html(sourceType);
+                /////////显示举报时间
+                reportTime = caseInfoMap["reportDate"];
+                $("#reportDate").html(reportTime);
+                ////显示案件描述
+                var caseDescription = caseInfoMap["caseDescription"].toString();
+                $("#content").html(caseInfoMap["caseDescription"].toString());
+                $('#content').textbox('setValue', caseInfoMap["caseDescription"].toString());
+
+                ////举报人信息
+                informantID = caseInfoMap["informantID"];
+                $("#informantID").html(informantID);
+                informantAdress = caseInfoMap["informantPersonAddress"];
+                $("#informantAdress").html(informantAdress);
+                informantName = caseInfoMap["informantName"];
+                $("#informantName").html(informantName);
+
+                if (caseInfoMap["formUnRegisterCaseSate"] != "0") {
+                    $.ajax({
+                        async: false,
+                        cache: false,
+                        type: 'POST',
+                        url: '../../formUnRegisterCase/getOneForm',
+                        data: JSON.stringify(testMap),
+                        contentType: 'application/json;charset=utf-8',
+                        dataType: 'json',
+                        success: function(data) {
+                            if (data == null) {
+                                return;
+                            }
+                            existForm = data;
+                        },
+                        error: function() {
+                            return;
+                        }
+                    });
+
+                }
+
+                $('#excuteDate').datebox('setValue', existForm["excuteDate"]);
+                $('#suggestion').textbox('setValue', existForm["suggestion"]);
+                $('#excutor1').textbox('setValue', existForm["excutor1"]);
+                $('#excutor2').textbox('setValue', existForm["excutor2"]);
+                $('#content').textbox('setValue', caseDescription);
+                $('#excuteDate').datebox('setValue', existForm["excuteDate"]);
+                $('#informantAge').textbox('setValue', existForm["informantAge"]);
+                $('#examDate').datebox('setValue', existForm["examDate"]);
+                $('#examSuggestion').textbox('setValue', existForm["examSuggestion"]);
+                $('#reponsible').val(existForm["reponsible"].toString());
+                $('#leader').val(existForm["leader"].toString());
+                $('#reExamSuggestion').textbox('setValue', existForm["reExamSuggestion"]);
+                $('#reExamDate').datebox('setValue', existForm["reExamDate"]);
+
+            }
+
+            $("#submit").click(function() {
+                informantSex = $("#informantSex").val();
+                informantAge = $("#informantAge").val();
+                var reponsible = $("#reponsible").val();
+                var responsible = $("#responsible").val();
+                var suggestion = $("#suggestion").val();
+                var excutor1 = $("#excutor1").val();
+                var excutor2 = $("#excutor2").val();
+                var excuteDate = $("#excuteDate").val();
+                var content = $("#content").val();
+                var reponsibleId;
+                for (i = 0; i < allResponsibles.length; i++) {
+                    if (allResponsibles[i].UserName.toString() == reponsible) {
+                        reponsibleId = allResponsibles[i].UID;
+                    }
+                }
+                var addMap = new Object();
+                addMap['caseID'] = caseId;
+                addMap['sourceID'] = sourceID;
+                addMap['informantID'] = informantID;
+                addMap['informantName'] = informantName;
+                addMap['informantAdress'] = informantAdress;
+                addMap['informantAge'] = informantAge;
+                addMap['informantSex'] = informantSex;
+                addMap['content'] = content;
+                addMap['suggestion'] = suggestion;
+                addMap['reportDate'] = reportTime;
+                addMap['reponsible'] = reponsible;
+                addMap['responsible'] = $("#responsible").val();
+                addMap['excutor1'] = excutor1;
+                addMap['excutor2'] = excutor2;
+                addMap['excuteDate'] = excuteDate;
+                addMap['userName'] = reponsible;
+                addMap['userId'] = reponsibleId;
+                addMap['caseId'] = caseId;
+                addMap['caseName'] = content;
+                addMap['caseType'] = "待审核";
+                addMap['documentName'] = "不予立案呈批表";
+                var caseJson = JSON.stringify(addMap);
+                $.ajax({
+                    async: false,
+                    cache: false,
+                    type: 'POST',
+                    url: '../../formUnRegisterCase/submit',
+                    data: JSON.stringify(addMap),
+                    contentType: 'application/json;charset=utf-8',
+                    dataType: 'json',
+                    success: function(data) {
+                        if (data == null) {
+                            return;
+                        }
+                        $.messager.alert('消息', '操作成功！');
+
+                    }
+                })
+            });
+            $("#reExam").click(function() {
+                var caseID = caseId;
+                var reExamSuggestion = $("#reExamSuggestion").val();
+                var leader = $("#leader").val();
+                var reExamDate = $("#reExamDate").val();
+                var examFormRegisterMap = {
+                    "caseID": caseID,
+                    "reExamSuggestion": reExamSuggestion,
+                    "leader": leader,
+                    "reExamDate": reExamDate
+                };
+                var caseJson = JSON.stringify(examFormRegisterMap);
+                $.ajax({
+                    async: false,
+                    cache: false,
+                    type: 'POST',
+                    url: '../../formUnRegisterCase/reExamForm',
+                    data: JSON.stringify(examFormRegisterMap),
+                    contentType: 'application/json;charset=utf-8',
+                    dataType: 'json',
+                    success: function(data) {
+                        if (data == null) {
+                            return;
+                        }
+                        $.messager.alert('消息', '操作成功！');
+                    }
+                })
+            });
+            //reExam
+
+            $("#exam").click(function() {
+                var caseID = caseId;
+                var examSuggestion = $("#examSuggestion").val();
+                var reponsible = $("#reponsible").val();
+                var examDate = $("#examDate").val();
+                var leader = $("#leader").val();
+                var leaderId;
+                var content = $("#content").val();
+                for (i = 0; i < allLeaders.length; i++) {
+                    if (allLeaders[i].UserName.toString() == leader) {
+                        leaderId = allLeaders[i].UID;
+                    }
+                }
+                //
+                var examFormRegister = {
+                    "caseID": caseID,
+                    "examSuggestion": examSuggestion,
+                    "reponsible": $("#reponsible").val(),
+                    "examDate": examDate,
+                    "leader": leader,
+                    "userId": leaderId,
+                    "userName": leader,
+                    "caseId": caseId,
+                    "caseName": content,
+                    "caseType": "待审批",
+                    "documentName": "不予立案呈批表"
+                };
+                var caseJson = JSON.stringify(examFormRegister);
+                $.ajax({
+                    async: false,
+                    cache: false,
+                    type: 'POST',
+                    url: '../../formUnRegisterCase/examForm',
+                    data: JSON.stringify(examFormRegister),
+                    contentType: 'application/json;charset=utf-8',
+                    dataType: 'json',
+                    success: function(data) {
+                        if (data == null) {
+                            return;
+                        }
+                        $.messager.alert('消息', '操作成功！');
+                    }
+                })
+            });
+        </script>
+    </html>

@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+		<title>黄柏河流域综合执法信息管理系统</title>
+		<link rel="stylesheet" href="../jquery.mobile-1.4.5/jquery.mobile-1.4.5.css">
+		<link rel="stylesheet" href="../nativeDroid2/vendor/waves/waves.min.css" />
+		<link rel="stylesheet" href="../nativeDroid2/vendor/wow/animate.css"/>
+		<link rel="stylesheet" href="../nativeDroid2/css/nativedroid2.css" />
+		<link rel="stylesheet" href="../nativeDroid2/css/nativedroid2.color.green.css" />
+		<script src="../jquery.mobile-1.4.5/jquery-2.1.4.min.js"></script>
+		<script src="../nativeDroid2/jquery-ui.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../jquery.mobile-1.4.5/jquery.mobile-1.4.5.js"></script>
+		<script src="../nativeDroid2/vendor/waves/waves.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../nativeDroid2/vendor/wow/wow.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../nativeDroid2/js/nativedroid2.js"></script>
+		<script type="text/javascript" src="../nativeDroid2/nd2settings.js" ></script>
+		<style type="text/css">
+			a.ui-btn.ui-btn-fab {
+                position: fixed;
+            }
+		</style>
+		<script src="../js/auth.js"></script>
+		<script>
+			auth("daily", null, "index.html");
+		</script>
+	</head>
+
+	<body>
+		<div id="root">
+			<div data-role="page" id="page_main">
+				<div data-role="header" data-position="fixed" data-tap-toggle="false">
+					<a href="#" onclick="back()" class="ui-btn">
+						<i class="zmdi zmdi-arrow-back"></i>
+					</a>
+					<h1>检测报告统计</h1>
+                    <ul data-role="nd2tabs" data-swipe="true">
+                        <li data-tab="tendency" data-tab-active="true">趋势图统计</li>
+                        <li data-tab="average" onclick="average_tab_click()">平均值统计</li>
+                    </ul>
+				</div>
+				<div data-role="main" class="ui-content">
+                    <div data-role="nd2tab" data-tab="tendency">
+                        <a class="ui-btn ui-btn-fab ui-btn-raised clr-primary ui-btn-inline" href="#tendencyPopup" data-rel="popup" data-position-to="window" data-transition="slideup">
+                            <i class="zmdi zmdi-edit"></i>
+                        </a>						
+                        <div id="tendencyPopup" data-role="popup" data-dismissible="false">
+                            <div data-role="header">
+                                <h1 class="nd-title">修改数据源</h1>
+                            </div>
+                            <div data-role="content">
+                                <form v-on:submit.prevent>
+                                    <div class="ui-field-contain">
+                                        <label for="address">被测企业</label>
+                                        <select name="address" v-model="tendency.form.address" id="address">
+                                            <option value="" disabled>请选择</option>
+                                            <option v-for="address in address_list" v-bind:value="address.id">{{ address.text }}</option>
+                                        </select>
+                                    </div>
+                                    <div class="ui-field-contain">
+                                        <label for="zs">指数</label>
+                                        <select name="zs" v-model="tendency.form.zs" id="zs">
+                                            <option value="ph值">ph值</option>
+                                            <option value="化学需氧量">化学需氧量</option>
+                                            <option value="悬浮物">悬浮物</option>
+                                        </select>
+                                    </div>
+                                    <div class="ui-field-contain">
+                                        <label for="year">年份</label>
+                                        <select name="year" v-model="tendency.form.year" id="year">
+                                            <option v-for="i in 100" v-bind:value="1970 + i">{{ 1970 + i }}</option>
+                                        </select>
+                                    </div>
+                                </form>
+                                <div class="row between-xs">
+                                    <div class="col-xs-6">
+                                        <a href="#" class="ui-btn clr-primary" data-rel="back" v-on:click="queryTendencyData()">确定</a>
+                                    </div>
+                                    <div class="col-xs-6">
+                                        <a href="#" class="ui-btn" data-rel="back">取消</a>																
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="tendency-chart" style="height: 300px;width: 100%;"></div>
+                        <div id="yes-chart" style="height: 140px;width: 100%;"></div>
+                    </div>
+                    <div data-role="nd2tab" data-tab="average">
+                        <a class="ui-btn ui-btn-fab ui-btn-raised clr-primary ui-btn-inline" href="#averagePopup" data-rel="popup" data-position-to="window" data-transition="slideup">
+                            <i class="zmdi zmdi-edit"></i>
+                        </a>						
+                        <div id="averagePopup" data-role="popup" data-dismissible="false">
+                            <div data-role="header">
+                                <h1 class="nd-title">修改数据源</h1>
+                            </div>
+                            <div data-role="content">
+                                <form v-on:submit.prevent>
+                                    <div class="ui-field-contain">
+                                        <label for="zs">指数</label>
+                                        <select name="zs" v-model="average.form.zs" id="zs">
+                                            <option value="ph值">ph值</option>
+                                            <option value="化学需氧量">化学需氧量</option>
+                                            <option value="悬浮物">悬浮物</option>
+                                        </select>
+                                    </div>
+                                    <div class="ui-field-contain">
+                                        <label for="year">年</label>
+                                        <select name="year" v-model="average.form.year" id="year">
+                                            <option v-for="i in 100" v-bind:value="1970 + i">{{ 1970 + i }}</option>
+                                        </select>
+                                    </div>
+                                </form>
+                                <div class="row between-xs">
+                                    <div class="col-xs-6">
+                                        <a href="#" class="ui-btn clr-primary" data-rel="back" v-on:click="queryAverageData()">确定</a>
+                                    </div>
+                                    <div class="col-xs-6">
+                                        <a href="#" class="ui-btn" data-rel="back">取消</a>																
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="average-chart" style="height: 420px;width: 100%;" ></div>
+                    </div>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript" src="../vuejs/vue.min.js"></script>
+    <script type="text/javascript" src="../datejs/date-zh-CN.js"></script>
+    <script src="../echarts/echarts.js"></script>
+    <script>
+        var viewmodel = new Vue({
+            el: "#root",
+            data: {
+                address_list: [],
+                tendency: {
+                    form: {
+                        address: "",
+                        zs: "pH值",
+                        year: Date.today().toString("yyyy")
+                    },
+                    data: [],
+                    chart: null,
+                    option: {
+                        title: { text: "", subtext: "", left: "center" },
+                        tooltip : { trigger: 'axis' },
+                        grid: {
+                            bottom: 20
+                        },
+                        xAxis: { type: 'category', boundaryGap: false, data: [] },
+                        yAxis: { type: 'value' },
+                        series: [{
+                            data: [],
+                            type: 'line',
+                            markPoint : {
+                                data : [
+                                    {type : 'max', name: '最大值'},
+                                    {type : 'min', name: '最小值'}
+                                ]
+                            },
+                            markLine : {
+                                data : [
+                                    {type : 'average', name: '平均值'}
+                                ]
+                            }
+                        }],
+                        toolbox: { show : true, feature : { saveAsImage : {show: true} } },
+                    }
+                },
+                yes: {
+                    chart: null,
+                    option: {
+                        title: {
+                            text: "合格率统计",
+                            top: "middle"
+                        },
+                        legend: { orient: 'vertical', left: 'right', top: "middle", data: ['合格', '不合格'] },
+                        series: [{
+                            name:'数量',
+                            type:'pie',
+                            radius: ['50%', '70%'],
+                            avoidLabelOverlap: false,
+                            label: {
+                                normal: {
+                                    show: false,
+                                    position: 'center'
+                                },
+                                emphasis: {
+                                    show: true,
+                                    textStyle: {
+                                        fontSize: '30',
+                                        fontWeight: 'bold'
+                                    }
+                                }
+                            },
+                            labelLine: { normal: { show: false } },
+                            data:[
+                                {value: 0, name: '合格'},
+                                {value: 0, name: '不合格'},
+                            ]
+                        }]
+                    }
+                },
+                average: {
+                    form: {
+                        zs: "pH值",
+                        year: Date.today().toString("yyyy")
+                    },
+                    data: [],
+                    chart: null,
+                    option: {
+                        title: { text: "", subtext: "", left: "center" },
+                        grid: {
+                            left: "56%",
+                            right: "2%"
+                        },
+                        yAxis: { type: 'category', data: [] },
+                        xAxis: { type: 'value', position: "top" },
+                        series: [{
+                            data: [],
+                            type: 'bar',
+                            label:  { normal: { show: true } }
+                        }],
+                        toolbox: { show : true, feature : { saveAsImage : {show: true} } }
+                    }
+                }
+            },
+            computed: {
+                tendency_data: {
+                    get: function () {
+                        return this.tendency.data;
+                    },
+                    set: function (newValue) {
+                        this.tendency.data = newValue;
+                        this.tendency.option.title.text = this.tendency.form.address.split("-")[1]
+                        this.tendency.option.title.subtext = !this.tendency.option.title.text ? "" : [
+                            this.tendency.form.address.split("-")[0],
+                            "，",
+                            this.tendency.form.year,
+                            "年，",
+                            this.tendency.form.zs
+                        ].join("");
+                        this.tendency.option.xAxis.data = newValue.map(function (value) {
+                            return value.date;
+                        })
+                        this.tendency.option.series[0].data = newValue.map(function (value) {
+                            return value.value;
+                        })
+                        this.tendency.chart.setOption(this.tendency.option);
+                        // 饼图
+                        this.yes.option.series[0].data[0].value = 0;
+                        this.yes.option.series[0].data[1].value = 0;
+                        for (var i = 0; i < newValue.length; i++) {
+                            var element = newValue[i];
+                            if (this.isYes(element)) {
+                                this.yes.option.series[0].data[0].value += 1;
+                            } else {
+                                this.yes.option.series[0].data[1].value += 1;
+                            }
+                        }
+                        this.yes.chart.setOption(this.yes.option);
+                    }
+                },
+                average_data: {
+                    get: function () {
+                        return this.average.data;
+                    },
+                    set: function (newValue) {
+                        this.average.data = newValue;
+                        this.average.option.title.text = this.average.form.zs;
+                        this.average.option.title.subtext = this.average.form.year + "年";
+                        this.average.option.yAxis.data = newValue.map(function (item) {
+                            return item.address.split("-").join("\n");
+                        })
+                        this.average.option.series[0].data = newValue.map(function (item) {
+                            return item.value.toFixed(1);
+                        })
+                        this.average.chart.setOption(this.average.option);
+                        this.average.chart.resize({
+                            height: newValue.length * 72
+                        })
+                    }
+                }
+            },
+            methods: {
+                queryAddress: function(obj) {
+					$.ajax({
+						type:"post",
+						url:"http://61.136.146.172:8080/huangbaihe/WInsR/queryaddress",
+						dataType: "JSON",
+						success: function(data) {
+							obj.address_list = data;
+						}
+					});
+				},
+                queryTendencyData: function (obj) {
+                    if (!obj) {
+                        obj = viewmodel
+                    }
+                    $.ajax({
+                        type: "POST",
+                        url: "http://61.136.146.172:8080/huangbaihe/WInsR/tj1query",
+                        dataType: "JSON",
+                        data: obj.tendency.form,
+                        success: function (data) {
+                            obj.tendency_data = data;
+                        },
+                        error: function (data) {
+                            new $.nd2Toast({
+								message : "查询失败", // Required
+							});
+                        }
+                    })
+                },
+                queryAverageData: function (obj) {
+                    if (!obj) {
+                        obj = viewmodel
+                    }
+                    $.ajax({
+                        type: "POST",
+                        url: "http://61.136.146.172:8080/huangbaihe/WInsR/tj2query",
+                        dataType: "JSON",
+                        data: obj.average.form,
+                        success: function (data) {
+                            obj.average_data = data;
+                        },
+                        error: function (data) {
+                            new $.nd2Toast({
+								message : "查询失败", // Required
+							});
+                        }
+                    })
+                },
+                isYes: function (item) {
+                    switch (item.zs) {
+                        case "pH值":
+                            var stand = item.stand.split("~").map(function (item) {
+                                return parseFloat(item);
+                            });
+                            if (item.value > stand[0] && item.value < stand[1]) {
+                                return true;
+                            } else {
+                                return false;
+                            }
+                        default:
+                            if (item.value < parseFloat(item.stand)) {
+                                return true;
+                            } else {
+                                return false;
+                            }
+                    }
+                }
+            },
+            watch: {
+                address_list: function (newValue, oldValue) {
+                    this.tendency.form.address = newValue[0].id;
+                    this.queryTendencyData(this);
+                    this.average.form.point = newValue[0].id;                    
+                    this.queryAverageData(this);
+                }
+            },
+            created: function () {
+                this.queryAddress(this);
+            },
+            mounted: function () {
+                this.tendency.chart = echarts.init(document.getElementById("tendency-chart"))
+                this.yes.chart = echarts.init(document.getElementById("yes-chart"))
+                this.average.chart = echarts.init(document.getElementById("average-chart"))
+            }
+        })
+
+        $(function () {
+            viewmodel.tendency.chart.resize();
+            viewmodel.yes.chart.resize();
+        })
+
+        function average_tab_click() {
+            setTimeout(() => {
+                viewmodel.average.chart.resize();
+            }, 300);
+        }
+
+        function back() {
+            window.location = "../index.html";
+        }
+    </script>
+</html>

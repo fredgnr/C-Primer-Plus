@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+		<title>黄柏河流域综合执法信息管理系统</title>
+		<link rel="stylesheet" href="../jquery.mobile-1.4.5/jquery.mobile-1.4.5.css">
+		<link rel="stylesheet" href="../nativeDroid2/vendor/waves/waves.min.css" />
+		<link rel="stylesheet" href="../nativeDroid2/vendor/wow/animate.css"/>
+		<link rel="stylesheet" href="../nativeDroid2/css/nativedroid2.css" />
+		<link rel="stylesheet" href="../nativeDroid2/css/nativedroid2.color.green.css" />
+		<script src="../jquery.mobile-1.4.5/jquery-2.1.4.min.js"></script>
+		<script src="../nativeDroid2/jquery-ui.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../jquery.mobile-1.4.5/jquery.mobile-1.4.5.js"></script>
+		<script src="../nativeDroid2/vendor/waves/waves.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../nativeDroid2/vendor/wow/wow.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../nativeDroid2/js/nativedroid2.js"></script>
+		<script type="text/javascript" src="../nativeDroid2/nd2settings.js" ></script>
+		<style type="text/css">
+			a.ui-btn.ui-btn-fab {
+                position: fixed;
+            }
+		</style>
+		<script src="../js/auth.js"></script>
+		<script>
+			auth("daily", null, "index.html");
+		</script>
+	</head>
+
+	<body>
+		<div id="root">
+			<div data-role="page" id="page_main">
+				<div data-role="header" data-position="fixed" data-tap-toggle="false">
+					<a href="#" onclick="back()" class="ui-btn">
+						<i class="zmdi zmdi-arrow-back"></i>
+					</a>
+					<h1>水质报告统计</h1>
+                    <ul data-role="nd2tabs" data-swipe="true">
+                        <li data-tab="tendency" data-tab-active="true">河流/水库指标趋势</li>
+                        <li data-tab="statistics" onclick="statistics_tab_click()">河流/水库指标统计</li>
+                    </ul>
+				</div>
+				<div data-role="main" class="ui-content">
+                    <div data-role="nd2tab" data-tab="tendency">
+                        <a class="ui-btn ui-btn-fab ui-btn-raised clr-primary ui-btn-inline" href="#tendencyPopup" data-rel="popup" data-position-to="window" data-transition="slideup">
+                            <i class="zmdi zmdi-edit"></i>
+                        </a>						
+                        <div id="tendencyPopup" data-role="popup" data-dismissible="false">
+                            <div data-role="header">
+                                <h1 class="nd-title">修改数据源</h1>
+                            </div>
+                            <div data-role="content">
+                                <form v-on:submit.prevent>
+                                    <div class="ui-field-contain">
+                                        <label for="point">名称</label>
+                                        <select name="point" v-model="tendency.form.point" id="point">
+                                            <option value="" disabled>请选择</option>
+                                            <option v-for="river in river_names" v-bind:value="river.id">{{ river.text }}</option>
+                                        </select>
+                                    </div>
+                                    <div class="ui-field-contain">
+                                        <label for="year">年份</label>
+                                        <select name="year" v-model="tendency.form.year" id="year">
+                                            <option v-for="i in 100" v-bind:value="1970 + i">{{ 1970 + i }}</option>
+                                        </select>
+                                    </div>
+                                </form>
+                                <div class="row between-xs">
+                                    <div class="col-xs-6">
+                                        <a href="#" class="ui-btn clr-primary" data-rel="back" v-on:click="queryTendencyData()">确定</a>
+                                    </div>
+                                    <div class="col-xs-6">
+                                        <a href="#" class="ui-btn" data-rel="back">取消</a>																
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="tendency-chart" style="height: 420px;width: 100%;"></div>
+                    </div>
+                    <div data-role="nd2tab" data-tab="statistics">
+                        <a class="ui-btn ui-btn-fab ui-btn-raised clr-primary ui-btn-inline" href="#statisticsPopup" data-rel="popup" data-position-to="window" data-transition="slideup">
+                            <i class="zmdi zmdi-edit"></i>
+                        </a>						
+                        <div id="statisticsPopup" data-role="popup" data-dismissible="false">
+                            <div data-role="header">
+                                <h1 class="nd-title">修改数据源</h1>
+                            </div>
+                            <div data-role="content">
+                                <form v-on:submit.prevent>
+                                    <div class="ui-field-contain">
+                                        <label for="point">名称</label>
+                                        <select name="point" v-model="statistics.form.point" id="point">
+                                            <option value="" disabled>请选择</option>
+                                            <option v-for="river in river_names" v-bind:value="river.id">{{ river.text }}</option>
+                                        </select>
+                                    </div>
+                                    <div class="ui-field-contain">
+                                        <label for="year">年</label>
+                                        <select name="year" v-model="statistics.form.year" id="year">
+                                            <option v-for="i in 100" v-bind:value="1970 + i">{{ 1970 + i }}</option>
+                                        </select>
+                                    </div>
+                                    <div class="ui-field-contain">
+                                        <label for="month">月</label>
+                                        <select name="month" v-model="statistics.form.month" id="month">
+                                            <option v-for="i in 12" v-bind:value="i">{{ i }}</option>
+                                        </select>
+                                    </div>
+                                    <div class="ui-field-contain">
+                                        <label for="zs">指数</label>
+                                        <select name="zs" v-model="statistics.form.zs" id="zs">
+                                            <option value="kmo">高锰酸盐</option>
+                                            <option value="nhn">氨氮</option>
+                                            <option value="sp">总磷</option>
+                                            <option value="xfw">高锰酸盐</option>
+                                        </select>
+                                    </div>
+                                </form>
+                                <div class="row between-xs">
+                                    <div class="col-xs-6">
+                                        <a href="#" class="ui-btn clr-primary" data-rel="back" v-on:click="queryStatisticsData()">确定</a>
+                                    </div>
+                                    <div class="col-xs-6">
+                                        <a href="#" class="ui-btn" data-rel="back">取消</a>																
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="statistics-chart" style="height: 420px;width: 100%;" ></div>
+                    </div>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript" src="../vuejs/vue.min.js"></script>
+    <script type="text/javascript" src="../datejs/date-zh-CN.js"></script>
+    <script src="../echarts/echarts.js"></script>
+    <script>
+        var viewmodel = new Vue({
+            el: "#root",
+            data: {
+                river_names: [],
+                tendency: {
+                    form: {
+                        point: "",
+                        year: Date.today().toString("yyyy")
+                    },
+                    data: [],
+                    chart: null,
+                    option: {
+                        title: { text: "河流/水库指标趋势图", left: "center" },
+                        tooltip : { trigger: 'axis' },
+                        legend: { data:['高锰酸盐','氨氮',"总磷","悬浮物"], left: "right", top: "middle", orient: "vertical" },
+                        toolbox: {
+                            show : true,
+                            feature : {
+                                saveAsImage : {show: true}
+                            }
+                        },
+                        calculable : true,
+                        xAxis : [{type : 'category', data: []}],
+                        yAxis : [{type : 'value'}],
+                        series : [
+                            {
+                                name:'高锰酸盐',
+                                type:'line',
+                                data: [],
+                                markPoint : {
+                                    data : [
+                                        {type : 'max', name: '最大值'},
+                                        {type : 'min', name: '最小值'}
+                                    ]
+                                },
+                                markLine : {data : [{type : 'average', name: '平均值'}]}
+                            },
+                            {
+                                name:'氨氮',
+                                type:'line',
+                                data: [],
+                                markPoint : {
+                                    data : [
+                                        {type : 'max', name: '最大值'},
+                                        {type : 'min', name: '最小值'}
+                                    ]
+                                },
+                                markLine : {data : [{type : 'average', name: '平均值'}]}
+                            },
+                            {
+                                name:'总磷',
+                                type:'line',
+                                data: [],
+                                markPoint : {
+                                    data : [
+                                        {type : 'max', name: '最大值'},
+                                        {type : 'min', name: '最小值'}
+                                    ]
+                                },
+                                markLine : {data : [{type : 'average', name: '平均值'}]}
+                            },
+                            {
+                                name:'悬浮物',
+                                type:'line',
+                                data: [],
+                                markPoint : {
+                                    data : [
+                                        {type : 'max', name: '最大值'},
+                                        {type : 'min', name: '最小值'}
+                                    ]
+                                },
+                                markLine : {data : [{type : 'average', name: '平均值'}]}
+                            },
+                        ]
+                    }
+                },
+                statistics: {
+                    form: {
+                        point: "",
+                        year: Date.today().toString("yyyy"),
+                        month: Date.today().toString("M"),
+                        zs: "kmo"
+                    },
+                    data: [],
+                    chart: null,
+                    option: {
+                        title: {
+                            text: "",
+                            subtext: "",
+                            left: "center"
+                        },
+                        tooltip: {
+                            trigger: 'axis',
+                            axisPointer: {
+                                type: 'shadow'
+                            }
+                        },
+                        toolbox: {
+                            show: true,
+                            feature: {
+                                saveAsImage: {show: true}
+                            }
+                        },
+                        calculable: true,
+                        xAxis: [{ type: 'category', axisTick: {show: false}, data: ["上旬", "中旬", "下旬", "平均值"] }],
+                        yAxis: [{ type: 'value' }],
+                        series: [
+                            {
+                                name: '水质指标统计',
+                                type: 'bar',
+                                barGap: 0,
+                                data: [],
+                                label: {
+                                    show: true,
+                                    position: "top"
+                                }
+                            }
+                        ]
+                    }
+                }
+            },
+            computed: {
+                tendency_data: {
+                    get: function () {
+                        return this.tendency.data;
+                    },
+                    set: function (newValue) {
+                        this.tendency.data = newValue;
+                        this.tendency.option.title.text = this.tendency.form.point
+                        this.tendency.option.xAxis[0].data = newValue.map(function (value) {
+                            return value.ymx;
+                        })
+                        this.tendency.option.series[0].data = newValue.map(function (value) {
+                            return value.kmo;
+                        })
+                        this.tendency.option.series[1].data = newValue.map(function (value) {
+                            return value.nhn;
+                        })
+                        this.tendency.option.series[2].data = newValue.map(function (value) {
+                            return value.sp;
+                        })
+                        this.tendency.option.series[3].data = newValue.map(function (value) {
+                            return value.xfw;
+                        })
+                        this.tendency.chart.setOption(this.tendency.option)
+                    }
+                },
+                statistics_data: {
+                    get: function () {
+                        return this.statistics.data;
+                    },
+                    set: function (newValue) {
+                        this.statistics.data = newValue;
+                        this.statistics.option.title.text = newValue.hl ? newValue.hl[0] : "";
+                        this.statistics.option.title.subtext = !this.statistics.option.title.text ? "" : [
+                            this.statistics.form.year,
+                            "年",
+                            this.statistics.form.month,
+                            "月，",
+                            this.statistics.form.zs
+                        ].join("");
+                        var nums = [
+                            newValue.xun1.length > 0 ? newValue.xun1[0] : 0, 
+                            newValue.xun2.length > 0 ? newValue.xun2[0] : 0, 
+                            newValue.xun3.length > 0 ? newValue.xun3[0] : 0
+                        ];
+                        nums.push(((nums[0] + nums[1] + nums[2]) / 3).toFixed(2));
+                        this.statistics.option.series[0].data = nums.map(function (value, index) {
+                            return {
+                                value: value,
+                                itemStyle: {
+                                    color: ['#003366', '#006699', '#4cabce', '#e5323e'][index]
+                                }
+                            }
+                        });
+                        this.statistics.chart.setOption(this.statistics.option);
+                    }
+                }
+            },
+            methods: {
+                queryRiverNames: function (obj) {
+                    $.ajax({
+						type: "POST",
+						url: "http://61.136.146.172:8080/huangbaihe/River/queryhl",
+						dataType: "JSON",
+						success: function(data) {
+							obj.river_names = data
+						}
+					});
+                },
+                queryTendencyData: function (obj) {
+                    if (!obj) {
+                        obj = viewmodel
+                    }
+                    $.ajax({
+                        type: "POST",
+                        url: "http://61.136.146.172:8080/huangbaihe/River/hl1tj",
+                        dataType: "JSON",
+                        data: obj.tendency.form,
+                        success: function (data) {
+                            obj.tendency_data = data;
+                        },
+                        error: function (data) {
+                            new $.nd2Toast({
+								message : "查询失败", // Required
+							});
+                        }
+                    })
+                },
+                queryStatisticsData: function (obj) {
+                    if (!obj) {
+                        obj = viewmodel
+                    }
+                    var formData = {
+                        "hl[]": obj.statistics.form.point,
+                        yearm: obj.statistics.form.year + "年" + obj.statistics.form.month + "月",
+                        zs: obj.statistics.form.zs
+                    }
+                    $.ajax({
+                        type: "POST",
+                        url: "http://61.136.146.172:8080/huangbaihe/River/hl2tj",
+                        dataType: "JSON",
+                        data: formData,
+                        success: function (data) {
+                            obj.statistics_data = data;
+                        },
+                        error: function (data) {
+                            new $.nd2Toast({
+								message : "查询失败", // Required
+							});
+                        }
+                    })
+                }
+            },
+            watch: {
+                river_names: function (newValue, oldValue) {
+                    this.tendency.form.point = newValue[0].id;
+                    this.queryTendencyData(this);
+                    this.statistics.form.point = newValue[0].id;                    
+                    this.queryStatisticsData(this);
+                }
+            },
+            created: function () {
+                this.queryRiverNames(this);
+            },
+            mounted: function () {
+                this.tendency.chart = echarts.init(document.getElementById("tendency-chart"))
+                this.statistics.chart = echarts.init(document.getElementById("statistics-chart"))
+            }
+        })
+
+        $(function () {
+            viewmodel.tendency.chart.resize();
+        })
+
+        function statistics_tab_click() {
+            setTimeout(() => {
+                viewmodel.statistics.chart.resize();
+            }, 300);
+        }
+
+        function back() {
+            window.location = "../index.html";
+        }
+    </script>
+</html>

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+		<title>黄柏河流域综合执法信息管理系统</title>
+		<link rel="stylesheet" href="../jquery.mobile-1.4.5/jquery.mobile-1.4.5.css">
+		<link rel="stylesheet" href="../jquery-mobile-datepicker-wrapper/jquery.mobile.datepicker.css">
+		<link rel="stylesheet" href="../jquery-mobile-datepicker-wrapper/jquery.mobile.datepicker.theme.css">
+		<script src="../jquery.mobile-1.4.5/jquery-2.1.4.min.js"></script>
+		<script src="../jquery.mobile-1.4.5/jquery.mobile-1.4.5.js"></script>
+		<script src="../jquery.mobile-1.4.5/jquery.ui.datepicker.js"></script>
+		<script src="../jquery-mobile-datepicker-wrapper/jquery.mobile.datepicker.js"></script>
+		<script src="../vuejs/vue.min.js"></script>
+		<script src="../datejs/date-zh-CN.js"></script>
+		<link rel="stylesheet" href="../nativeDroid2/css/nativedroid2.css" />
+		<link rel="stylesheet" href="../nativeDroid2/css/nativedroid2.color.green.css" />
+		<script src="../nativeDroid2/js/nativedroid2.js"></script>
+		<style type="text/css">
+			.ui-field-contain {
+				border-bottom-width: 0px;
+			}
+		</style>
+		<script src="../js/auth.js"></script>
+		<script>
+			auth("daily", "add", window.location.pathname.replace("add", "").substr(1));
+		</script>
+	</head>
+
+	<body>
+		<div data-role="page">
+			<div data-role="header" data-position="fixed" data-tap-toggle="false">
+				<a href="#" onclick="back()" class="ui-btn"><i class="zmdi zmdi-arrow-back"></i></a>
+				<h1>新建监察通知</h1>
+			</div>
+			<div id="content" data-role="main" class="ui-content">
+				<h4>编号：{{ form.id }}</h4>
+				<form action="#">
+					<div class="ui-field-contain">
+						<label for="company">被监察单位</label>
+						<input type="text" name="company" id="company" v-model="form.company">
+					</div>
+					<div class="ui-field-contain">
+						<label for="time">被监察时间</label>
+						<input type="date" name="time" id="time" v-model="form.time">
+					</div>
+					<div class="ui-field-contain">
+						<label for="person">巡查人员</label>
+						<input type="text" name="person" id="person" v-model="form.person">
+					</div>
+					<div class="ui-field-contain">
+						<label for="type">巡查方式</label>
+						<input type="text" name="type" id="type" v-model="form.type">
+					</div>
+					<div class="ui-field-contain">
+						<label for="content">监察内容</label>
+						<textarea name="content" id="content" v-model="form.content"></textarea>
+					</div>
+					<div class="ui-field-contain">
+						<label for="ins_other">其他资料</label>
+						<textarea name="ins_othermation" id="ins_other" v-model="form.ins_other"></textarea>
+					</div>
+					<div class="ui-field-contain">
+						<label for="cperson">联系人员</label>
+						<input name="cperson" id="cperson" v-model="form.cperson"></input>
+					</div>
+					<div class="ui-field-contain">
+						<label for="num">联系电话</label>
+						<input type="text" name="num" id="num" v-model="form.num">
+					</div>
+					<div class="ui-field-contain">
+						<label for="pdate">签发日期</label>
+						<input type="date" name="pdate" id="pdate" v-model="form.pdate">
+					</div>
+				</form>
+				<div class="align-center">
+					<a href="#" class="ui-btn ui-btn-inline ui-btn-raised clr-primary" onclick="submit()">提交</a>
+					<a href="#" class="ui-btn ui-btn-inline" onclick="clean()">清空</a>
+				</div>
+			</div>
+		</div>
+		
+		<script type="text/javascript">
+			var content = new Vue({
+				el: "#content",
+				data: {
+					form: {
+						id: "jctz-" + new Date().toString("yyyyMMddHHmmss"),
+						company: "",
+						time: Date.today().toString("yyyy-MM-dd"),
+						content: " ",
+						person: "",
+						type: "",
+						other: "",
+						cperson: "",
+						num: "",
+						pdate: Date.today().toString("yyyy-MM-dd")
+					},
+					submit_status: ""
+				}
+			})
+
+			function back() {
+				window.location = "notice.html";
+			}
+
+			function gotomain(name) {
+				window.location = "../company/main.html" + name;
+			}
+
+			function submit() {
+				content.form.time = Date.parse(content.form.time).toString("yyyy年MM月dd日")
+				content.form.pdate = Date.parse(content.form.pdate).toString("yyyy年MM月dd日")
+				$.ajax({
+					type: "post",
+					url: "http://61.136.146.172:8080/huangbaihe/InsNotice/save",
+					data: content.form,
+					success: function() {
+						new $.nd2Toast({
+							message : "提交成功", // Required
+						});
+					},
+					error: function() {
+						new $.nd2Toast({
+							message : "提交失败", // Required
+						});
+					}
+				});
+			}
+
+			function clean() {
+				for(key in content.form) {
+					if(content.form.hasOwnProperty(key)) {
+						content.form[key] = ""
+					}
+				}
+			}
+		</script>
+	</body>
+
+</html>

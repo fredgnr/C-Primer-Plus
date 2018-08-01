@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+		<title>黄柏河流域综合执法信息管理系统</title>
+		<link rel="stylesheet" href="../jquery.mobile-1.4.5/jquery.mobile-1.4.5.css">
+		<link rel="stylesheet" href="../nativeDroid2/vendor/waves/waves.min.css">
+		<link rel="stylesheet" href="../nativeDroid2/vendor/wow/animate.css">
+		<link rel="stylesheet" href="../nativeDroid2/css/nativedroid2.css" />
+		<link rel="stylesheet" href="../nativeDroid2/css/nativedroid2.color.green.css" />
+		<style type="text/css">
+			.ui-field-contain {
+				border-bottom-width: 0px;
+			}
+			
+			.item-title {
+				font-weight: bold;
+			}
+		</style>
+		<script src="../js/auth.js"></script>
+		<script>
+			auth("daily", "add", window.location.pathname.replace("add", "").substr(1));
+		</script>
+	</head>
+
+	<body>
+		<div data-role="page">
+			<div data-role="header" data-position="fixed" data-tap-toggle="false">
+				<a href="#" onclick="back()" class="ui-btn"><i class="zmdi zmdi-arrow-back"></i></a>
+				<h1>新建现场监察记录</h1>
+			</div>
+			<div id="content" data-role="main" class="ui-content">
+
+				<h4>编号：{{ form.ins_id }}</h4>
+				<form action="#">
+					<div class="ui-field-contain">
+						<label for="factory_name">被监察单位</label>
+						<input v-model="form.factory_name" type="text" name="factory_name" id="factory_name">
+					</div>
+					<div class="ui-field-contain">
+						<label for="project_name">项目名称</label>
+						<input v-model="form.project_name" type="text" name="project_name" id="project_name">
+					</div>
+					<div class="ui-field-contain">
+						<label for="factory_location">公司地址</label>
+						<input v-model="form.factory_location" type="text" name="factory_location" id="factory_location">
+					</div>
+					<div class="ui-field-contain">
+						<label for="project_location">项目地址</label>
+						<input v-model="form.project_location" type="text" name="project_location" id="project_location">
+					</div>
+					<div class="ui-field-contain">
+						<label for="dis_river">所属河段</label>
+						<input v-model="form.dis_river" type="text" name="dis_river" id="dis_river">
+					</div>
+					<div class="ui-field-contain">
+						<label for="law_person">法人代表</label>
+						<input v-model="form.law_person" type="text" name="law_person" id="law_person">
+					</div>
+					<div class="ui-field-contain">
+						<label for="law_tel">法人电话</label>
+						<input v-model="form.law_tel" type="tel" name="law_tel" id="law_tel">
+					</div>
+					<div class="ui-field-contain">
+						<label for="principal">现场负责人</label>
+						<input v-model="form.principal" type="text" name="principal" id="principal">
+					</div>
+					<div class="ui-field-contain">
+						<label for="person_type">职务</label>
+						<input v-model="form.person_type" type="text" name="person_type" id="person_type">
+					</div>
+					<div class="ui-field-contain">
+						<label for="person_tell">负责人电话</label>
+						<input v-model="form.person_tell" type="tel" name="person_tell" id="person_tell">
+					</div>
+						<div class="nd2-card">
+							<div class="card-title has-supporting-text">
+								<h3 class="card-primary-title">项目情况</h3>
+							</div>
+							<div class="card-supporting-text has-title">
+								<div class="ui-field-contain">
+									<fieldset data-role="controlgroup" data-type="horizontal" data-mini="true">
+										<legend>项目类别</legend>
+										<label><input v-model="form.project_type" onclick="content.form.project_type='采矿'" type="radio" name="project_type" value="采矿"/>采矿</label>
+										<label><input v-model="form.project_type" onclick="content.form.project_type='探矿'" type="radio" name="project_type" value="探矿"/>探矿</label>
+										<label><input v-model="form.project_type" onclick="content.form.project_type='选矿'" type="radio" name="project_type" value="选矿"/>选矿</label>
+										<label><input v-model="form.project_type" onclick="content.form.project_type='尾矿库'" type="radio" name="project_type" value="尾矿库"/>尾矿库</label>
+										<label><input v-model="form.project_type" onclick="content.form.project_type='其他'" type="radio" name="project_type" value="其他"/>其他</label>
+									</fieldset>
+								</div>
+								<div class="ui-field-contain" v-show="form.project_type === '其他'">
+									<label for="project_type_other">请输入项目类别</label>
+									<input v-model="form.project_type_other" type="text" name="project_type_other" id="project_type_other" />
+								</div>
+								<div class="ui-field-contain">
+									<fieldset data-role="controlgroup" data-type="horizontal" data-mini="true">
+										<legend>项目状态</legend>
+										<label><input v-model="form.project_state" onclick="content.form.project_state='在建'" type="radio" name="project_state" value="在建"/>在建</label>
+										<label><input v-model="form.project_state" onclick="content.form.project_state='改扩建'" type="radio" name="project_state" value="改扩建"/>改扩建</label>
+										<label><input v-model="form.project_state" onclick="content.form.project_state='生产'" type="radio" name="project_state" value="生产"/>生产</label>
+										<label><input v-model="form.project_state" onclick="content.form.project_state='停产'" type="radio" name="project_state" value="停产"/>停产</label>
+									</fieldset>
+								</div>
+								<div class="ui-field-contain">
+									<label for="project_other">其他情况</label>
+									<textarea v-model="form.project_other" name="project_other" id="project_other"></textarea>
+								</div>
+							</div>
+						</div>
+					<div class="nd2-card">
+						<div class="card-title has-supporting-text">
+							<h3 class="card-primary-title">行政审批及许可</h3>
+						</div>
+						<div class="card-supporting-text has-title">
+							<div class="ui-grid-b">
+								<div class="ui-block-a">
+									<p class="item-title">环评</p>
+								</div>
+								<div class="ui-block-b">
+									<fieldset data-role="controlgroup" data-mini="true" data-type="horizontal">
+										<legend>需办理</legend>
+										<label><input v-model="form.environment_n" onclick="content.form.environment_n='是'" type="radio" name="environment_n" value="是"/>是</label>
+										<label><input v-model="form.environment_n" onclick="content.form.environment_n='否'" type="radio" name="environment_n" value="否"/>否</label>
+									</fieldset>
+								</div>
+								<div class="ui-block-c">
+									<fieldset data-role="controlgroup" data-mini="true" data-type="horizontal">
+										<legend>是否办</legend>
+										<label><input v-model="form.environment" onclick="content.form.environment='是'" type="radio" name="environment" value="是"/>是</label>
+										<label><input v-model="form.environment" onclick="content.form.environment='否'" type="radio" name="environment" value="否"/>否</label>
+									</fieldset>
+								</div>
+								<div class="ui-block-a">
+									<p class="item-title">防洪</p>
+								</div>
+								<div class="ui-block-b">
+									<fieldset data-role="controlgroup" data-mini="true" data-type="horizontal">
+										<legend>需办理</legend>
+										<label><input v-model="form.flood_n" onclick="content.form.flood_n='是'" type="radio" name="flood_n" value="是"/>是</label>
+										<label><input v-model="form.flood_n" onclick="content.form.flood_n='否'" type="radio" name="flood_n" value="否"/>否</label>
+									</fieldset>
+								</div>
+								<div class="ui-block-c">
+									<fieldset data-role="controlgroup" data-mini="true" data-type="horizontal">
+										<legend>是否办</legend>
+										<label><input v-model="form.flood" onclick="content.form.flood='是'" type="radio" name="flood" value="是"/>是</label>
+										<label><input v-model="form.flood" onclick="content.form.flood='否'" type="radio" name="flood" value="否"/>否</label>
+									</fieldset>
+								</div>
+								<div class="ui-block-a">
+									<p class="item-title">水保</p>
+								</div>
+								<div class="ui-block-b">
+									<fieldset data-role="controlgroup" data-mini="true" data-type="horizontal">
+										<legend>需办理</legend>
+										<label><input v-model="form.waterp_n" onclick="content.form.waterp_n='是'" type="radio" name="waterp_n" value="是"/>是</label>
+										<label><input v-model="form.waterp_n" onclick="content.form.waterp_n='否'" type="radio" name="waterp_n" value="否"/>否</label>
+									</fieldset>
+								</div>
+								<div class="ui-block-c">
+									<fieldset data-role="controlgroup" data-mini="true" data-type="horizontal">
+										<legend>是否办</legend>
+										<label><input v-model="form.waterp" onclick="content.form.waterp='是'" type="radio" name="waterp" value="是"/>是</label>
+										<label><input v-model="form.waterp" onclick="content.form.waterp='否'" type="radio" name="waterp" value="否"/>否</label>
+									</fieldset>
+								</div>
+								<div class="ui-block-a">
+									<p class="item-title">取水</p>
+								</div>
+								<div class="ui-block-b">
+									<fieldset data-role="controlgroup" data-mini="true" data-type="horizontal">
+										<legend>需办理</legend>
+										<label><input v-model="form.water_n" onclick="content.form.water_n='是'" type="radio" name="water_n" value="是"/>是</label>
+										<label><input v-model="form.water_n" onclick="content.form.water_n='否'" type="radio" name="water_n" value="否"/>否</label>
+									</fieldset>
+								</div>
+								<div class="ui-block-c">
+									<fieldset data-role="controlgroup" data-mini="true" data-type="horizontal">
+										<legend>是否办</legend>
+										<label><input v-model="form.water" onclick="content.form.water='是'" type="radio" name="water" value="是"/>是</label>
+										<label><input v-model="form.water" onclick="content.form.water='否'" type="radio" name="water" value="否"/>否</label>
+									</fieldset>
+								</div>
+								<div class="ui-block-a">
+									<p class="item-title">排污口</p>
+								</div>
+								<div class="ui-block-b">
+									<fieldset data-role="controlgroup" data-mini="true" data-type="horizontal">
+										<legend>需办理</legend>
+										<label><input v-model="form.pollutionset_n" onclick="content.form.pollutionset_n='是'" type="radio" name="pollutionset_n" value="是"/>是</label>
+										<label><input v-model="form.pollutionset_n" onclick="content.form.pollutionset_n='否'" type="radio" name="pollutionset_n" value="否"/>否</label>
+									</fieldset>
+								</div>
+								<div class="ui-block-c">
+									<fieldset data-role="controlgroup" data-mini="true" data-type="horizontal">
+										<legend>是否办</legend>
+										<label><input v-model="form.pollutionset" onclick="content.form.pollutionset='是'" type="radio" name="pollutionset" value="是"/>是</label>
+										<label><input v-model="form.pollutionset" onclick="content.form.pollutionset='否'" type="radio" name="pollutionset" value="否"/>否</label>
+									</fieldset>
+								</div>
+								<div class="ui-block-a">
+									<p class="item-title">排污</p>
+								</div>
+								<div class="ui-block-b">
+									<fieldset data-role="controlgroup" data-mini="true" data-type="horizontal">
+										<legend>需办理</legend>
+										<label><input v-model="form.pollution_n" onclick="content.form.pollution_n='是'" type="radio" name="pollution_n" value="是"/>是</label>
+										<label><input v-model="form.pollution_n" onclick="content.form.pollution_n='否'" type="radio" name="pollution_n" value="否"/>否</label>
+									</fieldset>
+								</div>
+								<div class="ui-block-c">
+									<fieldset data-role="controlgroup" data-mini="true" data-type="horizontal">
+										<legend>是否办</legend>
+										<label><input v-model="form.pollution" onclick="content.form.pollution='是'" type="radio" name="pollution" value="是"/>是</label>
+										<label><input v-model="form.pollution" onclick="content.form.pollution='否'" type="radio" name="pollution" value="否"/>否</label>
+									</fieldset>
+								</div>
+								<div class="ui-block-a">
+									<p class="item-title">采砂</p>
+								</div>
+								<div class="ui-block-b">
+									<fieldset data-role="controlgroup" data-mini="true" data-type="horizontal">
+										<legend>需办理</legend>
+										<label><input v-model="form.sand_n" onclick="content.form.sand_n='是'" type="radio" name="sand_n" value="是"/>是</label>
+										<label><input v-model="form.sand_n" onclick="content.form.sand_n='否'" type="radio" name="sand_n" value="否"/>否</label>
+									</fieldset>
+								</div>
+								<div class="ui-block-c">
+									<fieldset data-role="controlgroup" data-mini="true" data-type="horizontal">
+										<legend>是否办</legend>
+										<label><input v-model="form.sand" onclick="content.form.sand='是'" type="radio" name="sand" value="是"/>是</label>
+										<label><input v-model="form.sand" onclick="content.form.sand='否'" type="radio" name="sand" value="否"/>否</label>
+									</fieldset>
+								</div>
+							</div>
+							<div class="ui-field-contain">
+								<label for="perother">其他</label>
+								<input v-model="form.perother" type="text" name="perother" id="perother" />
+							</div>
+						</div>
+					</div>
+					<div class="nd2-card">
+						<div class="card-title has-supporting-text">
+							<h3 class="card-primary-title">水污染防治</h3>
+							<div class="card-subtitle">环评情况</div>
+						</div>
+						<div class="card-supporting-text has-title">
+							<div class="ui-field-contain">
+								<fieldset data-role="controlgroup" data-mini="true" data-type="horizontal">
+									<legend>建设与环评一致性</legend>
+									<label><input v-model="form.en_constent" onclick="content.form.en_constent='是'" type="radio" name="en_constent" value="是"/>是</label>
+									<label><input v-model="form.en_constent" onclick="content.form.en_constent='否'" type="radio" name="en_constent" value="否"/>否</label>
+								</fieldset>
+							</div>
+							<div class="ui-field-contain">
+								<fieldset data-role="controlgroup" data-mini="true" data-type="horizontal">
+									<legend>未经环评审批的新建项目</legend>
+									<label><input v-model="form.en_project" onclick="content.form.en_project='是'" type="radio" name="en_project" value="是"/>是</label>
+									<label><input v-model="form.en_project" onclick="content.form.en_project='否'" type="radio" name="en_project" value="否"/>否</label>
+								</fieldset>
+							</div>
+							<div class="ui-field-contain">
+								<label for="en_problem">问题描述</label>
+								<textarea v-model="form.en_problem" name="en_problem" id="en_problem"></textarea>
+							</div>
+						</div>
+					</div>
+					<div class="nd2-card">
+						<div class="card-title has-supporting-text">
+							<h3 class="card-primary-title">水污染防治</h3>
+							<div class="card-subtitle">排污口及排污情况 </div>
+						</div>
+						<div class="card-supporting-text has-title">
+							<div class="ui-field-contain">
+								<fieldset data-role="controlgroup" data-mini="true" data-type="horizontal">
+									<legend>排污口设置规范性</legend>
+									<label><input v-model="form.po_set" onclick="content.form.po_set='是'" type="radio" name="po_set" value="是"/>是</label>
+									<label><input v-model="form.po_set" onclick="content.form.po_set='否'" type="radio" name="po_set" value="否"/>否</label>
+									<label><input v-model="form.po_set" onclick="content.form.po_set='正常排放'" type="radio" name="po_set" value="正常排放"/>正常排放</label>
+									<label><input v-model="form.po_set" onclick="content.form.po_set='非正常排放'" type="radio" name="po_set" value="非正常排放"/>非正常排放</label>
+								</fieldset>
+							</div>
+							<div class="ui-field-contain">
+								<label for="po_num">排污总量</label>
+								<input v-model="form.po_num" type="number" name="po_num" id="po_num" />
+							</div>
+							<div class="ui-field-contain">
+								<fieldset data-role="controlgroup" data-mini="true" data-type="horizontal">
+									<legend>违法设置排污口</legend>
+									<label><input v-model="form.po_ill_set" onclick="content.form.po_ill_set='是'" type="radio" name="po_ill_set" value="是"/>是</label>
+									<label><input v-model="form.po_ill_set" onclick="content.form.po_ill_set='否'" type="radio" name="po_ill_set" value="否"/>否</label>
+								</fieldset>
+							</div>
+							<div class="ui-field-contain">
+								<fieldset data-role="controlgroup" data-mini="true" data-type="horizontal">
+									<legend>私设暗管</legend>
+									<label><input v-model="form.po_pipe" onclick="content.form.po_pipe='是'" type="radio" name="po_pipe" value="是"/>是</label>
+									<label><input v-model="form.po_pipe" onclick="content.form.po_pipe='否'" type="radio" name="po_pipe" value="否"/>否</label>
+								</fieldset>
+							</div>
+							<div class="ui-field-contain">
+								<fieldset data-role="controlgroup" data-mini="true" data-type="horizontal">
+									<legend>违规排污</legend>
+									<label><input v-model="form.po_illeg" onclick="content.form.po_illeg='有'" type="radio" name="po_illeg" value="有"/>有</label>
+									<label><input v-model="form.po_illeg" onclick="content.form.po_illeg='无'" type="radio" name="po_illeg" value="无"/>无</label>
+								</fieldset>
+							</div>
+							<div class="ui-field-contain">
+								<label for="po_problem">问题描述</label>
+								<textarea v-model="form.po_problem" name="po_problem" id="po_problem"></textarea>
+							</div>
+						</div>
+					</div>
+					<div class="nd2-card">
+						<div class="card-title has-supporting-text">
+							<h3 class="card-primary-title">水污染防治</h3>
+							<div class="card-subtitle">“三同时”执行</div>
+						</div>
+						<div class="card-supporting-text has-title">
+							<div class="ui-field-contain">
+								<fieldset data-role="controlgroup" data-mini="true" data-type="horizontal">
+									<legend>未执行“三同时”建设项目</legend>
+									<label><input v-model="form.thr_project" onclick="content.form.thr_project='有'" type="radio" name="thr_project" value="有"/>有</label>
+									<label><input v-model="form.thr_project" onclick="content.form.thr_project='无'" type="radio" name="thr_project" value="无"/>无</label>
+									<label><input v-model="form.thr_project" onclick="content.form.thr_project='未设计'" type="radio" name="thr_project" value="未设计"/>未设计</label>
+									<label><input v-model="form.thr_project" onclick="content.form.thr_project='未施工'" type="radio" name="thr_project" value="未施工"/>未施工</label>
+									<label><input v-model="form.thr_project" onclick="content.form.thr_project='未投入生产和管理'" type="radio" name="thr_project" value="未投入生产和管理"/>未投入生产和管理</label>
+								</fieldset>
+							</div>
+							<div class="ui-field-contain">
+								<label for="thr_problem">问题描述</label>
+								<textarea v-model="form.thr_problem" name="thr_problem" id="thr_problem"></textarea>
+							</div>
+						</div>
+					</div>
+					<div class="nd2-card">
+						<div class="card-title has-supporting-text">
+							<h3 class="card-primary-title">水污染防治</h3>
+							<div class="card-subtitle">设施建设、运行及管理 </div>
+						</div>
+						<div class="card-supporting-text has-title">
+							<div class="ui-field-contain">
+								<fieldset data-role="controlgroup" data-mini="true" data-type="horizontal">
+									<legend>沉淀池</legend>
+									<label><input v-model="form.pool" onclick="content.form.pool='有'" type="radio" name="pool" value="有"/>有</label>
+									<label><input v-model="form.pool" onclick="content.form.pool='无'" type="radio" name="pool" value="无"/>无</label>
+									<label><input v-model="form.pool" onclick="content.form.pool='运行'" type="radio" name="pool" value="运行"/>运行</label>
+									<label><input v-model="form.pool" onclick="content.form.pool='未运行'" type="radio" name="pool" value="未运行"/>未运行</label>
+								</fieldset>
+							</div>
+							<div class="ui-field-contain">
+								<fieldset data-role="controlgroup" data-mini="true" data-type="horizontal">
+									<legend>使用凝絮剂</legend>
+									<label for="flocculant_a"><input v-model="form.flocculant" onclick="content.form.flocculant='有'" type="radio" name="flocculant" value="有"/>有</label>
+									<label for="flocculant_b"><input v-model="form.flocculant" onclick="content.form.flocculant='无'" type="radio" name="flocculant" value="无"/>无</label>
+								</fieldset>
+								<div class="ui-field-contain" v-show="form.flocculant === '有'">
+									<label>品名</label>
+									<input v-model="form.flocculant_name" type="text" name="flocculant_name">
+								</div>
+							</div>
+							<div class="ui-field-contain">
+								<fieldset data-role="controlgroup" data-mini="true" data-type="horizontal">
+									<legend>生活污水微动力处理</legend>
+									<label><input v-model="form.life_mp" onclick="content.form.life_mp='有'" type="radio" name="life_mp" value="有"/>有</label>
+									<label><input v-model="form.life_mp" onclick="content.form.life_mp='无'" type="radio" name="life_mp" value="无"/>无</label>
+									<label><input v-model="form.life_mp" onclick="content.form.life_mp='运行'" type="radio" name="life_mp" value="运行"/>运行</label>
+									<label><input v-model="form.life_mp" onclick="content.form.life_mp='未运行'" type="radio" name="life_mp" value="未运行"/>未运行</label>
+								</fieldset>
+							</div>
+							<div class="ui-field-contain">
+								<fieldset data-role="controlgroup" data-mini="true" data-type="horizontal">
+									<legend>设施运营台账</legend>
+									<label><input v-model="form.equip_record" onclick="content.form.equip_record='有'" type="radio" name="equip_record" value="有"/>有</label>
+									<label><input v-model="form.equip_record" onclick="content.form.equip_record='无'" type="radio" name="equip_record" value="无"/>无</label>
+								</fieldset>
+							</div>
+							<div class="ui-field-contain">
+								<label for="equip_problem">问题描述</label>
+								<textarea v-model="form.equip_problem" name="equip_problem" id="equip_problem"></textarea>
+							</div>
+						</div>
+					</div>
+					<div class="nd2-card">
+						<div class="card-title has-supporting-text">
+							<h3 class="card-primary-title">水污染防治 </h3>
+							<div class="card-subtitle">自动在线监控 </div>
+						</div>
+						<div class="card-supporting-text has-title">
+							<div class="ui-field-contain">
+								<fieldset data-role="controlgroup" data-type="horizontal" data-mini="true">
+									<legend>自动监控设备状态</legend>
+									<label><input v-model="form.auto_monit" onclick="content.form.auto_monit='未安装'" type="radio" name="auto_monit" value="未安装"/>未安装</label>
+									<label><input v-model="form.auto_monit" onclick="content.form.auto_monit='正常运行'" type="radio" name="auto_monit" value="正常运行"/>正常运行</label>
+									<label><input v-model="form.auto_monit" onclick="content.form.auto_monit='非正常运行'" type="radio" name="auto_monit" value="非正常运行"/>非正常运行</label>
+									<label><input v-model="form.auto_monit" onclick="content.form.auto_monit='已联网'" type="radio" name="auto_monit" value="已联网"/>已联网</label>
+									<label><input v-model="form.auto_monit" onclick="content.form.auto_monit='未联网'" type="radio" name="auto_monit" value="未联网"/>未联网</label>
+									<label><input v-model="form.auto_monit" onclick="content.form.auto_monit='已验收'" type="radio" name="auto_monit" value="已验收"/>已验收</label>
+									<label><input v-model="form.auto_monit" onclick="content.form.auto_monit='未验收'" type="radio" name="auto_monit" value="未验收"/>未验收</label>
+								</fieldset>
+							</div>
+							<div class="ui-field-contain">
+								<label for="online_data">在线监测数据</label>
+								<textarea v-model="form.online_data" name="online_data" id="online_data"></textarea>
+							</div>
+							<div class="ui-field-contain">
+								<label for="auto_problem">问题描述</label>
+								<textarea v-model="form.auto_problem" name="auto_problem" id="auto_problem"></textarea>
+							</div>
+						</div>
+					</div>
+					<div class="nd2-card">
+						<div class="card-title has-supporting-text">
+							<h3 class="card-primary-title">水污染防治</h3>
+							<div class="card-subtitle">固体废物</div>
+						</div>
+						<div class="card-supporting-text has-title">
+							<div class="ui-field-contain">
+								<fieldset data-role="controlgroup" data-mini="true" data-type="horizontal">
+									<legend>一般固废管理方案</legend>
+									<label><input v-model="form.normal_solid" onclick="content.form.normal_solid='是'" type="radio" name="normal_solid" value="是"/>是</label>
+									<label><input v-model="form.normal_solid" onclick="content.form.normal_solid='否'" type="radio" name="normal_solid" value="否"/>否</label>
+								</fieldset>
+							</div>
+							<div class="ui-field-contain">
+								<fieldset data-role="controlgroup" data-mini="true" data-type="horizontal">
+									<legend>危险废物符合要求</legend>
+									<label><input v-model="form.danger_solid" onclick="content.form.danger_solid='是'" type="radio" name="danger_solid" value="是"/>是</label>
+									<label><input v-model="form.danger_solid" onclick="content.form.danger_solid='否'" type="radio" name="danger_solid" value="否"/>否</label>
+								</fieldset>
+							</div>
+							<div class="ui-field-contain">
+								<label for="solid_problem">问题描述</label>
+								<textarea v-model="form.solid_problem" name="solid_problem" id="solid_problem"></textarea>
+							</div>
+						</div>
+					</div>
+					<div class="nd2-card">
+						<div class="card-title has-supporting-text">
+							<h3 class="card-primary-title">水污染防治</h3>
+							<div class="card-subtitle">取水许可情况</div>
+						</div>
+						<div class="card-supporting-text has-title">
+							<div class="ui-field-contain">
+								<fieldset data-role="controlgroup" data-mini="true" data-type="horizontal">
+									<legend>取水许可证情况符合取水许可证规定</legend>
+									<label><input v-model="form.water_per" onclick="content.form.water_per='是'" type="radio" name="water_per" value="是"/>是</label>
+									<label><input v-model="form.water_per" onclick="content.form.water_per='否'" type="radio" name="water_per" value="否"/>否</label>
+								</fieldset>
+							</div>
+							<div class="ui-field-contain">
+								<fieldset data-role="controlgroup" data-mini="true" data-type="horizontal">
+									<legend>未经许可取水口</legend>
+									<label><input v-model="form.water_noper" onclick="content.form.water_noper='有'" type="radio" name="water_noper" value="有"/>有</label>
+									<label><input v-model="form.water_noper" onclick="content.form.water_noper='无'" type="radio" name="water_noper" value="无"/>无</label>
+									<label><input v-model="form.water_noper" onclick="content.form.water_noper='使用'" type="radio" name="water_noper" value="使用"/>使用</label>
+									<label><input v-model="form.water_noper" onclick="content.form.water_noper='未使用'" type="radio" name="water_noper" value="未使用"/>未使用</label>
+								</fieldset>
+							</div>
+							<div class="ui-field-contain">
+								<label for="water_problem">问题描述</label>
+								<textarea v-model="form.water_problem" name="water_problem" id="water_problem"></textarea>
+							</div>
+						</div>
+					</div>
+					<div class="nd2-card">
+						<div class="card-title has-supporting-text">
+							<h3 class="card-primary-title">水土保持</h3>
+						</div>
+						<div class="card-supporting-text has-title">
+							<div class="ui-field-contain">
+								<fieldset data-role="controlgroup" data-mini="true" data-type="horizontal">
+									<legend>存在法律禁止的开垦、开发活动或可能造成水土流失的活动</legend>
+									<label><input v-model="form.ws_activity" onclick="content.form.ws_activity='是'" type="radio" name="ws_activity" value="是"/>是</label>
+									<label><input v-model="form.ws_activity" onclick="content.form.ws_activity='否'" type="radio" name="ws_activity" value="否"/>否</label>
+								</fieldset>
+							</div>
+							<div class="ui-field-contain">
+								<fieldset data-role="controlgroup" data-mini="true" data-type="horizontal">
+									<legend>建设与水保方案一致性</legend>
+									<label><input v-model="form.ws_constent" onclick="content.form.ws_constent='是'" type="radio" name="ws_constent" value="是"/>是</label>
+									<label><input v-model="form.ws_constent" onclick="content.form.ws_constent='否'" type="radio" name="ws_constent" value="否"/>否</label>
+								</fieldset>
+							</div>
+							<div class="ui-field-contain">
+								<fieldset data-role="controlgroup" data-mini="true" data-type="horizontal">
+									<legend>未执行“三同时”建设项目</legend>
+									<label><input v-model="form.ws_three" onclick="content.form.ws_three='有'" type="radio" name="ws_three" value="有"/>有</label>
+									<label><input v-model="form.ws_three" onclick="content.form.ws_three='无'" type="radio" name="ws_three" value="无"/>无</label>
+									<label><input v-model="form.ws_three" onclick="content.form.ws_three='未设计'" type="radio" name="ws_three" value="未设计"/>未设计</label>
+									<label><input v-model="form.ws_three" onclick="content.form.ws_three='未施工'" type="radio" name="ws_three" value="未施工"/>未施工</label>
+									<label><input v-model="form.ws_three" onclick="content.form.ws_three='未投'" type="radio" name="ws_three" value="未投"/>未交付使用</label>
+								</fieldset>
+							</div>
+							<div class="ui-field-contain">
+								<fieldset data-role="controlgroup" data-mini="true" data-type="horizontal">
+									<legend>未经水保方案审批的新建项目</legend>
+									<label><input v-model="form.ws_project" onclick="content.form.ws_project='有'" type="radio" name="ws_project" value="有"/>有</label>
+									<label><input v-model="form.ws_project" onclick="content.form.ws_project='无'" type="radio" name="ws_project" value="无"/>无</label>
+								</fieldset>
+							</div>
+							<div class="ui-field-contain">
+								<label for="ws_problem">问题描述</label>
+								<textarea v-model="form.ws_problem" name="ws_problem" id="ws_problem"></textarea>
+							</div>
+						</div>
+					</div>
+					<div class="nd2-card">
+						<div class="card-title has-supporting-text">
+							<h3 class="card-primary-title">河道及水工程</h3>
+						</div>
+						<div class="card-supporting-text has-title">
+							<div class="ui-field-contain">
+								<fieldset data-role="controlgroup" data-mini="true" data-type="horizontal">
+									<legend>建设符合防洪评价</legend>
+									<label><input v-model="form.rp_constent" onclick="content.form.rp_constent='是'" type="radio" name="rp_constent" value="是"/>是</label>
+									<label><input v-model="form.rp_constent" onclick="content.form.rp_constent='否'" type="radio" name="rp_constent" value="否"/>否</label>
+								</fieldset>
+							</div>
+							<div class="ui-field-contain">
+								<fieldset data-role="controlgroup" data-mini="true" data-type="horizontal">
+									<legend>未经防洪影响评价审批的新建项目</legend>
+									<label><input v-model="form.rp_project" onclick="content.form.rp_project='有'" type="radio" name="rp_project" value="有"/>有</label>
+									<label><input v-model="form.rp_project" onclick="content.form.rp_project='无'" type="radio" name="rp_project" value="无"/>无</label>
+								</fieldset>
+							</div>
+							<div class="ui-field-contain">
+								<fieldset data-role="controlgroup" data-mini="true" data-type="horizontal">
+									<legend>是否属于水工程管理和保护范围</legend>
+									<label><input v-model="form.rp_zone" onclick="content.form.rp_zone='是'" type="radio" name="rp_zone" value="是"/>是</label>
+									<label><input v-model="form.rp_zone" onclick="content.form.rp_zone='否'" type="radio" name="rp_zone" value="否"/>否</label>
+								</fieldset>
+							</div>
+							<div class="ui-field-contain">
+								<fieldset data-role="controlgroup" data-mini="true" data-type="horizontal">
+									<legend>河道采砂</legend>
+									<label><input v-model="form.r_sand" onclick="content.form.r_sand='有'" type="radio" name="r_sand" value="有"/>有</label>
+									<label><input v-model="form.r_sand" onclick="content.form.r_sand='无'" type="radio" name="r_sand" value="无"/>无</label>
+								</fieldset>
+							</div>
+							<div class="ui-field-contain">
+								<fieldset data-role="controlgroup" data-mini="true" data-type="horizontal">
+									<legend>阻碍行洪</legend>
+									<label><input v-model="form.hinder_flood" onclick="content.form.hinder_flood='有'" type="radio" name="hinder_flood" value="有"/>有</label>
+									<label><input v-model="form.hinder_flood" onclick="content.form.hinder_flood='无'" type="radio" name="hinder_flood" value="无"/>无</label>
+								</fieldset>
+							</div>
+							<div class="ui-field-contain">
+								<label for="rp_problem">问题描述</label>
+								<textarea v-model="form.rp_problem" name="rp_problem" id="rp_problem"></textarea>
+							</div>
+						</div>
+					</div>
+					<div class="nd2-card">
+						<div class="card-title has-supporting-text">
+							<h3 class="card-primary-title">其他</h3>
+						</div>
+						<div class="card-supporting-text has-title">
+							<div class="ui-field-contain">
+								<label for="other">问题描述</label>
+								<textarea v-model="form.other" name="other" id="other"></textarea>
+							</div>
+						</div>
+					</div>
+					<div class="ui-field-contain">
+						<label for="result">检查结论</label>
+						<textarea v-model="form.result" name="result" id="result"></textarea>
+					</div>
+					<div class="ui-field-contain">
+						<label for="advice">处理意见</label>
+						<textarea v-model="form.advice" name="advice" id="advice"></textarea>
+					</div>
+					<div class="ui-field-contain">
+						<label for="personone">检查人</label>
+						<input v-model="form.personone" type="text" name="personone" id="personone" />
+					</div>
+					<div class="ui-field-contain">
+						<label for="tellone">工作证号</label>
+						<input v-model="form.tellone" type="text" name="tellone" id="tellone" />
+					</div>
+					<div class="ui-field-contain">
+						<label for="record_sign">记录人</label>
+						<input v-model="form.record_sign" type="text" name="record_sign" id="record_sign" />
+					</div>
+					<div class="ui-field-contain">
+						<label for="person_sign">被检查单位现场负责人</label>
+						<input v-model="form.person_sign" type="text" name="person_sign" id="person_sign" />
+					</div>
+					<div class="ui-field-contain">
+						<label for="department">检查单位</label>
+						<input v-model="form.department" type="text" name="department" id="department" />
+					</div>
+					<div class="ui-field-contain">
+						<label for="insdate">完成时间</label>
+						<input v-model="form.insdate" type="date" name="insdate" id="insdate" />
+					</div>
+				</form>
+				<div class="align-center">
+					<a href="#" class="ui-btn ui-btn-inline ui-btn-raised clr-primary" onclick="submit()">提交</a>
+					<a href="#" class="ui-btn ui-btn-inline" onclick="clean()">清空</a>
+				</div>
+			</div>
+		</div>
+		<script src="../jquery.mobile-1.4.5/jquery-2.1.4.min.js"></script>
+		<script src="../nativeDroid2/jquery-ui.min.js"></script>
+		<script src="../jquery.mobile-1.4.5/jquery.mobile-1.4.5.js"></script>
+		<script src="../nativeDroid2/vendor/waves/waves.min.js"></script>
+		<script src="../nativeDroid2/vendor/wow/wow.min.js"></script>
+		<script src="../nativeDroid2/js/nativedroid2.js"></script>
+		<script type="text/javascript" src="../datejs/date-zh-CN.js"></script>
+		<script type="text/javascript" src="../vuejs/vue.min.js"></script>
+		
+		<script type="text/javascript">
+			var content = new Vue({
+				el: "div.ui-content",
+				data: {
+					form: {
+						ins_id: "xcjc-" + new Date().toString("yyyyMMddHHmmss"),
+						factory_name: "",
+						project_name: "",
+						factory_location: "",
+						project_location: "",
+						dis_river: "",
+						law_tell: "",
+						law_person: "",
+						principal: "",
+						person_type: "",
+						person_tell: "",
+						project_type_other: "",
+						project_type: "采矿",
+						project_state: "生产",
+						project_other: "",
+						environment_n: "否",
+						environment: "否",
+						perother: "",
+						sand_n: "否",
+						sand: "否",
+						pollutionset_n: "否",
+						pollutionset: "否",
+						pollution_n: "否",
+						pollution: "否",
+						waterp_n: "否",
+						waterp: "否",
+						water_n: "否",
+						water: "否",
+						flood_n: "否",
+						flood: "否",
+						en_constent: "否",
+						en_project: "否",
+						en_problem: "",
+						po_set: "正常排放",
+						po_num: "",
+						po_ill_set: "否",
+						po_pipe: "否",
+						po_illeg: "无",
+						po_problem: "",
+						thr_project: "无",
+						thr_problem: "",
+						pool: "运行",
+						flocculant: "有",
+						flocculant_name: "",
+						life_mp: "有",
+						equip_record: "有",
+						equip_problem: "",
+						auto_monit: "正常运行",
+						online_data: "",
+						auto_problem: "",
+						normal_solid: "是",
+						danger_solid: "是",
+						solid_problem: "",
+						water_per: "是",
+						water_noper: "无",
+						water_problem: "",
+						ws_constent: "是",
+						ws_project: "无",
+						ws_activity: "否",
+						ws_three: "无",
+						ws_problem: "",
+						rp_constent: "是",
+						rp_project: "无",
+						hinder_flood: "无",
+						r_sand: "无",
+						rp_zone: "是",
+						rp_problem: "",
+						other: "",
+						result: "",
+						advice: "",
+						personone: "",
+						persontwo: "",
+						tellone: "",
+						telltwo: "",
+						department: "",
+						record_sign: "",
+						person_sign: "",
+						insdate: Date.today().toString("yyyy-MM-dd")
+					},
+					submit_status: ""
+				},
+				methods: {
+					submit: function() {
+						console.log(JSON.stringify(this.form))
+					}
+				}
+			});
+
+			function back() {
+				window.location = "current.html";
+			}
+
+			function gotomain(name) {
+				window.location = "../company/main.html" + name;
+			}
+
+			function submit() {
+				content.form.insdate = Date.parse(content.form.insdate).toString("yyyy年MM月dd日")
+				$.ajax({
+					type: "post",
+					url: "http://61.136.146.172:8080/huangbaihe/CruIns/save",
+					data: content.form,
+					success: function() {
+						new $.nd2Toast({
+							message : "提交成功", // Required
+						});
+					},
+					error: function() {
+						new $.nd2Toast({
+							message : "提交失败", // Required
+						});
+					}
+				});
+			}
+
+			function clean() {
+				for(key in content.form) {
+					if(content.form.hasOwnProperty(key)) {
+						content.form[key] = ""
+					}
+				}
+			}
+		</script>
+	</body>
+
+</html>

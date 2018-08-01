@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+		<title>黄柏河流域综合执法信息管理系统</title>
+		<link rel="stylesheet" href="../jquery.mobile-1.4.5/jquery.mobile-1.4.5.css">
+		<script src="../jquery.mobile-1.4.5/jquery-2.1.4.min.js"></script>
+		<script src="../jquery.mobile-1.4.5/jquery.mobile-1.4.5.js"></script>
+		<script type="text/javascript" src="../vuejs/vue.min.js"></script>
+		<link rel="stylesheet" href="../nativeDroid2/css/nativedroid2.css" />
+		<link rel="stylesheet" href="../nativeDroid2/css/nativedroid2.color.green.css" />
+		<script src="../nativeDroid2/js/nativedroid2.js"></script>
+		<script src="../js/auth.js"></script>
+		<script>
+			auth("daily", null, "index.html");
+		</script>
+	</head>
+
+	<body>
+		<div data-role="page">
+			<div data-role="header" data-position="fixed" data-tap-toggle="false">
+				<a href="#" onclick="back()" class="ui-btn"><i class="zmdi zmdi-arrow-back"></i></a>
+				<h1>发现问题</h1>
+				<a href="#" onclick="add()" class="ui-btn"><i class="zmdi zmdi-plus"></i></a>
+			</div>
+			<div data-role="main" class="ui-content" id="main">
+				<form v-on:submit.prevent>
+					<input name="search" id="search" type="search" onchange="content.searchText = this.value" placeholder="搜索..." data-clear-btn="true">
+				</form>
+				<ul id="content" data-role="listview" data-inset="true">
+					<li v-for="item in items">
+						<a href="#" class="ui-btn ui-icon-eye ui-btn-icon-right" v-on:click="detail(item.pro_id)">
+							<h2><span class="nd2-label nd2-label-left" :class="{
+								'nd2-label-orange': item.pro_finsh == '否',
+								'nd2-label-green': item.pro_finsh == '是'
+							}">{{ item.pro_finsh == "是" ? "已完成" : "未完成" }}</span>{{ item.pro_zone }}</h2>
+							<p class="listview-aside" style="margin: 0px;">{{ item.pro_id }}</p>
+						</a>
+					</li>
+				</ul>
+				<div v-show="showPagination">
+					<button class="ui-btn ui-corner-all ui-btn-inline" v-bind:class="{ 'ui-state-disabled' : !previousPageEnable }" v-on:click="previousPage()"><i class="zmdi zmdi-chevron-left"></i></button>
+					<button class="ui-btn ui-corner-all ui-btn-inline" v-on:click="refresh()"><i class="zmdi zmdi-refresh"></i></button>
+					<button class="ui-btn ui-corner-all ui-icon-arrow-r ui-btn-inline" v-bind:class="{ 'ui-state-disabled' : !nextPageEnable }" v-on:click="nextPage()"><i class="zmdi zmdi-chevron-right"></i></button>
+					<span>第{{pageIndex + ((totalPages === 0) ? 0 : 1)}}页，共{{ totalPages }}页，{{ total }}条记录。</span>
+				</div>
+			</div>
+		</div>
+	</body>
+	
+	<!--<script src="https://cdn.jsdelivr.net/npm/lodash@4.13.1/lodash.min.js"></script>-->
+	<script>
+		var content = new Vue({
+			el: "#main",
+			data: {
+				items: [],
+				pageIndex: 0,
+				total: 0,
+				searchText: "",
+				showPagination: true
+			},
+			computed: {
+				previousPageEnable: function() {
+					return this.pageIndex > 0
+				},
+				nextPageEnable: function() {
+					return this.pageIndex < (this.totalPages - 1)
+				},
+				totalPages: function() {
+					return Math.ceil(this.total / 10)
+				}
+			},
+			watch: {
+				searchText: function(newSearch, oldSearch) {
+					this.pageIndex = 0;
+					if(newSearch !== "" && newSearch !== oldSearch) {
+						this.searchItems()
+					} else {
+						showLoader()
+					}
+				}
+			},
+			methods: {
+				searchItems: function() {
+					$.ajax({
+						type: "POST",
+						url: "http://61.136.146.172:8080/huangbaihe/InsProb/query",
+						dataType: "json",
+						data: {
+							zone: this.searchText
+						},
+						success: function(data) {
+							content.items = data.rows
+						},
+						error: function() {
+							$("#submit-message").popup("open");
+							setTimeout(function() {
+								$("#submit-message").popup("close");
+							}, 1000)
+						}
+					});
+				}
+			}
+		});
+		$(document).ready(function() {
+			showLoader();
+		});
+
+		function back() {
+			window.location = "../index.html";
+		}
+
+		function gotomain(name) {
+			window.location = "../company/main.html" + name;
+		}
+		//获取所有项目名称
+		function showLoader() {
+			$.ajax({
+				type: "POST",
+				url: "http://61.136.146.172:8080/huangbaihe/InsProb/querybypage",
+				data: {
+					page: content.pageIndex + 1,
+					rows: 10
+				},
+				dataType: 'json',
+				success: function(json) {
+					content.items = json.rows;
+					content.total = json.total;
+				},
+				error: function() {
+					$("#submit-message").popup("open");
+					setTimeout(function() {
+						$("#submit-message").popup("close");
+					}, 1000)
+				}
+			});
+		}
+
+		function search(id) {
+			alert(document.getElementById(id).value)
+		}
+
+		function previousPage() {
+			content.pageIndex -= 1;
+			showLoader()
+		}
+
+		function nextPage() {
+			content.pageIndex += 1;
+			showLoader();
+		}
+
+		function refresh() {
+			showLoader();
+		}
+
+		function detail(index) {
+			window.location = "problemdetail.html?index=" + index;
+		}
+
+		function add() {
+			window.location = "problemadd.html";
+		}
+	</script>
+
+</html>

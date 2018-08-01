@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta  http-equiv="Content-Type" content="text/html;charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" >
+<title>黄柏河流域综合执法信息管理系统</title>
+<link rel=stylesheet href='../jquery.mobile-1.4.5/jquery.mobile-1.4.5.css'>  
+<script src='../jquery.mobile-1.4.5/jquery-2.1.4.min.js'></script>  
+<script src='../jquery.mobile-1.4.5/jquery.mobile-1.4.5.js'></script> 
+<style>
+	span.listview-aside {
+	font-size: 14px;
+	position: relative;
+	float: right;
+	margin: 0px auto;
+}
+</style>
+</head>
+<body>
+	<div data-role="page">
+		<div data-role="header" data-position="fixed"  data-tap-toggle="false">
+			<a href="#" onclick="back()" class="ui-btn ui-icon-back ui-btn-icon-left">返回</a>
+			<h1 id="projectname"></h1>
+		</div>
+		<div data-role="main" class="ui-content">
+			<div data-role="collapsible">
+			<h1>项目基本信息</h1>
+			<ul id="content" data-role="listview" data-inset="true">
+			<li>
+				<b>项目名称:</b>
+				<span class="listview-aside" id="minename"/></span>
+			</li>
+			<li>
+				<b>项目负责人:</b>
+				<span class="listview-aside"    id="projectcharger"></span>
+			</li>
+			<li>
+				<b>项目办公地址:</b>
+				<span class="listview-aside"   id="address"></span>
+			</li>
+			<li>
+				<b>类别:</b>
+				<span class="listview-aside"   id="type"/></span>
+			</li>
+			<li>
+				<b>设计产量(吨/年):</b>
+				<span class="listview-aside"   id="designoutput"/></span>
+			</li>
+			<li>
+				<b>实际产量(吨/年):</b>
+				<span class="listview-aside"   id="factoutput"/></span>
+			</li>
+			<li>
+				<b>开（投）产时间:</b>
+				<span class="listview-aside"   id="opreationtime"/></span>
+			</li>
+			<li>
+				<b>经度:</b>
+				<span class="listview-aside"   id="locationx"/></span>
+			</li>
+			<li>
+				<b>纬度:</b>
+				<span class="listview-aside"   id="locationy"/></span>
+			</li>
+			<li>
+				<b>河域范围:</b>
+				<span class="listview-aside"   id="river"/></span>
+			</li>
+			<li>
+				<b>项目现状:</b>
+				<span class="listview-aside"   id="projectstatus"/></sapn>
+			</li>
+			</ui>
+		</div>
+		<div data-role="collapsible">
+		<h1>项目附加信息</h1>
+		<ul id="content" data-role="listview" data-inset="true">
+		<li>					
+			<b>所属企业名称:</b>
+			<span class="listview-aside" id="companyname"/></span>
+		</li>
+		<li>
+			<b>所属行政区域:</b>
+			<span class="listview-aside" id="administration"/></sapn>
+			</li>
+		<li>
+			<b>年设计生产规模(万)</b>
+			<span class="listview-aside" id="productscale"/></span>
+		</li>
+		<li>
+			<b>硐口数量:</b>
+			<span class="listview-aside" id="cavenumber"/></span>
+			</li>
+		<li>
+			<b>出矿硐数量:</b>
+			<span class="listview-aside" id="minecavenumber"/></span>
+		</li>
+		<li>
+			<b>地面沉淀池数量:</b>
+			<span class="listview-aside" id="groundtank"/></span>
+			</li>
+		<li>
+			<b>地面沉淀池总容量(方):</b>
+			<span class="listview-aside" id="groundtankvolume"/></span>
+		</li>
+		<li>
+			<b>生产废水排污口数量:</b>
+			<span class="listview-aside" id="productoutletnumber"/></span>
+			</li>
+		<li>
+			<b>在线监测数量:</b>
+			<span class="listview-aside" id="onlinenumber"/><span>
+		</li>
+		<li>
+			<b>生活污水排污口数量:</b>
+			<span class="listview-aside" id="lifeoutletnumber"/></span>
+			</li>
+		<li>
+			<b>生活污水微动力建设数量:</b>
+			<span class="listview-aside" id="lifepowernumber"/></span>
+		</li>
+		<li>
+			<b>排污许可证情况:</b>
+			<span class="listview-aside" id="license"/></span>
+			</li>
+		<li>
+			<b>备注:</b>
+			<span class="listview-aside" id="remarks"/></span>
+		</li>
+	</ui>
+</div>
+	<div data-role="collapsible">
+		<h1>行政审批信息</h1>
+		<ul id="approval" data-role="listview">
+		</ul>
+	</div>
+</div>
+		<div style="text-align:center;" data-role="footer" data-position="fixed" data-tap-toggle="false">
+			<div data-role="controlgroup" data-type="horizontal">
+		    <a href="#" onclick="gotomain('#page_main')" class="ui-btn ui-icon-home ui-btn-icon-left">主页</a>
+		    <a href="#" onclick="gotomain('#page_company')" class="ui-btn ui-icon-bullets ui-btn-icon-left">企业</a>
+		    <a href="#" onclick="gotomain('#page_inspect')" class="ui-btn ui-icon-edit ui-btn-icon-left">巡查</a>
+		    <a href="#" onclick="gotomain('#page_case')" class="ui-btn ui-icon-calendar ui-btn-icon-left">案件</a>
+		 	</div>
+		</div>
+  	</div>
+</body>
+<script>
+function getURLParameter(name) {  
+    return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search)||[,""])[1].replace(/\+/g, '%20'))||null;  
+} 
+var SlectproID = null;
+$(document).ready(function() {
+	SlectproID = getURLParameter("index"); 
+	loadpro(SlectproID);
+	loadapproval(SlectproID);
+});
+function back(){
+	window.location="project.html";
+}
+function gotomain(name){
+	window.location="main.html"+name;
+}
+//加载项目信息
+function loadpro(SlectproID) {
+	// 判断是否选择了项目ID
+	if (!SlectproID) {
+		$.messager.alert('警告', '发生错误！');
+	}
+	// 加载项目详细信息
+	$.ajax({
+		type : "POST",
+		url : "http://61.136.146.172:8080/huangbaihe/Cproinfo/qurbyid",
+		data : {
+			'index' : SlectproID
+		},
+		dataType : 'json',
+		success : function(json) {
+			var data = json.result;
+			$("#projectcharger") .html(data.projectCharger);
+			$("#address")  .html(data.address);
+			$("#type")  .html(data.type);
+			$("#designoutput")  .html(data.designOutput);
+			$("#factoutput")  .html(data.factOutput);
+			$("#opreationtime")  .html(data.opreationTime);
+			$("#locationx")  .html(data.locationx);
+			$("#locationy")  .html(data.locationy);
+			$("#river")  .html(data.river);
+			$("#projectstatus")  .html(data.projectStatus);
+		}
+	});
+	// 加载项目基本信息
+	$.ajax({
+		type : "POST",
+		url : "http://61.136.146.172:8080/huangbaihe/Cprobasic/qurbyid",
+		data : {
+			index : SlectproID
+		},
+		dataType : 'json',
+		success : function(json) {
+			var data = json.result;
+			$("#administration") .html(data.administration);
+			$("#projectname") .html(data.mineName);
+			$("#minename")  .html(data.mineName);
+			$("#companyname")  .html(data.companyName);
+			$("#productscale")  .html(data.productScale);
+			$("#cavenumber")  .html(data.caveNumber);
+			$("#minecavenumber")  .html(data.mineCaveNumber);
+			$("#groundtank")  .html(data.groundTank);
+			$("#groundtankvolume")  .html(data.groundTankVolume);
+			$("#productoutletnumber")  .html(data.productOutletNumber);
+			$("#onlinenumber")  .html(data.onlineNumber);
+			$("#lifeoutletnumber")  .html(data.lifeOutletNumber);
+			$("#lifepowernumber")  .html(data.lifePowerNumber);
+			$("#license")  .html(data.license);
+			$("#remarks")  .html(data.remarks);
+		}
+	});
+}
+//显示此项目的所有审批内容
+function loadapproval(SlectproID) {
+	var param = {
+		"index" : SlectproID
+	};
+	$.ajax({
+		type : "POST",
+		url : "http://61.136.146.172:8080/huangbaihe/Capproval/query",
+		data : param,
+		dataType : 'json',
+		success : function(json) {
+			var content = "";
+			$.each(json.rows, function(i, val) {
+				var temp = " <li><a style='font-size:10px;' href='#' class='ui-btn' onclick='gotoapproval("+val.approvalID+")'>"+ val.approvalName+"</a></li>"
+				content += temp;
+			});
+			$("#approval").append(content);
+		}
+	});
+}
+function gotoapproval(index){
+	window.location = "updapproval.html?index="+index;
+}
+</script>
+</html>

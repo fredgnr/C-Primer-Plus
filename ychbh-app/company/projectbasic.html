@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+		<title>黄柏河流域综合执法信息管理系统</title>
+		<link rel="stylesheet" href="../jquery.mobile-1.4.5/jquery.mobile-1.4.5.css">
+		<link rel="stylesheet" href="../nativeDroid2/vendor/waves/waves.min.css" />
+		<link rel="stylesheet" type="text/css" href="../nativeDroid2/vendor/wow/animate.css"/>
+		<link rel="stylesheet" href="../nativeDroid2/css/nativedroid2.css" />
+		<link rel="stylesheet" href="../nativeDroid2/css/nativedroid2.color.green.css" />
+		<style type="text/css">
+			span.listview-aside {
+				font-size: 14px;
+				position: relative;
+				float: right;
+				margin: 0px auto;
+			}
+			
+			ul li p.listview-aside {
+				font-size: 14px;
+				word-wrap: break-word;
+				white-space: normal;
+			}
+			
+			.ui-field-contain {
+				border-bottom-width: 0px;
+			}
+			
+			.item-title {
+				font-weight: bold;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="root">
+			<div data-role="page" id="page_main">
+				<div data-role="header" data-position="fixed" data-tap-toggle="false">
+					<a href="#" onclick="back()" class="ui-btn">
+						<i class="zmdi zmdi-arrow-back"></i>
+					</a>
+					<h1>项目概况</h1>
+					<a href="#page_new" v-on:click.capture="createForm()" class="ui-btn">
+						<i class="zmdi zmdi-plus"></i>
+					</a>
+				</div>
+				<div data-role="main" class="ui-content">
+					<ul data-role="listview" data-inset="true">
+						<li v-for="(item, index) in items">
+							<a href="#page_detail" v-on:click="selected_id = item.projectID" class="ui-btn ui-icon-eye ui-btn-icon-right">
+								<h2>{{ item.mineName }}</h2>
+							</a>
+						</li>
+					</ul>
+					<div v-show="showPagination">
+						<button class="ui-btn ui-corner-all ui-btn-inline" v-bind:class="{ 'ui-state-disabled' : !previousPageEnable }" v-on:click="previousPage()">
+							<i class="zmdi zmdi-chevron-left"></i>
+						</button>
+						<button class="ui-btn ui-corner-all ui-btn-inline" v-on:click="refresh()">
+							<i class="zmdi zmdi-refresh"></i>
+						</button>
+						<button class="ui-btn ui-corner-all ui-icon-arrow-r ui-btn-inline" v-bind:class="{ 'ui-state-disabled' : !nextPageEnable }" v-on:click="nextPage()">
+							<i class="zmdi zmdi-chevron-right"></i>
+						</button>
+						<span>第{{page + ((totalPages === 0) ? 0 : 1)}}页，共{{ totalPages }}页，{{ total }}条记录。</span>
+					</div>
+				</div>
+			</div>
+			<div data-role="page" id="page_detail">
+				<div data-role="header" data-position="fixed" data-tap-toggle="false">
+					<a href="#" v-on:click="showMain()" class="ui-btn">
+						<i class="zmdi zmdi-arrow-back"></i>
+					</a>
+					<h1>项目详细信息</h1>
+				</div>
+				<div id="detail-listview" data-role="main" class="ui-content">
+					<ul data-role="listview" data-inset="true">
+						<li data-role="list-divider"><h3>基本信息</h3></li>
+						<li>
+							<b>矿井名称</b>
+							<span class="listview-aside">{{ basic.mineName }}</span>
+						</li>
+						<li>
+							<b>行政区</b>
+							<span class="listview-aside">{{ basic.administration }}</span>
+						</li>
+						<li>
+							<b>企业名称</b>
+							<span class="listview-aside">{{ basic.companyName }}</span>
+						</li>
+						<li>
+							<b>生产规模</b>
+							<span class="listview-aside">{{ basic.productScale }}</span>
+						</li>
+						<li>
+							<b>硐口数</b>
+							<span class="listview-aside">{{ basic.caveNumber }}</span>
+						</li>
+						<li>
+							<b>出矿硐数</b>
+							<span class="listview-aside">{{ basic.mineCaveNumber }}</span>
+						</li>
+						<li>
+							<b>沉淀池数</b>
+							<span class="listview-aside">{{ basic.groundTank }}</span>
+						</li>
+						<li>
+							<b>沉淀池容量</b>
+							<span class="listview-aside">{{ basic.groundTankVolume }}</span>
+						</li>
+						<li>
+							<b>生产废水排污口数</b>
+							<span class="listview-aside">{{ basic.productOutletNumber }}</span>
+						</li>
+						<li>
+							<b>在线监测数</b>
+							<span class="listview-aside">{{ basic.onlineNumber }}</span>
+						</li>
+						<li>
+							<b>生活污水排污口量</b>
+							<span class="listview-aside">{{ basic.lifeOutletNumber }}</span>
+						</li>
+						<li>
+							<b>微动力建设数</b>
+							<span class="listview-aside">{{ basic.lifePowerNumber }}</span>
+						</li>
+						<li>
+							<b>排污许可证</b>
+							<span class="listview-aside">{{ basic.license }}</span>
+						</li>
+						<li>
+							<b>备注</b>
+							<p class="listview-aside">{{ basic.remarks }}</p>
+						</li>
+						<li data-role="list-divider"><h3>项目详细信息</h3></li>
+						<li>
+							<b>项目负责人</b>
+							<span class="listview-aside">{{ detail.projectCharger }}</span>
+						</li>
+						<li>
+							<b>项目办公地址</b>
+							<span class="listview-aside">{{ detail.address }}</span>
+						</li>
+						<li>
+							<b>类别</b>
+							<span class="listview-aside">{{ detail.type }}</span>
+						</li>
+						<li>
+							<b>设计产量</b>
+							<span class="listview-aside">{{ detail.designOutput }}</span>
+						</li>
+						<li>
+							<b>实际产量</b>
+							<span class="listview-aside">{{ detail.factOutput }}</span>
+						</li>
+						<li>
+							<b>开（投）产时间</b>
+							<span class="listview-aside">{{ detail.opreationTime }}</span>
+						</li>
+						<li>
+							<b>位置范围 x</b>
+							<span class="listview-aside">{{ detail.locationx }}</span>
+						</li>
+						<li>
+							<b>位置范围 y</b>
+							<span class="listview-aside">{{ detail.locationy }}</span>
+						</li>
+						<li>
+							<b>河域范围</b>
+							<span class="listview-aside">{{ detail.river }}</span>
+						</li>
+						<li>
+							<b>项目现状</b>
+							<span class="listview-aside">{{ detail.projectStatus }}</span>
+						</li>
+						<li data-role="list-divider"><h3>其他</h3></li>
+						<li><a href="#" v-on:click="gotoCompany(detail.companyID)"><b>所属企业</b></a></li>
+						<li><a href="#" v-on:click="gotoDetail('approval', detail.projectID)"><b>行政审批情况</b></a></li>
+						<li><a href="#" v-on:click="gotoDetail('mine', detail.projectID)"><b>矿硐</b></a></li>
+						<li><a href="#" v-on:click="gotoDetail('site', detail.projectID)"><b>渣场</b></a></li>
+						<li><a href="#" v-on:click="gotoDetail('deposit', detail.projectID)"><b>生产废水处理设施</b></a></li>
+						<li><a href="#" v-on:click="gotoDetail('outlet', detail.projectID)"><b>排污口情况</b></a></li>
+						<li><a href="#" v-on:click="gotoDetail('region', detail.projectID)"><b>办公生活基本情况</b></a></li>
+						<li><a href="#" v-on:click="gotoDetail('masure', detail.projectID)"><b>办公生活废水处理</b></a></li>
+						<li><a href="#" v-on:click="gotoDetail('person', detail.projectID)"><b>通讯录</b></a></li>
+						<li><a href="#" v-on:click="gotoDetail('selectmine', detail.projectID)"><b>选矿厂区</b></a></li>
+						<li><a href="#" v-on:click="gotoDetail('tailmine', detail.projectID)"><b>尾矿厂区</b></a></li>
+					</ul>
+				</div>
+			</div>
+			<div data-role="page" id="page_new">
+				<div data-role="header" data-position="fixed" data-tap-toggle="false">
+					<a href="#" v-on:click="showMain()" class="ui-btn">
+						<i class="zmdi zmdi-arrow-back"></i>
+					</a>
+					<h1>新建项目信息</h1>
+				</div>
+				<div data-role="main" class="ui-content">
+					<div class="nd2-card">
+						<div class="card-title">
+							<h3 class="card-primary-title">项目基本信息</h3>
+						</div>
+						<div class="card-supporting-text has-action">
+							<form>
+								<div class="ui-field-contain">
+									<label for="mineName">矿井名称</label>
+									<input type="text" name="mineName" id="mineName" v-model="basic_form.mineName"/>
+								</div>
+								<div class="ui-field-contain">
+									<label for="companyName">企业名称</label>
+									<input type="text" name="companyName" id="companyName" v-model="basic_form.companyName"/>
+								</div>
+								<div class="ui-field-contain">
+									<label for="administration">所属行政区域</label>
+									<input type="text" name="administration" id="administration" v-model="basic_form.administration"/>
+								</div>
+								<div class="ui-field-contain">
+									<label for="productScale">年设计生产规模(万)</label>
+									<input type="text" name="productScale" id="productScale" v-model="basic_form.productScale"/>
+								</div>
+								<div class="ui-field-contain">
+									<label for="caveNumber">硐口数量</label>
+									<input type="number" name="caveNumber" id="caveNumber" v-model="basic_form.caveNumber"/>
+								</div>
+								<div class="ui-field-contain">
+									<label for="mineCaveNumber">出矿硐数量</label>
+									<input type="number" name="mineCaveNumber" id="mineCaveNumber" v-model="basic_form.mineCaveNumber"/>
+								</div>
+								<div class="ui-field-contain">
+									<label for="groundTank">地面沉淀池数量</label>
+									<input type="number" name="groundTank" id="groundTank" v-model="basic_form.groundTank"/>
+								</div>
+								<div class="ui-field-contain">
+									<label for="groundTankVolume">地面沉淀池总容量(方)</label>
+									<input type="number" name="groundTankVolume" id="groundTankVolume" v-model="basic_form.groundTankVolume"/>
+								</div>
+								<div class="ui-field-contain">
+									<label for="productOutletNumber">生产废水排污口数量</label>
+									<input type="number" name="productOutletNumber" id="productOutletNumber" v-model="basic_form.productOutletNumber"/>
+								</div>
+								<div class="ui-field-contain">
+									<label for="onlineNumber">在线监测数量</label>
+									<input type="number" name="onlineNumber" id="onlineNumber" v-model="basic_form.onlineNumber"/>
+								</div>
+								<div class="ui-field-contain">
+									<label for="lifeOutletNumber">生活污水排污口数量</label>
+									<input type="number" name="lifeOutletNumber" id="lifeOutletNumber" v-model="basic_form.lifeOutletNumber"/>
+								</div>
+								<div class="ui-field-contain">
+									<label for="lifePowerNumber">生活污水微动力建设数量</label>
+									<input type="number" name="lifePowerNumber" id="lifePowerNumber" v-model="basic_form.lifePowerNumber"/>
+								</div>
+								<div class="ui-field-contain">
+									<label for="license">排污许可证情况</label>
+									<input type="text" name="license" id="license" v-model="basic_form.license"/>
+								</div>
+								<div class="ui-field-contain">
+									<label for="remarks">备注</label>
+									<input type="text" name="remarks" id="remarks" v-model="basic_form.remarks"/>
+								</div>
+							</form>
+						</div>
+					</div>
+					<div class="nd2-card">
+						<div class="card-title">
+							<h3 class="card-primary-title">详细信息</h3>
+						</div>
+						<div class="card-supporting-text has-action">
+							<form>
+								<div class="ui-field-contain">
+									<label for="projectCharger">项目负责人</label>
+									<input type="text" name="projectCharger" id="projectCharger" v-model="detail_form.projectCharger"/>
+								</div>
+								<div class="ui-field-contain">
+									<label for="address">项目办公地址</label>
+									<input type="text" name="address" id="address" v-model="detail_form.address"/>
+								</div>
+								<div class="ui-field-contain">
+									<label for="type">类别</label>
+									<input type="text" name="type" id="type" v-model="detail_form.type"/>
+								</div>
+								<div class="ui-field-contain">
+									<label for="designOutput">设计产量（吨/年）</label>
+									<input type="number" name="designOutput" id="designOutput" v-model="detail_form.designOutput"/>
+								</div>
+								<div class="ui-field-contain">
+									<label for="factOutput">实际产量（吨/年）</label>
+									<input type="number" name="factOutput" id="factOutput" v-model="detail_form.factOutput"/>
+								</div>
+								<div class="ui-field-contain">
+									<label for="opreationTime">开（投）产时间</label>
+									<input type="date" name="opreationTime" id="opreationTime" v-model="detail_form.opreationTime"/>
+								</div>
+								<div class="ui-field-contain">
+									<label for="locationx">位置范围x</label>
+									<input type="text" name="locationx" id="locationx" v-model="detail_form.locationx"/>
+								</div>
+								<div class="ui-field-contain">
+									<label for="locationy">位置范围y</label>
+									<input type="text" name="locationy" id="locationy" v-model="detail_form.locationy"/>
+								</div>
+								<div class="ui-field-contain">
+									<label for="river">河域范围</label>
+									<input type="text" name="river" id="river" v-model="detail_form.river"/>
+								</div>
+								<div class="ui-field-contain">
+									<label for="projectstatus">项目现状</label>
+									<input type="text" name="projectstatus" id="projectstatus" v-model="detail_form.projectstatus"/>
+								</div>
+							</form>
+						</div>
+					</div>
+					<div class="row between-xs">
+						<div class="col-xs-12 align-center">
+							<button href="#" class="ui-btn ui-btn-icon-left ui-btn-inline" v-on:click="clean()">清空 </button>
+							<button class="ui-btn ui-btn-icon-left ui-btn-inline ui-btn-raised clr-primary" v-on:click="submit()"> 提交 </button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script src="../jquery.mobile-1.4.5/jquery-2.1.4.min.js"></script>
+	<script src="../jquery.mobile-1.4.5/jquery.mobile-1.4.5.js"></script>
+	<script type="text/javascript" src="../vuejs/vue.min.js"></script>
+	<script type="text/javascript" src="../datejs/date-zh-CN.js"></script>
+	<script src="../nativeDroid2/vendor/waves/waves.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../nativeDroid2/vendor/wow/wow.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../nativeDroid2/jquery-ui.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../nativeDroid2/js/nativedroid2.js"></script>
+	<script type="text/javascript" src="../nativeDroid2/nd2settings.js" ></script>
+	<script src="../js/auth.js"></script>
+	<!-- Vue Model -->
+	<script type="text/javascript" src="model/ProjectBasic.js" ></script>
+	<script type="text/javascript" src="model/ProjectInfo.js" ></script>
+	<script type="text/javascript">
+		var mainpageVM = new Vue({
+			el: "#root",
+			data: {
+				items: [],
+				company_id: localStorage.getItem("companyID"),
+				selected_id: localStorage.getItem("projectID"),
+				total: 0,
+				page: 0,
+				basic_form: new ProjectBasic(),
+				detail_form: new ProjectInfo(),
+				showPagination: true,
+				basic: new ProjectBasic(),
+				detail: new ProjectInfo()
+			},
+			methods: {
+				getItems: function(obj) {
+					$.ajax({
+						type: "POST",
+						url: "http://61.136.146.172:8080/huangbaihe/Cprobasic/showProbasic",
+						dataType: "JSON",
+						data: {
+							page: obj.page + 1,
+							rows: 10
+						},
+						success: function(data) {
+							obj.items = data.rows.map(function(item) {
+								return new ProjectBasic(item);
+							});
+							obj.total = data.total;
+						},
+                        error: function () {
+                            new $.nd2Toast({
+								message : "查询失败",
+							});
+                        }
+					});
+				},
+				getCompanyItems: function(company_id, obj) {
+					$.ajax({
+						type: "POST",
+						url: "http://61.136.146.172:8080/huangbaihe/Cprobasic/showProbasicbycompany",
+						dataType: "JSON",
+						data: {
+							index:company_id
+						},
+						success: function(data) {
+							obj.items = data.rows.map(function(item) {
+								return new ProjectBasic(item);
+							});
+							showPagination: false
+						},
+                        error: function () {
+                            new $.nd2Toast({
+								message : "查询失败",
+							});
+                        }
+					});
+				},
+				previousPage: function() {
+					mainpageVM.page -= 1;
+					mainpageVM.getItems();
+				},
+				nextPage: function() {
+					mainpageVM.page += 1;
+					mainpageVM.getItems();
+				},
+				refresh: function() {
+					if (mainpageVM.company_id) {
+						mainpageVM.getCompanyItems(mainpageVM.company_id, mainpageVM);
+					} else {
+						mainpageVM.getItems(mainpageVM);
+					}
+				},
+				submit: function() {
+					$.ajax({
+						type: "POST",
+						url: "http://61.136.146.172:8080/huangbaihe/Cprobasic/add",
+						data: mainpageVM.basic_form.toForm().substr(1),
+						dataType: "JSON",
+						success: function(data) {
+							new $.nd2Toast({
+								message : "基本信息提交成功",
+							});
+							if (data.status > 0) {
+								$.ajax({
+									type: "POST",
+									url: "http://61.136.146.172:8080/huangbaihe/Cproinfo/add",
+									data: mainpageVM.detail_form.toForm().substr(1),
+									success: function (data) {
+										new $.nd2Toast({
+											message : "基本信息提交成功",
+										});
+									},
+									error: function () {
+										new $.nd2Toast({
+											message : "基本信息提交失败",
+										});
+									}
+								})
+							}
+						},
+						error: function() {
+							new $.nd2Toast({
+								message : "提交失败",
+							});
+						}
+					});
+				},
+				clean: function() {
+					mainpageVM.basic_form.clean();
+				},
+				createForm: function() {
+					if (auth("inf", "manage")) {
+						mainpageVM.form = new ProjectBasic();
+					}
+				},
+				queryItem: function(projectID, obj) {
+					$.ajax({
+						type: "post",
+						url: "http://61.136.146.172:8080/huangbaihe/Cprobasic/qurbyid",
+						dataType: "json",
+						data: {
+							index: projectID
+						},
+						success: function (data) {
+							obj.basic = new ProjectBasic(data.result);
+						}
+					});
+					$.ajax({
+						type: "post",
+						url: "http://61.136.146.172:8080/huangbaihe/Cproinfo/qurbyid",
+						dataType: "json",
+						data: {
+							index: projectID
+						},
+						success: function (data) {
+							obj.detail = new ProjectInfo(data.result);
+						}
+					})
+				},
+				clearSearch: function() {
+					mainpageVM.showPagination = true;
+					mainpageVM.getItems(mainpageVM)
+				},
+				gotoDetail: function (page, index) {
+					window.location = ["project-detail/", page, ".html"].join("");
+				},
+				showMain: function () {
+					localStorage.removeItem("projectID");
+					mainpageVM.refresh(mainpageVM);
+					window.location = "#";
+				},
+				gotoCompany: function (company_id) {
+					localStorage.setItem("companyID", company_id);
+					window.location = "../company/companybasic.html#page_detail?redirect=project"
+				}
+			},
+			watch: {
+				selected_id: function (newId, oldId) {
+					localStorage.setItem("projectID", newId)
+					mainpageVM.queryItem(newId, mainpageVM);
+				}
+			},
+			computed: {
+				previousPageEnable: function() {
+					return this.page > 0
+				},
+				nextPageEnable: function() {
+					return this.page < (this.totalPages - 1)
+				},
+				totalPages: function() {
+					return Math.ceil(this.total / 10)
+				}
+			},
+			created: function() {
+				var obj = this;
+				if (this.company_id) {
+					this.getCompanyItems(this.company_id, this)
+				} else {
+					this.getItems(obj);
+				}
+				if (this.selected_id) {
+					this.queryItem(this.selected_id, this)
+				}
+			}
+		});
+
+		$(function () {
+			var hrefsplit = window.location.href.split("#");
+			var companyID = localStorage.getItem("companyID");
+			if (companyID) {
+				return;
+			}
+			if (hrefsplit.length < 2 || hrefsplit[1] === "" || hrefsplit[1] === "page_main") {
+				new $.nd2Search({
+					placeholder: "搜索企业名称", // Placeholder in the search field
+					defaultIcon: "null", // optional: icon | null
+					source: function (request, response) {
+						$.ajax({
+							method: "POST",
+							url: "http://61.136.146.172:8080/huangbaihe/Cprobasic/query",
+							dataType: "JSON",
+							data: {
+								companyname: request.term
+							},
+							success: function (data) {
+								response(data.rows.map(function (value) {
+									return {
+										label: value.mineName,
+										value: value.projectID
+									}
+								}))
+							},
+							error: function () {
+								response([])
+							}
+						})
+					}, // autocomplete : option-source
+					fn: function(result) { // this function will be executed when a valid result item is selected
+						mainpageVM.selected_id = result;
+						window.location = window.location.href + "#page_detail"
+					}
+				});
+			}
+		})
+
+		function getURLParameter(name) {  
+			return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search)||[,""])[1].replace(/\+/g, '%20'))||null;  
+		}
+
+		function back() {
+			localStorage.removeItem("projectID");
+			if (mainpageVM.company_id) {
+				window.location = "../company/companybasic.html#page_detail"
+			} else {
+				window.location = "../index.html";
+			}
+		}
+	</script>
+
+</html>

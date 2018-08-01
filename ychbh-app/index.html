@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+		<title>黄柏河流域综合执法信息管理系统</title>
+		<link rel="stylesheet" href="./jquery.mobile-1.4.5/jquery.mobile-1.4.5.css">
+		<link rel="stylesheet" href="./nativeDroid2/vendor/waves/waves.min.css" />
+		<link rel="stylesheet" href="./nativeDroid2/vendor/wow/animate.css"/>
+		<link rel="stylesheet" href="./nativeDroid2/css/nativedroid2.css" />
+		<link rel="stylesheet" href="./nativeDroid2/css/nativedroid2.color.green.css" />
+		<link rel="stylesheet" href="./swiper/css/swiper.min.css">
+		<script src="./jquery.mobile-1.4.5/jquery-2.1.4.min.js"></script>
+		<script src="./jquery.mobile-1.4.5/jquery.mobile-1.4.5.js"></script>
+		<script src="./nativeDroid2/vendor/waves/waves.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="./nativeDroid2/vendor/wow/wow.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="./nativeDroid2/jquery-ui.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="./nativeDroid2/js/nativedroid2.js"></script>
+		<style type="text/css">
+			span.listview-aside {
+				font-size: 14px;
+				position: relative;
+				float: right;
+				margin: 0px auto;
+			}
+			
+			ul li p.listview-aside {
+				font-size: 14px;
+				word-wrap: break-word;
+				white-space: normal;
+			}
+			
+			.ui-field-contain {
+				border-bottom-width: 0px;
+			}
+			
+			.item-title {
+				font-weight: bold;
+			}
+
+			img {
+				width: 42%;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div data-role="page">
+			<div data-role="header" data-position="fixed" data-tap-toggle="false">
+				<a href="#" class="ui-btn">
+					<img src="./plugin/logo.png" alt="" style="width: 100%;height: 100%;">
+				</a>
+				<h1>黄柏河执法系统</h1>
+				<a href="#" class="ui-btn" onclick="gotomap()">
+					<i class="zmdi zmdi-map"></i>
+				</a>
+			</div>
+			<div id="page" class="ui-content" data-role="main">
+				<div class="nd2-card">
+					<div class="card-title has-anatar has-supporting-text">
+						<img src="./img/user.png" class="card-avatar">
+						<h3 class="card-primary-title">{{ user.realname }}</h3>
+						<h5 class="card-subtitle">{{ user.job }}</h5>
+					</div>
+					<div class="card-supporting-text" style="padding: 0px;padding-bottom: 16px;">
+						<ul class="ui-listview" data-role="listview" data-inset="false" style="margin: 0px;">
+							<li data-role="list-divider">
+								<b>待办事项</b>
+								<span class="listview-aside">共{{ task_list.length }}条</span>
+							</li>
+							<li class="ui-li-static ui-body-inherit" v-for="task in task_list" style="padding: 0px 16px">
+								<a href="#" @click="gotoTask(task)" class="ui-btn" style="padding: 0px;">
+									<h3> <span class="nd2-label nd2-label-left" v-if="task.state != null" v-bind:class="{
+										'nd2-label-grey': task.case_type == '未填写',
+										'nd2-label-amber': task.case_type == '待审核',
+										'nd2-label-orange': task.case_type == '待审批',
+										'nd2-label-green': task.case_type == '已填写'
+									}">{{ task.case_type }}</span> {{ task.case_name }}</h3>
+									<p class="listview-aside">{{ task.document_name }}</p>
+								</a>
+							</li>
+						</ul>
+					</div>
+				</div>
+				<div class="row between-xs">
+					<div class="col-xs-12">
+						<h5 class="nd2-title" style="margin: 20px auto;"><strong>项目信息</strong></h5>
+					</div>
+					<div class="col-xs-4 align-center" onclick="gotoPage('company/projectbasic.html')">
+						<img src="img/icon/projectbasic.png"/>
+						<p>项目概况</p>
+					</div>
+					<div class="col-xs-4 align-center" onclick="gotoPage('company/companybasic.html')">
+						<img src="img/icon/companybasic.png"/>
+						<p>企业概况</p>
+					</div>
+					<div class="col-xs-4 align-center" onclick="gotoPage('company/factoryinfo.html')">
+						<img src="img/icon/factoryinfo.png"/>
+						<p>综合项目</p>
+					</div>
+					<div class="col-xs-12">
+						<h5 class="nd2-title" style="margin: 20px auto;"><strong>案件巡查</strong></h5>
+					</div>
+					<div class="col-xs-4 align-center" onclick="gotoPage('inspect/daily.html')">
+						<img src="img/icon/daily.png"/>
+						<p>日常巡查</p>
+					</div>
+					<div class="col-xs-4 align-center" onclick="gotoPage('inspect/current.html')">
+						<img src="img/icon/current.png"/>
+						<p>现场监察</p>
+					</div>
+					<div class="col-xs-4 align-center" onclick="gotoPage('inspect/renotice.html')">
+						<img src="img/icon/renotice.png"/>
+						<p>现场检查结果通知</p>
+					</div>
+					<div class="col-xs-4 align-center" onclick="gotoPage('inspect/notice.html')">
+						<img src="img/icon/notice.png"/>
+						<p>监察通知</p>
+					</div>
+					<div class="col-xs-4 align-center" onclick="gotoPage('inspect/problem.html')">
+						<img src="img/icon/problem.png"/>
+						<p>发现问题</p>
+					</div>
+					<div class="col-xs-4 align-center" onclick="gotoPage('inspect/dealproblem.html')">
+						<img src="img/icon/dealproblem.png"/>
+						<p>处理问题</p>
+					</div>
+					<div class="col-xs-12">
+						<h5 class="nd2-title" style="margin: 20px auto;"><strong>水质监测</strong></h5>
+					</div>
+					<div class="col-xs-4 align-center" onclick="gotoPage('water/watertj.html')">
+						<img src="img/icon/watertj.png"/>
+						<p>水质监测统计</p>
+					</div>
+					<div class="col-xs-4 align-center" onclick="gotoPage('water/othertj.html')">
+						<img src="img/icon/othertj.png"/>
+						<p>检测报告统计</p>
+					</div>
+					<div class="col-xs-4 align-center" onclick="gotoPage('water/otherw.html')">
+						<img src="img/icon/otherw.png"/>
+						<p>河流水质监测</p>
+					</div>
+					<div class="col-xs-4 align-center" onclick="gotoPage('water/pool.html')">
+						<img src="img/icon/pool.png"/>
+						<p>水库水质监测</p>
+					</div>
+					<div class="col-xs-4 align-center" onclick="gotoPage('water/otherbg.html')">
+						<img src="img/icon/otherbg.png"/>
+						<p>检测报告</p>
+					</div>
+					<div class="col-xs-4"></div>
+					<div class="col-xs-12">
+						<h5 class="nd2-title" style="margin: 20px auto;"><strong>案件管理</strong></h5>
+					</div>
+					<div class="col-xs-4 align-center" onclick="gotoPage('case/casetj.html')">
+						<img src="img/icon/casechart.png"/>
+						<p>统计图表</p>
+					</div>
+					<div class="col-xs-4 align-center" onclick="gotoPage('case/caseindex.html')">
+						<img src="img/icon/caselist.png"/>
+						<p>案件列表</p>
+					</div>
+					<div class="col-xs-4"></div>
+					<div class="col-xs-12">
+						<h5 class="nd2-title" style="margin: 20px auto;"><strong>智库管理</strong></h5>
+					</div>
+					<div class="col-xs-4 align-center" onclick="gotoPage('law/commoncase.html')">
+						<img src="img/icon/commoncase.png"/>
+						<p>案由管理</p>
+					</div>
+					<div class="col-xs-4 align-center" onclick="gotoPage('law/law.html')">
+						<img src="img/icon/law.png"/>
+						<p>法律法规</p>
+					</div>
+					<div class="col-xs-4"></div>
+				</div>
+				<div class="row between-xs" style="margin-top: 16px;">
+					<div class="col-xs-12">
+						<a href="#" onclick="logout()" class="ui-btn ui-btn-raised clr-primary">退出登录</a>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script type="text/javascript" src="vuejs/vue.min.js"></script>
+		<script src="case/model/CaseIndex.js"></script>
+		<script>
+			var vm = new Vue({
+				el: "#page",
+				data: {
+					task_list: [],
+					user: {},
+					caseStateType: {
+						"0": "未填写",
+						"1": "审核中",
+						"2": "审批中",
+						"3": "已填写"
+					}
+				},
+				methods: {
+					queryTasks: function (obj) {
+						$.getJSON("http://61.136.146.172:8080/huangbaihe/login/getusermission", {
+							id: obj.user.UID
+						}, function (data) {
+							obj.task_list = data
+						})
+					},
+					getCaseState: function (caseStateText) {
+						var caseState = parseInt(caseStateText);
+						if (caseState == 0) {
+							return 0;
+						}
+						if ((caseState > 49999 && caseState < 79999 && caseState != 59999 && caseState != 69999 && caseState != 99999 && caseState != 99998) || (caseState < 5 && caseState > 0)) {
+							return 1;
+						}
+						if (caseState == 59999 || caseState == 69999 || caseState == 79999 || caseState == 99999 || caseState == 99998) {
+							return 2;
+						}
+					},
+					gotoTask: function (task) {
+						if (task) {
+							localStorage.setItem("caseID", task.case_id);
+							var targetHref;
+							for (var i = 0; i < CaseIndex.prototype.docMap.length; i++) {
+								const group = CaseIndex.prototype.docMap[i];
+								for (var j = 0; j < group.docs.length; j++) {
+									const doc = group.docs[j];
+									if (doc.name === task.document_name) {
+										targetHref = doc.link;
+										break;
+									}
+								}
+								if (targetHref) break;
+							}
+							window.location = "case/document/" + targetHref + ".html" + "?redirect=home"
+						}
+					}
+				},
+				created: function () {
+					setInterval(function () {
+						vm.queryTasks(vm);
+					}, 1000);
+					this.user = JSON.parse(localStorage.getItem("au"));
+				},
+				beforeCreate: function () {
+					if (!sessionStorage.getItem("logged") || sessionStorage.getItem("logged") != "true") {
+						window.localStorage.clear();
+						window.sessionStorage.clear();
+						window.location = "login.html";
+					}
+				}
+			})
+
+			function logout() {
+				window.localStorage.clear();
+				window.sessionStorage.clear();
+				window.location = "login.html";
+			}
+
+			function back() {
+				window.location = "index.html";
+			}
+
+			function relogin() {
+				window.location = "index.html"
+			}
+
+			function account() {
+				window.location = "account.html"
+			}
+	
+			function gotoPage(page) {
+				window.location = page;
+			}
+
+			function gotomap() {
+				window.location = "mapview.html"
+			}
+		</script>
+    </body>
+</html>

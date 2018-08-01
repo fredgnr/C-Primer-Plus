@@ -1,0 +1,31 @@
+@font-face {
+    font-family: 'Source Han CN';
+    font-style: normal;
+    font-weight: 300;
+    src: url("../fonts/SourceHanSansCN-Light.otf") format('otf');
+  }
+  @font-face {
+    font-family: 'Source Han CN';
+    font-style: normal;
+    font-weight: 400;
+    src: url("../fonts/SourceHanSansCN-Regular.otf") format('otf');
+  }
+  @font-face {
+    font-family: 'Source Han CN';
+    font-style: normal;
+    font-weight: 500;
+    src: url("../fonts/SourceHanSansCN-Medium.otf") format('otf');
+  }
+  @font-face {
+    font-family: 'Source Han CN';
+    font-style: normal;
+    font-weight: 700;
+    src: url("../fonts/SourceHanSansCN-Bold.otf") format('otf');
+  }
+  @font-face {
+    font-family: 'Source Han CN';
+    font-style: normal;
+    font-weight: 900;
+    src: url("../fonts/SourceHanSansCN-Heavy.otf") format('otf');
+  }
+  

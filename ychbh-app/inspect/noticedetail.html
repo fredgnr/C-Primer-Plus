@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+		<title>黄柏河流域综合执法信息管理系统</title>
+		<link rel="stylesheet" href="../jquery.mobile-1.4.5/jquery.mobile-1.4.5.css">
+		<script src="../jquery.mobile-1.4.5/jquery-2.1.4.min.js"></script>
+		<script src="../jquery.mobile-1.4.5/jquery.mobile-1.4.5.js"></script>
+		<script type="text/javascript" src="../vuejs/vue.min.js"></script>
+		<link rel="stylesheet" href="../nativeDroid2/css/nativedroid2.css" />
+		<link rel="stylesheet" href="../nativeDroid2/css/nativedroid2.color.green.css" />
+		<script src="../nativeDroid2/js/nativedroid2.js"></script>
+		<style type="text/css">
+			span.listview-aside {
+				font-size: 14px;
+				position: relative;
+				float: right;
+				margin: 0px auto;
+			}
+			
+			ul li p.listview-aside {
+				font-size: 14px;
+				word-wrap: break-word;
+				white-space: normal;
+			}
+		</style>
+		<script src="../js/auth.js"></script>
+		<script>
+			auth("daily", "add", window.location.pathname.replace("detail", ""));
+		</script>
+	</head>
+
+	<body>
+		<div data-role="page">
+			<div data-role="header" data-position="fixed" data-tap-toggle="false">
+				<a href="#" onclick="back()" class="ui-btn"><i class="zmdi zmdi-arrow-back"></i></a>
+				<h1>监查通知书</h1>
+			</div>
+			<div id="main" data-role="main" class="ui-content">
+				<h4>编号：{{ item.ins_noid }}</h3>
+			<ul id="content" data-role="listview" data-inset="false">
+				<li>
+					<b>被监察单位</b>
+					<span class="listview-aside">{{ item.com_name }}</span>
+				</li>
+				<li>
+					<b>预监察时间</b>
+					<span class="listview-aside">{{ item.ins_time }}</span>
+				</li>
+				<li>
+					<b>巡查人员</b>
+					<span class="listview-aside">{{ item.ins_person }}</span>
+				</li>
+				<li>
+					<b>巡查方式</b>
+					<span class="listview-aside">{{ item.ins_type }}</span>
+				</li>
+				<li>
+					<b>监察内容</b>
+					<p style="font-size: 14px;">{{ item.ins_content }}</p>
+				</li>
+				<li>
+					<b>其他资料</b>
+					<p style="font-size: 14px;">{{ item.ins_other }}</p>
+				</li>
+				<li>
+					<b>联系人员</b>
+					<span class="listview-aside">{{ item.call_person }}</span>
+				</li>
+				<li>
+					<b>联系电话</b>
+					<span class="listview-aside">{{ item.call_num }}</span>
+				</li>
+				<li>
+					<b>签发日期</b>
+					<span class="listview-aside">{{ item.pub_date }}</span>
+				</li>
+			</ul>
+		</div>
+	</div>
+</body>
+
+<script>
+	var content = new Vue({
+		el: "#main",
+		data: {
+			item: {}
+		}
+	})
+	
+	/**
+	 * 获取GET参数
+	 * @param {String} name 参数名
+	 */
+	function getURLParameter(name) {  
+	    return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search)||[,""])[1].replace(/\+/g, '%20'))||null;  
+	}
+	
+	$(document).ready(function() {
+		var id = getURLParameter("index");
+		$.getJSON("http://61.136.146.172:8080/huangbaihe/InsNotice/querybyid", {
+			id: id
+		}, function(data) {
+			content.item = data
+		})
+	});
+	function back() {
+		window.location = "notice.html";
+	}
+	function gotomain(name) {
+		window.location = "../company/main.html" + name;
+	}
+</script>
+</html>

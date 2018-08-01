@@ -1,0 +1,733 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="chrome=1">
+		<meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
+		<link rel="stylesheet" href="./jquery.mobile-1.4.5/jquery.mobile-1.4.5.css">
+		<link rel="stylesheet" href="./nativeDroid2/vendor/waves/waves.min.css" />
+		<link rel="stylesheet" href="./nativeDroid2/vendor/wow/animate.css"/>
+		<link rel="stylesheet" href="./nativeDroid2/css/nativedroid2.css" />
+		<link rel="stylesheet" href="./nativeDroid2/css/nativedroid2.color.green.css" />
+		<link rel="stylesheet" href="./swiper/css/swiper.min.css">
+		<script src="./jquery.mobile-1.4.5/jquery-2.1.4.min.js"></script>
+		<script src="./jquery.mobile-1.4.5/jquery.mobile-1.4.5.js"></script>
+		<script src="./nativeDroid2/vendor/waves/waves.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="./nativeDroid2/vendor/wow/wow.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="./nativeDroid2/jquery-ui.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="./nativeDroid2/js/nativedroid2.js"></script>
+		<link rel="stylesheet" href="./plugin/ol.css" type="text/css">
+		<script src="./plugin/ol.js"></script>
+		<style>
+			html,
+			body,
+			.map {
+				margin: 0;
+				padding: 0;
+				width: 100%;
+				height: 100%;
+			}
+
+			.map {
+				height: 100%;
+			}
+
+			.ol-popup {
+				position: absolute;
+				background-color: white;
+				-webkit-filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.2));
+				filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.2));
+				padding: 15px;
+				border-radius: 10px;
+				border: 1px solid #cccccc;
+				bottom: 12px;
+				left: -10px;
+				min-width: 150px;
+			}
+
+			.ol-popup:after,
+			.ol-popup:before {
+				top: 100%;
+				border: solid transparent;
+				content: " ";
+				height: 0;
+				width: 0;
+				position: absolute;
+				pointer-events: none;
+			}
+
+			.ol-popup:after {
+				border-top-color: white;
+				border-width: 10px;
+				left: 48px;
+				margin-left: -10px;
+			}
+
+			.ol-popup:before {
+				border-top-color: #cccccc;
+				border-width: 11px;
+				left: 48px;
+				margin-left: -11px;
+			}
+
+			#popup-content {
+				width: 100%;
+			}
+
+			.ol-popup-closer {
+				text-decoration: none;
+				position: absolute;
+				top: 2px;
+				right: 8px;
+			}
+
+			.ol-popup-closer:after {
+				content: "✖";
+			}
+		</style>
+		<title>OpenLayers example</title>
+	</head>
+
+	<body>
+		<div data-role="header" data-position="fixed" data-tap-toggle="false">
+			<a href="#" onclick="back()" class="ui-btn">
+				<i class="zmdi zmdi-arrow-back"></i>
+			</a>
+			<h1>地图展示</h1>
+		</div>
+		<div id="map" class="map"></div>
+		<div id="popup" class="ol-popup">
+			<a href="#" id="popup-closer" class="ol-popup-closer"></a>
+			<div id="popup-content"></div>
+		</div>
+	</body>
+	<script>
+		var flag = true;
+		function changemap() {
+			if (flag) {
+				baselayer.setSource(tianditu);
+				flag = false;
+			} else {
+				baselayer.setSource(OSMlayer);
+				flag = true;
+			}
+		}
+		function gotomain(name) {
+			window.location = "main.html" + name;
+		}
+		function back() {
+			window.location = "main.html";
+		}
+		function gotopage1(index) {
+			window.location = "propage.html?index=" + index;
+		}
+
+		function gotopage2(index) {
+			window.location = "propage.html?index=" + index;
+		}
+
+		var view = new ol.View({
+			center: [111.28, 30.75],
+			projection: 'EPSG:4326',
+			zoom: 13
+		});
+
+		// 设定底图source
+		var OSMlayer = new ol.source.OSM();
+
+		//arcgis天地图
+		var tianditu = new ol.source.TileArcGISRest({
+			extent: [-13884991, 2870341, -7455066, 6338219],
+			url: 'http://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer'
+		});
+
+		var baselayer = new ol.layer.Tile({
+			source: OSMlayer
+		});
+
+		var branchstream = new ol.layer.Tile({
+			source: new ol.source.TileWMS({
+				url: 'http://61.136.146.172:8080/geoserver/test/wms?service=WMS&version=1.1.0&request=GetMap&layers=test:branchstream&styles=&bbox=111.049994798482,30.6967946230315,111.579004951283,31.5079544439425&width=500&height=768&srs=EPSG:4326&format=application/openlayers'
+			})
+		});
+		var city = new ol.layer.Tile({
+			source: new ol.source.TileWMS({
+				url: 'http://61.136.146.172:8080/geoserver/test/wms?service=WMS&version=1.1.0&request=GetMap&layers=test:city&styles=&bbox=111.051394691641,31.2980165824523,111.578762019997,31.5079596936379&width=768&height=330&srs=EPSG:4326&format=application/openlayers',
+			})
+		});
+		var controlarea = new ol.layer.Tile({
+			source: new ol.source.TileWMS({
+				url: 'http://61.136.146.172:8080/geoserver/test/wms?service=WMS&version=1.1.0&request=GetMap&layers=test:controlarea&styles=&bbox=111.062454223633,30.8361988067627,111.521919250488,31.4797554016113&width=548&height=768&srs=EPSG:4326&format=application/openlayers'
+			})
+		});
+		var countryroad = new ol.layer.Tile({
+			source: new ol.source.TileWMS({
+				url: 'http://61.136.146.172:8080/geoserver/test/wms?service=WMS&version=1.1.0&request=GetMap&layers=test:countryroad&styles=&bbox=111.050587856385,30.6977351511356,111.577451050186,31.5077679169213&width=499&height=768&srs=EPSG:4326&format=application/openlayers'
+			})
+		});
+		var county = new ol.layer.Tile({
+			source: new ol.source.TileWMS({
+				url: 'http://61.136.146.172:8080/geoserver/test/wms?service=WMS&version=1.1.0&request=GetMap&layers=test:county&styles=&bbox=111.050484476481,30.6977631357184,111.575683697588,31.5073517278105&width=498&height=768&srs=EPSG:4326&format=application/openlayers'
+			})
+		});
+		var government = new ol.layer.Tile({
+			source: new ol.source.TileWMS({
+				url: 'http://61.136.146.172:8080/geoserver/test/wms?service=WMS&version=1.1.0&request=GetMap&layers=test:government&styles=&bbox=111.06265329717,30.7134673963248,111.55037724791,31.2949210293824&width=644&height=768&srs=EPSG:4326&format=application/openlayers'
+			})
+		});
+		var highway = new ol.layer.Tile({
+			source: new ol.source.TileWMS({
+				url: 'http://61.136.146.172:8080/geoserver/test/wms?service=WMS&version=1.1.0&request=GetMap&layers=test:highway&styles=&bbox=111.050609070236,30.6973399718958,111.577327421518,31.5077306969199&width=499&height=768&srs=EPSG:4326&format=application/openlayers'
+			})
+		});
+		var huangbaihe = new ol.layer.Tile({
+			source: new ol.source.TileWMS({
+				url: 'http://61.136.146.172:8080/geoserver/test/wms?service=WMS&version=1.1.0&request=GetMap&layers=test:huangbaihe&styles=&bbox=111.087499746857,30.7421293309092,111.428124276549,31.4133514706135&width=389&height=768&srs=EPSG:4326&format=application/openlayers'
+			})
+		});
+		var influencearea = new ol.layer.Tile({
+			source: new ol.source.TileWMS({
+				url: 'http://61.136.146.172:8080/geoserver/test/wms?service=WMS&version=1.1.0&request=GetMap&layers=test:influencearea&styles=&bbox=111.268074035645,30.766544342041,111.431663513184,30.880313873291&width=768&height=534&srs=EPSG:4326&format=application/openlayers'
+			})
+		});
+		var mainarea1 = new ol.layer.Tile({
+			source: new ol.source.TileWMS({
+				url: 'http://61.136.146.172:8080/geoserver/test/wms?service=WMS&version=1.1.0&request=GetMap&layers=test:mainarea1&styles=&bbox=111.070297241211,30.999870300293,111.462928771973,31.4736785888672&width=636&height=768&srs=EPSG:4326&format=application/openlayers'
+			})
+		});
+		var mainarea2 = new ol.layer.Tile({
+			source: new ol.source.TileWMS({
+				url: 'http://61.136.146.172:8080/geoserver/test/wms?service=WMS&version=1.1.0&request=GetMap&layers=test:mainarea2&styles=&bbox=111.421264648438,30.7972393035889,111.500465393066,30.9068698883057&width=554&height=768&srs=EPSG:4326&format=application/openlayers'
+			})
+		});
+		var mainstream = new ol.layer.Tile({
+			source: new ol.source.TileWMS({
+				url: 'http://61.136.146.172:8080/geoserver/test/wms?service=WMS&version=1.1.0&request=GetMap&layers=test:mainstream&styles=&bbox=111.050493504431,30.6971782686376,111.578208745179,31.507959915081&width=499&height=768&srs=EPSG:4326&format=application/openlayers'
+			})
+		});
+		var provinceroad = new ol.layer.Tile({
+			source: new ol.source.TileWMS({
+				url: 'http://61.136.146.172:8080/geoserver/test/wms?service=WMS&version=1.1.0&request=GetMap&layers=test:provinceroad&styles=&bbox=111.050490753214,30.6973577540029,111.578352241186,31.3007875498263&width=671&height=768&srs=EPSG:4326&format=application/openlayers'
+			})
+		});
+		/* var samllbranch = new ol.layer.Tile({
+			source: new ol.source.TileWMS({
+			  url: 'http://61.136.146.172:8080/geoserver/test/wms?service=WMS&version=1.1.0&request=GetMap&layers=test:samllbranch&styles=&bbox=111.068175134323,31.0094102642308,111.449945330755,31.4713806747642&width=634&height=768&srs=EPSG:4326&format=application/openlayers'
+					  })
+		  }); */
+		var town = new ol.layer.Tile({
+			source: new ol.source.TileWMS({
+				url: 'http://61.136.146.172:8080/geoserver/test/wms?service=WMS&version=1.1.0&request=GetMap&layers=test:town&styles=&bbox=111.050596033337,30.69740100086,111.578302680642,31.4397332338365&width=545&height=768&srs=EPSG:4326&format=application/openlayers'
+			})
+		});
+		var waterarea = new ol.layer.Tile({
+			source: new ol.source.TileWMS({
+				url: 'http://61.136.146.172:8080/geoserver/test/wms?service=WMS&version=1.1.0&request=GetMap&layers=test:waterarea&styles=&bbox=111.050591288671,30.6972967421174,111.57820948709,31.5079094976592&width=499&height=768&srs=EPSG:4326&format=application/openlayers'
+			})
+		});
+		/* var vilage = new ol.layer.Tile({
+			source: new ol.source.TileWMS({
+			  url: 'http://61.136.146.172:8080/geoserver/test/wms?service=WMS&version=1.1.0&request=GetMap&layers=test:vilage&styles=&bbox=111.050689697468,30.6979856473004,111.577479432898,31.4344117853524&width=549&height=768&srs=EPSG:4326&format=application/openlayers'
+					  })
+		  }); */
+		var cun = new ol.layer.Tile({
+			source: new ol.source.TileWMS({
+				url: 'http://61.136.146.172:8080/geoserver/test/wms?service=WMS&version=1.1.0&request=GetMap&layers=test:cun&styles=&bbox=111.0844,30.7163600000001,111.51677,31.4834700000001&width=432&height=768&srs=EPSG:4326&format=application/openlayers'
+			})
+		});
+
+		var container = document.getElementById('popup');
+		var content = document.getElementById('popup-content');
+		var closer = document.getElementById('popup-closer');
+		var lableoverlay = new ol.Overlay( /** @type {olx.OverlayOptions} */({
+			element: container,
+			autoPan: true,
+			autoPanAnimation: {
+				duration: 250
+			}
+		}));
+
+
+		var map = new ol.Map({
+			layers: [
+				baselayer,
+				town,
+				county,
+				city,
+				waterarea,
+				branchstream,
+				mainstream,
+				huangbaihe,
+				controlarea,
+				influencearea,
+				mainarea2,
+				mainarea1,
+				provinceroad,
+				countryroad,
+				highway,
+				//vilage,
+				cun,
+				government
+			],
+			target: 'map',
+			overlays: [lableoverlay],
+			view: view
+		});
+
+		// 关闭弹出框
+		closer.onclick = function () {
+			lableoverlay.setPosition(undefined);
+			closer.blur();
+			return false;
+		};
+
+		// 弹出事件
+		var displayFeatureInfo = function (evt) {
+
+			var coordinate = evt.coordinate;
+			var table_html = '';
+
+
+			//var hdms = ol.coordinate.toStringHDMS(coordinate);
+
+
+			table_html += '<table style="font-size:10px"><tbody>';
+
+			var feature = map.forEachFeatureAtPixel(evt.pixel, function (feature) {
+				return feature;
+			});
+
+			if (feature) {
+				var keys = feature.getKeys();
+				var properties = feature.getProperties();
+				for (var i = 1; i < keys.length; i++) {
+					table_html += '<tr><td>' + keys[i] + ':' + '</td><td>' + properties[keys[i]] + '</td></tr>';
+				}
+				table_html += '</tbody></table>';
+				content.innerHTML = table_html;
+				lableoverlay.setPosition(coordinate);
+			}
+		};
+
+		map.on('singleclick', displayFeatureInfo);
+
+		// 加载lifebasic图层
+		var source_lifebasic = new ol.source.Vector();
+		var vector_lifebasic = new ol.layer.Vector({
+			source: source_lifebasic,
+			style: new ol.style.Style({
+				image: new ol.style.Icon(({
+					src: './plugin/lifebasic.png'
+				}))
+			})
+		});
+		function loadlifebasic() {
+			$.ajax({
+				type: "POST",
+				url: "http://61.136.146.172:8080/huangbaihe/Clifebasic/loc",
+				dataType: 'json',
+				success: function (json) {
+					source_lifebasic.clear();
+					var data = json.rows;
+					for (var i = 0; i < data.length; i++) {
+
+						var propties = {};
+						propties["名称"] = data[i].regionName;
+						propties["人数"] = data[i].regionPopleNumber;
+						propties["主要污染物"] = data[i].regionMinPollutant;
+						propties["治污措施"] = data[i].regionCntrolMeasure;
+						propties["所属项目"] = "<a href='#' class='easyui-linkbutton' onclick='gotopage1(" + data[i].projectID + ")'>点击跳转</a>";
+
+						var center = ol.proj.transform([data[i].regionLocationx, data[i].regionLocationy],
+							'EPSG:4326', 'EPSG:4326');
+						var geom = new ol.geom.Point(center);
+						var feature = new ol.Feature(geom);
+						feature.setProperties(propties);
+						source_lifebasic.addFeature(feature);
+					}
+					map.addLayer(vector_lifebasic);
+				}
+			});
+		}
+		//加载lifewaste图层
+		var source_lifewaste = new ol.source.Vector();
+		var vector_lifewaste = new ol.layer.Vector({
+			source: source_lifewaste,
+			style: new ol.style.Style({
+				image: new ol.style.Icon(({
+					src: './plugin/lifewaste.png'
+				}))
+			})
+		});
+		function loadlifewaste() {
+			$.ajax({
+				type: "POST",
+				url: "http://61.136.146.172:8080/huangbaihe/Clifewaste/loc",
+				dataType: 'json',
+				success: function (json) {
+					source_lifewaste.clear();
+					var data = json.rows;
+					for (var i = 0; i < data.length; i++) {
+
+						var propties = {};
+						propties["措施名称"] = data[i].masureName;
+						propties["投运时间"] = data[i].masureOprationTime;
+						propties["容量"] = data[i].masureVlume + "吨";
+						propties["收集污水范围"] = data[i].masurePlluteArea;
+						propties["排污出口"] = data[i].masureOtlet;
+						propties["运行现状"] = data[i].masureSatus;
+						propties["所属项目"] = "<a href='#' class='easyui-linkbutton' onclick='gotopage1(" + data[i].pojectID + ")'>点击跳转</a>";
+
+						var center = ol.proj.transform([data[i].masureLocationx, data[i].masureLocationy],
+							'EPSG:4326', 'EPSG:4326');
+						var geom = new ol.geom.Point(center);
+						var feature = new ol.Feature(geom);
+						feature.setProperties(propties);
+						source_lifewaste.addFeature(feature);
+					}
+					map.addLayer(vector_lifewaste);
+				}
+			});
+		}
+		//加载mine图层
+		var source_mine = new ol.source.Vector();
+		var vector_mine = new ol.layer.Vector({
+			source: source_mine,
+			style: new ol.style.Style({
+				image: new ol.style.Icon(({
+					src: './plugin/mine.png'
+				}))
+			})
+		});
+		function loadmine() {
+			$.ajax({
+				type: "POST",
+				url: "http://61.136.146.172:8080/huangbaihe/Cmine/loc",
+				dataType: 'json',
+				success: function (json) {
+					source_mine.clear();
+					var data = json.rows;
+					for (var i = 0; i < data.length; i++) {
+
+						var propties = {};
+						propties["矿硐名称"] = data[i].mineName;
+						propties["用途"] = data[i].minePurpose;
+						propties["现状"] = data[i].mineStatus;
+						propties["河域"] = data[i].mineRiver;
+						propties["出水量"] = data[i].mineWaterYield;
+						propties["排水出口"] = data[i].mineDrainOutlet;
+						propties["所属项目"] = "<a href='#' class='easyui-linkbutton' onclick='gotopage1(" + data[i].porjectID + ")'>点击跳转</a>";
+
+						var center = ol.proj.transform([data[i].mineLocationx, data[i].mineLocationy],
+							'EPSG:4326', 'EPSG:4326');
+						var geom = new ol.geom.Point(center);
+						var feature = new ol.Feature(geom);
+						feature.setProperties(propties);
+						source_mine.addFeature(feature);
+					}
+					map.addLayer(vector_mine);
+				}
+			});
+		}
+		//加载outlet图层
+		var source_outlet = new ol.source.Vector();
+		var vector_outlet = new ol.layer.Vector({
+			source: source_outlet,
+			style: new ol.style.Style({
+				image: new ol.style.Icon(({
+					src: './plugin/outlet.png'
+				}))
+			})
+		});
+		function loadoutlet() {
+			$.ajax({
+				type: "POST",
+				url: "http://61.136.146.172:8080/huangbaihe/Coutlet/loc",
+				dataType: 'json',
+				success: function (json) {
+					source_outlet.clear();
+					var data = json.rows;
+					for (var i = 0; i < data.length; i++) {
+
+						var propties = {};
+						propties["排污口名称"] = data[i].outletName;
+						propties["河域"] = data[i].outletRiver;
+						propties["在线监测"] = data[i].outletOnline;
+						propties["排污控制指标"] = data[i].outletControlIndex;
+						propties["许可排污水量"] = data[i].outletPermitVolume + "(吨/天)";
+						propties["实际排污水量"] = data[i].outletFactVolume + "(吨/天)";
+						propties["所属项目"] = "<a href='#' class='easyui-linkbutton' onclick='gotopage1(" + data[i].projectID + ")'>点击跳转</a>";
+
+						var center = ol.proj.transform([data[i].outletLocationx, data[i].outletLocationy],
+							'EPSG:4326', 'EPSG:4326');
+						var geom = new ol.geom.Point(center);
+						var feature = new ol.Feature(geom);
+						feature.setProperties(propties);
+						source_outlet.addFeature(feature);
+					}
+					map.addLayer(vector_outlet);
+				}
+			});
+		}
+		//加载prowaste图层
+		var source_prowaste = new ol.source.Vector();
+		var vector_prowaste = new ol.layer.Vector({
+			source: source_prowaste,
+			style: new ol.style.Style({
+				image: new ol.style.Icon(({
+					src: './plugin/prowaste.png'
+				}))
+			})
+		});
+		function loadprowaste() {
+			$.ajax({
+				type: "POST",
+				url: "http://61.136.146.172:8080/huangbaihe/Cdeposit/loc",
+				dataType: 'json',
+				success: function (json) {
+					source_prowaste.clear();
+					var data = json.rows;
+					for (var i = 0; i < data.length; i++) {
+
+						var propties = {};
+						propties["沉淀设施名称"] = data[i].depositName;
+						propties["投运时间"] = data[i].depositOprationTime;
+						propties["容量"] = data[i].depositVolume + "立方米";
+						propties["絮凝措施"] = data[i].depositFlocculation;
+						propties["设施现状"] = data[i].depositStatus;
+						propties["排水出口"] = data[i].depositDrainOutlet;
+						propties["地面/井下"] = data[i].depositOnUnder;
+						propties["所属项目"] = "<a href='#' class='easyui-linkbutton' onclick='gotopage1(" + data[i].projectID + ")'>点击跳转</a>";
+
+						var center = ol.proj.transform([data[i].depositLocationx, data[i].depositLocationy],
+							'EPSG:4326', 'EPSG:4326');
+						var geom = new ol.geom.Point(center);
+						var feature = new ol.Feature(geom);
+						feature.setProperties(propties);
+						source_outlet.addFeature(feature);
+					}
+					map.addLayer(vector_prowaste);
+				}
+			});
+		}
+		//加载proinfo图层
+		var source_proinfo = new ol.source.Vector();
+		var vector_proinfo = new ol.layer.Vector({
+			source: source_proinfo,
+			style: new ol.style.Style({
+				image: new ol.style.Icon(({
+					src: './plugin/proinfo.png'
+				}))
+			})
+		});
+		function loadproinfo() {
+			$.ajax({
+				type: "POST",
+				url: "http://61.136.146.172:8080/huangbaihe/Cproinfo/loc",
+				dataType: 'json',
+				success: function (json) {
+					source_proinfo.clear();
+					var data = json.rows;
+					for (var i = 0; i < data.length; i++) {
+
+						var propties = {};
+						propties["项目名称"] = data[i].projectName;
+						propties["项目负责人"] = data[i].projectCharger;
+						propties["注册地址"] = data[i].address;
+						propties["类 别"] = data[i].type;
+						propties["设计产量"] = data[i].designOutput + "万吨/每年";
+						propties["实际产量"] = data[i].factOutput + "万吨/每年";
+						propties["开产时间"] = data[i].opreationTime;
+						propties["河域范围"] = data[i].river;
+						propties["项目现状"] = data[i].projectStatus;
+						propties["所属项目"] = "<a href='#' class='easyui-linkbutton' onclick='gotopage1(" + data[i].projectID + ")'>点击跳转</a>";
+
+						var center = ol.proj.transform([data[i].locationx, data[i].locationy],
+							'EPSG:4326', 'EPSG:4326');
+						var geom = new ol.geom.Point(center);
+						var feature = new ol.Feature(geom);
+						feature.setProperties(propties);
+						source_proinfo.addFeature(feature);
+					}
+					map.addLayer(vector_proinfo);
+				}
+			});
+		}
+		//加载project2图层
+		var source_project2 = new ol.source.Vector();
+		var vector_project2 = new ol.layer.Vector({
+			source: source_project2,
+			style: new ol.style.Style({
+				image: new ol.style.Icon(({
+					src: './plugin/proinfo.png'
+				}))
+			})
+		});
+		function loadproject2() {
+			$.ajax({
+				type: "POST",
+				url: "http://61.136.146.172:8080/huangbaihe/Cproject2/loc",
+				dataType: 'json',
+				success: function (json) {
+					source_project2.clear();
+					var data = json.rows;
+					for (var i = 0; i < data.length; i++) {
+
+						var propties = {};
+						propties["项目名称"] = data[i].projectName;
+						propties["项目地址"] = data[i].projectAddress;
+						propties["项目类别"] = data[i].projectType;
+						propties["所处河段"] = data[i].projectRiver;
+						propties["开办时间"] = data[i].projectTime;
+						propties["法人代表姓名"] = data[i].projectLegalPerson;
+						propties["所属项目"] = "<a href='#' class='easyui-linkbutton' onclick='gotopage2(" + data[i].projectID + ")'>点击跳转</a>";
+
+						var center = ol.proj.transform([data[i].projectLocationx, data[i].projectLocationy],
+							'EPSG:4326', 'EPSG:4326');
+						var geom = new ol.geom.Point(center);
+						var feature = new ol.Feature(geom);
+						feature.setProperties(propties);
+						source_project2.addFeature(feature);
+					}
+					map.addLayer(vector_project2);
+				}
+			});
+		}
+		//加载selectmine图层
+		var source_selectmine = new ol.source.Vector();
+		var vector_selectmine = new ol.layer.Vector({
+			source: source_selectmine,
+			style: new ol.style.Style({
+				image: new ol.style.Icon(({
+					src: './plugin/selectmine.png'
+				}))
+			})
+		});
+		function loadselectmine() {
+			$.ajax({
+				type: "POST",
+				url: "http://61.136.146.172:8080/huangbaihe/Cselectmine/loc",
+				dataType: 'json',
+				success: function (json) {
+					source_selectmine.clear();
+					var data = json.rows;
+					for (var i = 0; i < data.length; i++) {
+
+						var propties = {};
+						propties["选矿厂名称"] = data[i].selectMineName;
+						propties["工艺"] = data[i].selectMineArt;
+						propties["现状"] = data[i].selectMineStatus;
+						propties["流域"] = data[i].selectMineRiver;
+						propties["废水排放情况"] = data[i].selectMineWater;
+						propties["废渣处理情况"] = data[i].selectMineWaste;
+						propties["所属项目"] = "<a href='#' class='easyui-linkbutton' onclick='gotopage1(" + data[i].projectID + ")'>点击跳转</a>";
+
+						var center = ol.proj.transform([data[i].selectMineLocationx, data[i].selectMineLocationy],
+							'EPSG:4326', 'EPSG:4326');
+						var geom = new ol.geom.Point(center);
+						var feature = new ol.Feature(geom);
+						feature.setProperties(propties);
+						source_selectmine.addFeature(feature);
+					}
+					map.addLayer(vector_selectmine);
+				}
+			});
+		}
+		//加载site图层
+		var source_site = new ol.source.Vector();
+		var vector_site = new ol.layer.Vector({
+			source: source_site,
+			style: new ol.style.Style({
+				image: new ol.style.Icon(({
+					src: './plugin/site.png'
+				}))
+			})
+		});
+		function loadsite() {
+			$.ajax({
+				type: "POST",
+				url: "http://61.136.146.172:8080/huangbaihe/Csite/loc",
+				dataType: 'json',
+				success: function (json) {
+					source_site.clear();
+					var data = json.rows;
+					for (var i = 0; i < data.length; i++) {
+
+						var propties = {};
+						propties["渣场名称"] = data[i].siteName;
+						propties["渣场现状"] = data[i].siteStatus;
+						propties["河域"] = data[i].siteRiver;
+						propties["设计容积"] = data[i].siteDesignVolume;
+						propties["保护措施"] = data[i].siteProtectMeasure;
+						propties["所属项目"] = "<a href='#' class='easyui-linkbutton' onclick='gotopage1(" + data[i].projectID + ")'>点击跳转</a>";
+
+						var center = ol.proj.transform([data[i].siteLocationx, data[i].siteLocationy],
+							'EPSG:4326', 'EPSG:4326');
+						var geom = new ol.geom.Point(center);
+						var feature = new ol.Feature(geom);
+						feature.setProperties(propties);
+						source_site.addFeature(feature);
+					}
+					map.addLayer(vector_site);
+				}
+			});
+		}
+		//加载tailmine图层
+		var source_tailmine = new ol.source.Vector();
+		var vector_tailmine = new ol.layer.Vector({
+			source: source_tailmine,
+			style: new ol.style.Style({
+				image: new ol.style.Icon(({
+					src: './plugin/mine.png'
+				}))
+			})
+		});
+		function loadtailmine() {
+			$.ajax({
+				type: "POST",
+				url: "http://61.136.146.172:8080/huangbaihe/Ctailmine/loc",
+				dataType: 'json',
+				success: function (json) {
+					source_tailmine.clear();
+					var data = json.rows;
+					for (var i = 0; i < data.length; i++) {
+
+						var propties = {};
+						propties["渣场名称"] = data[i].tailMineName;
+						propties["渣场现状"] = data[i].tailMineStatus;
+						propties["河域"] = data[i].tailMineRiver;
+						propties["设计容积"] = data[i].tailMineTreatment;
+						propties["保护措施"] = data[i].tailMineMeasure;
+						propties["所属项目"] = "<a href='#' class='easyui-linkbutton' onclick='gotopage1(" + data[i].projectID + ")'>点击跳转</a>";
+
+						var center = ol.proj.transform([data[i].tailMineLocationx, data[i].tailMineLocationy],
+							'EPSG:4326', 'EPSG:4326');
+						var geom = new ol.geom.Point(center);
+						var feature = new ol.Feature(geom);
+						feature.setProperties(propties);
+						source_tailmine.addFeature(feature);
+					}
+					map.addLayer(vector_tailmine);
+
+				}
+			});
+		}
+
+		loadlifebasic();
+		loadlifewaste();
+		loadmine();
+		loadoutlet();
+		loadprowaste();
+		loadproinfo();
+		loadproject2();
+		loadselectmine();
+		loadsite();
+		loadtailmine();
+
+		function back() {
+			window.location = "index.html";
+		}
+	</script>
+
+</html>

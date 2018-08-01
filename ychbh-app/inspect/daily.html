@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+		<title>黄柏河流域综合执法信息管理系统</title>
+		<link rel="stylesheet" href="../jquery.mobile-1.4.5/jquery.mobile-1.4.5.css">
+		<script src="../jquery.mobile-1.4.5/jquery-2.1.4.min.js"></script>
+		<script src="../jquery.mobile-1.4.5/jquery.mobile-1.4.5.js"></script>
+		<script type="text/javascript" src="../vuejs/vue.min.js"></script>
+		<script type="text/javascript" src="../datejs/date-zh-CN.js"></script>
+		<link rel="stylesheet" href="../nativeDroid2/css/nativedroid2.css" />
+		<link rel="stylesheet" href="../nativeDroid2/css/nativedroid2.color.green.css" />
+		<link rel="stylesheet" type="text/css" href="../nativeDroid2/vendor/waves/waves.min.css"/>
+		<link rel="stylesheet" type="text/css" href="../nativeDroid2/vendor/wow/animate.css"/>
+		<script src="../nativeDroid2/js/nativedroid2.js"></script>
+		<script src="../js/auth.js"></script>
+		<script>
+			auth("daily", null, "index.html");
+		</script>
+	</head>
+
+	<body>
+		<div id="content" data-role="page">
+			<div data-role="header" data-position="fixed" data-tap-toggle="false">
+				<a href="#" onclick="back()" class="ui-btn"><i class="zmdi zmdi-arrow-back"></i></a>
+				<h1>巡查记录</h1>
+				<a href="#" onclick="add()" class="ui-btn"><i class="zmdi zmdi-plus"></i></a>
+			</div>
+			<div id="main" data-role="main" class="ui-content">
+				<div class="row between-xs">
+					<div class="col-xs-12">
+						<a class="ui-btn clr-primary ui-btn-inline" href="#popupFilter" data-rel="popup" data-position-to="window" data-transition="slideup">
+							<i class="zmdi zmdi-filter-list"></i> 筛选
+						</a>						
+						<a v-show="!showPagination" class="ui-btn ui-btn-inline" href="#" v-on:click="clearSearch()">清除筛选</a>
+						<span v-show="!showPagination" class="align-right">查询到{{ total }}条记录</span>							
+					</div>
+				</div>
+				<div class="ui-corner-all" id="popupFilter" data-role="popup" style="padding: 10px 20px;min-width: 240px;" data-dismissible="false">
+					<form v-on:submit.prevent>
+						<div class="ui-field-contain">
+							<label for="startdate">日期</label>
+							<input type="date" name="startdate" id="startdate" value="" v-model="searchText.date"/>
+						</div>
+						<div class="ui-field-contain">
+							<label for="dins_depart">巡查部门</label>
+							<select name="dins_depart" id="dins_depart" v-model="searchText.depart">
+								<option v-for="depart in depart_options" v-bind:value="depart">{{ depart }}</option>
+							</select>
+						</div>
+					</form>
+					<div class="row between-xs">
+						<div class="col-xs-6">
+							<a href="#" class="ui-btn clr-primary" data-rel="back" v-on:click="searchItems(searchText)">搜索</a>
+						</div>
+						<div class="col-xs-6">
+							<a href="#" class="ui-btn" data-rel="back" data-role="button">取消</a>																
+						</div>
+					</div>
+				</div>
+				<ul data-role="listview" data-inset="true">
+					<li v-for="item in items">
+						<a href="#" class="ui-btn ui-icon-eye ui-btn-icon-right" v-on:click="detail(item.dins_id)">
+							<h2>{{ item.dins_zone }}</h2>
+							<p class="listview-aside" style="margin: 0px;">{{ item.dins_date }}</p>
+						</a>
+					</li>
+				</ul>
+				<div v-show="showPagination">
+					<button class="ui-btn ui-corner-all ui-btn-inline" v-bind:class="{ 'ui-state-disabled' : !previousPageEnable }" v-on:click="previousPage()"><i class="zmdi zmdi-chevron-left"></i></button>
+					<button class="ui-btn ui-corner-all ui-btn-inline" v-on:click="refresh()"><i class="zmdi zmdi-refresh"></i></button>
+					<button class="ui-btn ui-corner-all ui-icon-arrow-r ui-btn-inline" v-bind:class="{ 'ui-state-disabled' : !nextPageEnable }" v-on:click="nextPage()"><i class="zmdi zmdi-chevron-right"></i></button>
+					<span>第{{pageIndex + ((totalPages === 0) ? 0 : 1)}}页，共{{ totalPages }}页，{{ total }}条记录。</span>
+				</div>
+			</div>
+		</div>
+	</body>
+	
+	<script>
+		var content = new Vue({
+			el: "#main",
+			data: {
+				items: [],
+				pageIndex: 0,
+				total: 0,
+				searchText: {
+					date: Date.today().toString("yyyy-MM-dd"),
+					depart: "",
+				},
+				showPagination: true,
+				depart_options: [
+					"局与支队领导",
+					"执法一大队",
+					"执法二大队",
+					"执法三大队",
+					"支队办公室",
+					"其他",
+				]
+			},
+			computed: {
+				previousPageEnable: function() {
+					return this.pageIndex > 0
+				},
+				nextPageEnable: function() {
+					return this.pageIndex < (this.totalPages - 1)
+				},
+				totalPages: function() {
+					return Math.ceil(this.total / 10)
+				}
+			},
+			methods: {
+				searchItems: function(searchText) {
+					$.ajax({
+						type: "POST",
+						url: "http://61.136.146.172:8080/huangbaihe/DInspec/query",
+						dataType: "json",
+						data: {
+							date: Date.parse(searchText.date).toString("yyyy年MM月dd日"),
+							dins_depart: searchText.depart
+						},
+						success: function(data) {
+							content.items = data.rows;
+							content.total = data.total;
+							content.showPagination = false;
+						},
+						error: function() {
+							new $.nd2Toast({
+								message : "查询失败", // Required
+							});
+						}
+					});
+				},
+				clearSearch: function () {
+					content.showPagination = true;
+					showLoader();
+				}
+			}
+		});
+		$(document).ready(function() {
+			showLoader();
+		});
+
+		function back() {
+			window.location = "../index.html";
+		}
+
+		function gotomain(name) {
+			window.location = "../company/main.html" + name;
+		}
+		//获取所有项目名称
+		function showLoader() {
+			$.ajax({
+				type: "POST",
+				url: "http://61.136.146.172:8080/huangbaihe/DInspec/querybypage",
+				data: {
+					page: content.pageIndex + 1,
+					rows: 10
+				},
+				dataType: 'json',
+				success: function(json) {
+					content.items = json.rows;
+					content.total = json.total;
+				},
+				error: function() {
+					new $.nd2Toast({
+						message : "查询失败",
+					});
+				}
+			});
+		}
+
+		function previousPage() {
+			content.pageIndex -= 1;
+			showLoader()
+		}
+
+		function nextPage() {
+			content.pageIndex += 1;
+			showLoader();
+		}
+
+		function refresh() {
+			showLoader();
+		}
+
+		function detail(index) {
+			window.location = "dailydetail.html?index=" + index;
+		}
+
+		function add() {
+			window.location = "dailyadd.html";
+		}
+	</script>
+
+</html>

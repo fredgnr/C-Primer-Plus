@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+		<title>黄柏河流域综合执法信息管理系统</title>
+		<link rel="stylesheet" href="../jquery.mobile-1.4.5/jquery.mobile-1.4.5.css">
+		<link rel="stylesheet" href="../nativeDroid2/vendor/waves/waves.min.css" />
+		<link rel="stylesheet" type="text/css" href="../nativeDroid2/vendor/wow/animate.css"/>
+		<link rel="stylesheet" href="../nativeDroid2/css/nativedroid2.css" />
+		<link rel="stylesheet" href="../nativeDroid2/css/nativedroid2.color.green.css" />
+		<style type="text/css">
+			span.listview-aside {
+				font-size: 14px;
+				position: relative;
+				float: right;
+				margin: 0px auto;
+			}
+			
+			ul li p.listview-aside {
+				font-size: 14px;
+				word-wrap: break-word;
+				white-space: normal;
+			}
+			
+			.ui-field-contain {
+				border-bottom-width: 0px;
+			}
+			
+			.item-title {
+				font-weight: bold;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="root">
+			<div data-role="page" id="page_main">
+				<div data-role="header" data-position="fixed" data-tap-toggle="false">
+					<a href="#" onclick="back()" class="ui-btn">
+						<i class="zmdi zmdi-arrow-back"></i>
+					</a>
+					<h1>企业概况</h1>
+					<a href="#page_new" v-on:click.capture="createForm()" class="ui-btn">
+						<i class="zmdi zmdi-plus"></i>
+					</a>
+				</div>
+				<div data-role="main" class="ui-content">
+					<ul data-role="listview" data-inset="true">
+						<li v-for="(item, index) in items">
+							<a href="#page_detail" v-on:click="selected_id = item.companyID" class="ui-btn ui-icon-eye ui-btn-icon-right">
+								<h2>{{ item.companyName }}</h2>
+							</a>
+						</li>
+					</ul>
+					<div v-show="showPagination">
+						<button class="ui-btn ui-corner-all ui-btn-inline" v-bind:class="{ 'ui-state-disabled' : !previousPageEnable }" v-on:click="previousPage()">
+							<i class="zmdi zmdi-chevron-left"></i>
+						</button>
+						<button class="ui-btn ui-corner-all ui-btn-inline" v-on:click="refresh()">
+							<i class="zmdi zmdi-refresh"></i>
+						</button>
+						<button class="ui-btn ui-corner-all ui-icon-arrow-r ui-btn-inline" v-bind:class="{ 'ui-state-disabled' : !nextPageEnable }" v-on:click="nextPage()">
+							<i class="zmdi zmdi-chevron-right"></i>
+						</button>
+						<span>第{{page + ((totalPages === 0) ? 0 : 1)}}页，共{{ totalPages }}页，{{ total }}条记录。</span>
+					</div>
+				</div>
+			</div>
+			<div data-role="page" id="page_detail">
+				<div data-role="header" data-position="fixed" data-tap-toggle="false">
+					<a href="#" v-on:click="showMain()" class="ui-btn">
+						<i class="zmdi zmdi-arrow-back"></i>
+					</a>
+					<h1>企业详细信息</h1>
+				</div>
+				<div id="detail-listview" data-role="main" class="ui-content">
+					<ul data-role="listview" data-inset="true">
+						<li data-role="list-divider"><h3>基本信息</h3></li>
+						<li>
+							<b>企业名称</b>
+							<span class="listview-aside">{{ basic.companyName }}</span>
+						</li>
+						<li>
+							<b>注册地址</b>
+							<span class="listview-aside">{{ basic.registerAdress }}</span>
+						</li>
+						<li>
+							<b>法定代表人</b>
+							<span class="listview-aside">{{ basic.legalPerson }}</span>
+						</li>
+						<li data-role="list-divider"><h3>股东信息</h3></li>						
+						<li v-for="partner in basic.partner.split(',')" class="ui-li-static ui-body-inherit">
+							{{ partner }}
+						</li>
+						<li data-role="list-divider"><h3>其他</h3></li>
+						<li><a href="#" v-on:click="gotoDetail('branch')"><b>分公司</b></a></li>
+						<li><a href="#" v-on:click="gotoDetail('../projectbasic')"><b>下属矿硐信息</b></a></li>
+					</ul>
+				</div>
+			</div>
+			<div data-role="page" id="page_new">
+				<div data-role="header" data-position="fixed" data-tap-toggle="false">
+					<a href="#" v-on:click="showMain()" class="ui-btn">
+						<i class="zmdi zmdi-arrow-back"></i>
+					</a>
+					<h1>新建企业概况</h1>
+				</div>
+				<div data-role="main" class="ui-content">
+					<form>
+                        <div class="ui-field-contain">
+                            <label for="companyName">企业名称</label>
+                            <input type="text" name="companyName" id="companyName" v-model="basic_form.companyName"/>
+                        </div>
+                        <div class="ui-field-contain">
+                            <label for="registerAdress">注册地址</label>
+                            <input type="text" name="registerAdress" id="registerAdress" v-model="basic_form.registerAdress"/>
+                        </div>
+                        <div class="ui-field-contain">
+                            <label for="legalPerson">法定代表人</label>
+                            <input type="text" name="legalPerson" id="legalPerson" v-model="basic_form.legalPerson"/>
+                        </div>
+                        <div class="ui-field-contain">
+                            <label for="partner">股东信息</label>
+                            <textarea name="partner" id="partner" v-model="basic_form.partner"></textarea>
+                        </div>
+                    </form>
+					<div class="row between-xs">
+						<div class="col-xs-12 align-center">
+							<button href="#" class="ui-btn ui-btn-icon-left ui-btn-inline" v-on:click="clean()">清空 </button>
+							<button class="ui-btn ui-btn-icon-left ui-btn-inline ui-btn-raised clr-primary" v-on:click="submit()"> 提交 </button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script src="../jquery.mobile-1.4.5/jquery-2.1.4.min.js"></script>
+	<script src="../jquery.mobile-1.4.5/jquery.mobile-1.4.5.js"></script>
+	<script type="text/javascript" src="../vuejs/vue.min.js"></script>
+	<script type="text/javascript" src="../datejs/date-zh-CN.js"></script>
+	<script src="../nativeDroid2/vendor/waves/waves.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../nativeDroid2/vendor/wow/wow.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../nativeDroid2/jquery-ui.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../nativeDroid2/js/nativedroid2.js"></script>
+	<script type="text/javascript" src="../nativeDroid2/nd2settings.js" ></script>
+	<script src="../js/auth.js"></script>
+	<!-- Vue Model -->
+	<script type="text/javascript" src="model/CompanyBasic.js" ></script>
+	<script type="text/javascript">
+		var mainpageVM = new Vue({
+			el: "#root",
+			data: {
+				items: [],
+				selected_id: localStorage.getItem("companyID"),
+				total: 0,
+				page: 0,
+				basic_form: new CompanyBasic(),
+				showPagination: true,
+				basic: new CompanyBasic(),
+			},
+			methods: {
+				getItems: function(obj) {
+					$.ajax({
+						type: "POST",
+						url: "http://61.136.146.172:8080/huangbaihe/Ccompany/showcompany",
+						dataType: "JSON",
+						data: {
+							page: obj.page + 1,
+							rows: 10
+						},
+						success: function(data) {
+							obj.items = data.rows.map(function(item) {
+								return new CompanyBasic(item);
+							});
+							obj.total = data.total;
+						},
+                        error: function () {
+                            new $.nd2Toast({
+								message : "查询失败",
+							});
+                        }
+					});
+				},
+				previousPage: function() {
+					mainpageVM.page -= 1;
+					mainpageVM.getItems();
+				},
+				nextPage: function() {
+					mainpageVM.page += 1;
+					mainpageVM.getItems();
+				},
+				refresh: function() {
+					mainpageVM.getItems(mainpageVM);
+				},
+				submit: function() {
+					$.ajax({
+						type: "POST",
+						url: "http://61.136.146.172:8080/huangbaihe/Ccompany/add",
+						data: mainpageVM.basic_form.toForm().substr(1),
+						dataType: "JSON",
+						success: function(data) {
+							new $.nd2Toast({
+								message : "基本信息提交成功",
+							});
+						},
+						error: function() {
+							new $.nd2Toast({
+								message : "提交失败",
+							});
+						}
+					});
+				},
+				clean: function() {
+					mainpageVM.basic_form.clean();
+				},
+				createForm: function() {
+					if (auth("inf", "manage")) {
+						mainpageVM.form = new CompanyBasic();
+					}
+				},
+				queryItem: function(projectID, obj) {
+					$.ajax({
+						type: "post",
+						url: "http://61.136.146.172:8080/huangbaihe/Ccompany/qurbyid",
+						dataType: "json",
+						data: {
+							index: projectID
+						},
+						success: function (data) {
+							obj.basic = new CompanyBasic(data.result);
+						}
+					});
+				},
+				clearSearch: function() {
+					mainpageVM.showPagination = true;
+					mainpageVM.getItems(mainpageVM)
+				},
+				gotoDetail: function (page, index) {
+					window.location = ["company-detail/", page, ".html"].join("");
+				},
+				showMain: function () {
+					if (getURLParameter("redirect") == "project") {
+						window.location = "../company/projectbasic.html#page_detail";
+					} else {
+						localStorage.removeItem("companyID");
+						mainpageVM.refresh();
+						window.location = "#";
+					}
+				}
+			},
+			watch: {
+				selected_id: function (newId, oldId) {
+					localStorage.setItem("companyID", newId);
+					mainpageVM.queryItem(newId, mainpageVM);
+				}
+			},
+			computed: {
+				previousPageEnable: function() {
+					return this.page > 0
+				},
+				nextPageEnable: function() {
+					return this.page < (this.totalPages - 1)
+				},
+				totalPages: function() {
+					return Math.ceil(this.total / 10)
+				}
+			},
+			created: function() {
+				var obj = this;
+				this.getItems(obj);
+				if (this.selected_id) {
+					this.queryItem(this.selected_id, this)
+				}
+			}
+		});
+
+		$(function () {
+			var hrefsplit = window.location.href.split("#");
+			if (hrefsplit.length < 2 || hrefsplit[1] === "" || hrefsplit[1] === "page_main") {
+				new $.nd2Search({
+					placeholder: "搜索企业名称", // Placeholder in the search field
+					defaultIcon: "null", // optional: icon | null
+					source: function (request, response) {
+						$.ajax({
+							method: "POST",
+							url: "http://61.136.146.172:8080/huangbaihe/Ccompany/query",
+							dataType: "JSON",
+							data: {
+								companyname: request.term
+							},
+							success: function (data) {
+								response(data.rows.map(function (value) {
+									return {
+										label: value.mineName,
+										value: value.projectID
+									}
+								}))
+							},
+							error: function () {
+								response([])
+							}
+						})
+					}, // autocomplete : option-source
+					fn: function(result) { // this function will be executed when a valid result item is selected
+						mainpageVM.selected_id = result;
+						window.location = window.location.href + "#page_detail"
+					}
+				});
+			}
+		})
+
+		function getURLParameter(name) {  
+			return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location)||[,""])[1].replace(/\+/g, '%20'))||null;  
+		}
+
+		function back() {
+			localStorage.removeItem("companyID");
+			window.location = "../index.html";
+		}
+	</script>
+
+</html>

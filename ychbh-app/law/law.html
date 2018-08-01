@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+		<title>黄柏河流域综合执法信息管理系统</title>
+		<link rel="stylesheet" href="../jquery.mobile-1.4.5/jquery.mobile-1.4.5.css">
+		<script src="../jquery.mobile-1.4.5/jquery-2.1.4.min.js"></script>
+		<script src="../jquery.mobile-1.4.5/jquery.mobile-1.4.5.js"></script>
+		<link rel="stylesheet" href="../nativeDroid2/css/nativedroid2.css" />
+		<link rel="stylesheet" href="../nativeDroid2/css/nativedroid2.color.green.css" />
+		<link rel="stylesheet" type="text/css" href="../nativeDroid2/vendor/waves/waves.min.css" />
+		<link rel="stylesheet" type="text/css" href="../nativeDroid2/vendor/wow/animate.css" />
+		<script src="../nativeDroid2/js/nativedroid2.js"></script>
+		<script src="../autosizejs/autosize.min.js"></script>
+		<script src="jqm-tree.js"></script>
+		<script src="../js/auth.js"></script>
+		<script>
+			auth("lawsystem", null, null);
+		</script>
+	</head>
+
+	<body>
+		<div data-role="page" id="mainPage">
+			<div data-role="content">
+				<div data-role="header" data-position="fixed" data-tap-toggle="false">
+					<a href="#" onclick="back()" class="ui-btn">
+						<li class="zmdi zmdi-arrow-back"></li>
+					</a>
+					<h1>法律法规</h1>
+				</div>
+				<input name="search" id="search" type="search" onkeypress="searchkeypress()" placeholder="搜索...">
+				<select name="lawtype" id="lawtype" onchange="getlawname()">
+					<option disabled selected>法律类型</option>
+				</select>
+				<select name="lawname" id="lawname" onchange="loadlawtree()">
+					<option disabled selected>法律名称</option>
+				</select>
+				<div class="ui-body ui-bar-a ui-corner-all" style="height: auto;">
+					<div id="lawtreecontent" data-role="content">
+						<h4 style="text-align: center;">暂无查询结果</h4>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div data-role="page" id="datailPage">
+			<div data-role="content" style="text-align: center;">
+				<div data-role="header" data-position="fixed" data-tap-toggle="false">
+					<a href="#mainPage" class="ui-btn">
+						<li class="zmdi zmdi-arrow-back"></li>
+					</a>
+					<h1>法律法规</h1>
+				</div>
+				<label for="detail" id="title" style="font-size: 16px;"></label>
+				<p id="detail" style="margin-top: 20px;font-size: 16px;padding: 5px; border: solid 1px #cccccc;"></p>
+			</div>
+		</div>
+	</body>
+	<script src="../nativeDroid2/vendor/wow/wow.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../nativeDroid2/vendor/waves/waves.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="law.js"></script>
+
+</html>

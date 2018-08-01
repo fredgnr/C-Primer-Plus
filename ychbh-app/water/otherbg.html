@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+		<title>黄柏河流域综合执法信息管理系统</title>
+		<link rel="stylesheet" href="../jquery.mobile-1.4.5/jquery.mobile-1.4.5.css">
+		<link rel="stylesheet" href="../nativeDroid2/vendor/waves/waves.min.css" />
+		<link rel="stylesheet" href="../nativeDroid2/vendor/wow/animate.css"/>
+		<link rel="stylesheet" href="../nativeDroid2/css/nativedroid2.css" />
+		<link rel="stylesheet" href="../nativeDroid2/css/nativedroid2.color.green.css" />
+		<script src="../jquery.mobile-1.4.5/jquery-2.1.4.min.js"></script>
+		<script src="../nativeDroid2/jquery-ui.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../jquery.mobile-1.4.5/jquery.mobile-1.4.5.js"></script>
+		<script src="../nativeDroid2/vendor/waves/waves.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../nativeDroid2/vendor/wow/wow.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../nativeDroid2/js/nativedroid2.js"></script>
+		<script type="text/javascript" src="../nativeDroid2/nd2settings.js" ></script>
+		<style type="text/css">
+			span.listview-aside {
+				font-size: 14px;
+				position: relative;
+				float: right;
+				margin: 0px auto;
+			}
+			
+			ul li p.listview-aside {
+				font-size: 14px;
+				word-wrap: break-word;
+				white-space: normal;
+			}
+			
+			.ui-field-contain {
+				border-bottom-width: 0px;
+			}
+			
+			.item-title {
+				font-weight: bold;
+			}
+		</style>
+		<script src="../js/auth.js"></script>
+		<script>
+			auth("daily", null, "index.html");
+		</script>
+	</head>
+
+	<body>
+		<div id="root">
+			<div data-role="page" id="page_main">
+				<div data-role="header" data-position="fixed" data-tap-toggle="false">
+					<a href="#" onclick="back()" class="ui-btn">
+						<i class="zmdi zmdi-arrow-back"></i>
+					</a>
+					<h1>检测报告</h1>
+					<a href="#page_new" v-on:click.capture="createForm()" class="ui-btn">
+						<i class="zmdi zmdi-plus"></i>
+					</a>
+				</div>
+				<div data-role="main" class="ui-content">
+					<div class="row between-xs">
+						<div class="col-xs-12">
+							<a class="ui-btn clr-primary ui-btn-inline" href="#popupFilter" data-rel="popup" data-position-to="window" data-transition="slideup">
+								<i class="zmdi zmdi-filter-list"></i> 筛选
+							</a>						
+							<a v-show="!showPagination" class="ui-btn ui-btn-inline" href="#" v-on:click="clearSearch()">清除筛选</a>
+							<span v-show="!showPagination" class="align-right">查询到{{ total }}条记录</span>							
+						</div>
+					</div>
+					<div class="ui-corner-all" id="popupFilter" data-role="popup" style="padding: 10px 20px;min-width: 240px;" data-dismissible="false">
+						<form v-on:submit.prevent>
+							<div class="ui-field-contain">
+								<label for="enddate">检测类型</label>
+								<select name="type" v-model="searchText.type" id="type" data-native-menu="false">
+									<option value=""></option>
+									<option v-for="type in OtherBg.prototype.typeOptions" v-bind:value="type">{{ type }}</option>
+								</select>
+							</div>
+							<div class="ui-field-contain">
+								<label for="enddate">检测地点</label>
+								<select name="address" v-model="searchText.address" id="address" data-native-menu="false">
+									<option value=""></option>
+									<option v-for="address in searchList" v-bind:value="address">{{ address }}</option>
+								</select>
+							</div>
+							<div class="ui-field-contain">
+								<label for="startdate">开始时间</label>
+								<input type="date" name="startdate" id="startdate" value="" v-model="searchText.startdate"/>
+							</div>
+							<div class="ui-field-contain">
+								<label for="enddate">结束时间</label>
+								<input type="date" name="enddate" id="enddate" value="" v-model="searchText.enddate"/>
+							</div>
+							<div class="ui-field-contain">
+								<label for="hcom">检测单位</label>
+								<select name="hcom" v-model="searchText.hcom" id="hcom">
+									<option value=""></option>
+									<option v-for="hcom in OtherBg.prototype.hcomOptions" v-bind:value="hcom">{{ hcom }}</option>
+								</select>
+							</div>
+						</form>
+						<div class="row between-xs">
+							<div class="col-xs-6">
+								<a href="#" class="ui-btn clr-primary" v-on:click="searchItems(searchText)">搜索</a>
+							</div>
+							<div class="col-xs-6">
+								<a href="#" class="ui-btn" onclick="$('#popupFilter').popup('close')" data-role="button">取消</a>																
+							</div>
+						</div>
+					</div>
+					<ul data-role="listview" data-inset="true">
+						<li v-for="(item, index) in items">
+							<a href="#page_detail" v-on:click="selected_id = item.sz_id" class="ui-btn ui-icon-eye ui-btn-icon-right">
+								<h2>{{ item.address }}</h2>
+								<p class="listview-aside" style="margin: 0px;">{{ item.sz_id }}</p>
+							</a>
+						</li>
+					</ul>
+					<div v-show="showPagination">
+						<button class="ui-btn ui-corner-all ui-btn-inline" v-bind:class="{ 'ui-state-disabled' : !previousPageEnable }" v-on:click="previousPage()">
+							<i class="zmdi zmdi-chevron-left"></i>
+						</button>
+						<button class="ui-btn ui-corner-all ui-btn-inline" v-on:click="refresh()">
+							<i class="zmdi zmdi-refresh"></i>
+						</button>
+						<button class="ui-btn ui-corner-all ui-icon-arrow-r ui-btn-inline" v-bind:class="{ 'ui-state-disabled' : !nextPageEnable }" v-on:click="nextPage()">
+							<i class="zmdi zmdi-chevron-right"></i>
+						</button>
+						<span>第{{page + ((totalPages === 0) ? 0 : 1)}}页，共{{ totalPages }}页，{{ total }}条记录。</span>
+					</div>
+				</div>
+			</div>
+			<div data-role="page" id="page_detail">
+				<div data-role="header" data-position="fixed" data-tap-toggle="false">
+					<a href="#page_main" v-on:click.capture="if (showPagination) refresh()" class="ui-btn">
+						<i class="zmdi zmdi-arrow-back"></i>
+					</a>
+					<h1>检测报告</h1>
+				</div>
+				<div id="detail-listview" data-role="main" class="ui-content">
+					<h4>编号：{{ detail.sz_id }}</h4>
+					<ul data-role="listview" data-inset="false">
+						<li><b>委托单位</b><span class="listview-aside">{{ detail.dcom }}</span></li>
+						<li><b>检测类型</b><span class="listview-aside">{{ detail.type }}</span></li>
+						<li><b>检测单位</b><span class="listview-aside">{{ detail.hcom }}</span></li>
+						<li><b>受测地址</b><p class="listview-aside">{{ detail.address }}</p></li>
+						<li><b>检测时间</b><span class="listview-aside">{{ detail.date }}</span></li>
+						<li><b>检测点位</b><span class="listview-aside">{{ detail.points }}</span></li>
+						<li><b>检测频次</b><span class="listview-aside">{{ detail.hz }}</span></li>
+						<li><b>编制人</b><span class="listview-aside">{{ detail.wperson }}</span></li>
+						<li><b>审核人</b><span class="listview-aside">{{ detail.cperson }}</span></li>
+						<template v-for="(ind, i) in detail.wInsRecordZs">
+							<li class="ui-li-divider ui-bar-inherit" data-role="list-divider"><h3>相关指数检测{{ i + 1 }}</h3></li>
+							<li class="ui-li-static ui-body-inherit"><b>指标（单位）</b><span class="listview-aside">{{ ind.zs }}</span></li>
+							<li class="ui-li-static ui-body-inherit"><b>值</b><span class="listview-aside">{{ ind.value }}</span></li>
+							<li class="ui-li-static ui-body-inherit"><b>标准</b><span class="listview-aside">{{ ind.stand }}</span></li>
+						</template>
+					</ul>
+				</div>
+			</div>
+			<div data-role="page" id="page_new">
+				<div data-role="header" data-position="fixed" data-tap-toggle="false">
+					<a href="#page_main" v-on:click.capture="if (showPagination) refresh()" class="ui-btn">
+						<i class="zmdi zmdi-arrow-back"></i>
+					</a>
+					<h1>新建检测报告</h1>
+				</div>
+				<div data-role="main" class="ui-content">
+					<h4>编号：{{ form.sz_id }}</h4>
+					<form id="newitem">
+						<div class="ui-field-contain">
+							<label for="type">检测类型</label>
+							<select name="type" id="type" v-model="form.type">
+								<option value="" disabled>请选择</option>
+								<option v-for="item in form.typeOptions" v-bind:value="item">{{ item }}</option>
+							</select>
+							<!--<input type="text" name="type" id="type" value="" v-model="form.type"/>-->
+						</div>
+						<div class="ui-field-contain">
+							<label for="dcom">委托单位</label>
+							<input type="text" name="dcom" id="dcom" value="" v-model="form.dcom"/>
+						</div>
+						<div class="ui-field-contain">
+							<label for="hcom">检测单位</label>
+							<select name="hcom" id="hcom" v-model="form.hcom">
+								<option value="" disabled>请选择</option>
+								<option v-for="item in form.hcomOptions" v-bind:value="item">{{ item }}</option>
+								<option value="其他">其他</option>
+							</select>
+						</div>
+						<div v-show="form.hcom === '其他'" class="ui-field-contain">
+							<label for="hcom_other">请输入检测单位</label>
+							<input type="text" name="hcom_other" id="hcom_other" value="" v-model="form.hcom_other"/>
+						</div>
+						<div class="ui-field-contain">
+							<label for="address">受测地址</label>
+							<textarea name="address" id="address" value="address" v-model="form.address"></textarea>
+						</div>
+						<div class="ui-field-contain">
+							<label for="date">检测时间</label>
+							<input type="date" name="date" id="date" value="" v-model="form.date"/>
+						</div>
+						<div class="ui-field-contain">
+							<label for="points">检测点位</label>
+							<input type="text" name="points" id="points" value="" v-model="form.points"/>
+						</div>
+						<div class="ui-field-contain">
+							<label for="hz">检测频次</label>
+							<input type="number" name="hz" id="hz" value="" v-model="form.hz"/>
+						</div>
+						<div class="ui-field-contain">
+							<label for="wperson">编制人</label>
+							<input type="text" name="wperson" id="wperson" value="" v-model="form.wperson"/>
+						</div>
+						<div class="ui-field-contain">
+							<label for="cperson">审核人</label>
+							<input type="text" name="cperson" id="cperson" value="" v-model="form.cperson"/>
+						</div>
+						<div v-for="(ind, index) in form.wInsRecordZs" class="nd2-card">
+							<div class="card-title">
+								<h3 class="card-primary-title"> 相关检测指数{{ index + 1 }} </h3>
+							</div>
+							<div class="card-supporting-text has-action has-title">
+								<div class="ui-field-contain">
+									<label v-bind:for="'zs_' + index">指数（单位）</label>
+									<input type="text" name="zs" v-bind:id="'zs_' + index" value="" v-model="form.wInsRecordZs[index].zs"/>
+								</div>
+								<div class="ui-field-contain">
+									<label v-bind:for="'value_' + index">值</label>
+									<input type="text" name="value" v-bind:id="'value_' + index" value="" v-model="form.wInsRecordZs[index].value"/>
+								</div>
+								<div class="ui-field-contain">
+									<label v-bind:for="'stand_' + index">标准</label>
+									<input type="text" name="stand" v-bind:id="'stand_' + index" value="" v-model="form.wInsRecordZs[index].stand"/>
+								</div>
+							</div>
+							<div class="card-action">
+								<div class="row between-xs">
+									<div class="col-xs-12 align-right">
+										<a href="#" class="ui-btn clr-primary ui-btn-inline" v-on:click="minusInticator(index)">删除 </a>
+									</div>
+								</div>
+							</div>
+						</div>
+					</form>
+					<div class="row between-xs">
+						<div class="col-xs-12 align-center">
+							<button href="#" class="ui-btn ui-btn-icon-left ui-btn-inline clr-primary" v-on:click="addIndicator()">添加检测指数 </button>
+							<button href="#" class="ui-btn ui-btn-icon-left ui-btn-inline" v-on:click="clean()">清空 </button>
+							<button class="ui-btn ui-btn-icon-left ui-btn-inline ui-btn-raised clr-primary" v-on:click="submit()"> 提交 </button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript" src="../vuejs/vue.min.js"></script>
+	<script type="text/javascript" src="../datejs/date-zh-CN.js"></script>
+	<script type="text/javascript" src="model/Indicator.js" ></script>
+	<script type="text/javascript" src="model/OtherBg.js" ></script>
+	<script type="text/javascript">
+		var mainpageVM = new Vue({
+			el: "#root",
+			data: {
+				items: [],
+				selected_id: 0,
+				total: 0,
+				page: 0,
+				form: new OtherBg(),
+				searchText: {
+					startdate: new Date().add(-1).day().toString("yyyy-MM-dd"),
+					enddate: new Date().toString("yyyy-MM-dd"),
+					address: "",
+					type: "",
+					hcom: ""
+				},
+				searchList: [],
+				showPagination: true,
+				detail: new OtherBg(),
+				submit_status: ""
+			},
+			methods: {
+				getItems: function(obj) {
+					$.ajax({
+						type: "get",
+						url: "http://61.136.146.172:8080/huangbaihe/WInsR/querybypage",
+						dataType: "JSON",
+						data: {
+							page: obj.page + 1,
+							rows: 10
+						},
+						success: function(data) {
+							obj.items = data.rows.map(function(item) {
+								return new OtherBg(item);
+							});
+							obj.total = data.total;
+						}
+					});
+				},
+				previousPage: function() {
+					mainpageVM.page -= 1;
+					mainpageVM.getItems();
+				},
+				nextPage: function() {
+					mainpageVM.page += 1;
+					mainpageVM.getItems();
+				},
+				refresh: function() {
+					mainpageVM.getItems(mainpageVM);
+					mainpageVM.queryAddress(mainpageVM);
+					mainpageVM.queryHcom(mainpageVM);
+				},
+				addIndicator: function() {
+					this.form.wInsRecordZs.push(new Indicator());
+					setTimeout(function() {
+						$("form").trigger("create")
+					}, 10)
+				},
+				submit: function() {
+					$.ajax({
+						type: "POST",
+						url: "http://61.136.146.172:8080/huangbaihe/WInsR/save",
+						data: mainpageVM.form.toForm().substr(1),
+						success: function() {
+							new $.nd2Toast({
+								message : "提交成功", // Required
+							});
+						},
+						error: function() {
+							new $.nd2Toast({
+								message : "提交失败", // Required
+							});
+						}
+					});
+				},
+				clean: function() {
+					mainpageVM.form.clean();
+				},
+				createForm: function() {
+					if (auth("daily", "add")) {
+						mainpageVM.form = new OtherBg();
+					}
+				},
+				minusInticator: function(index) {
+					mainpageVM.form.wInsRecordZs.splice(index, 1);
+				},
+				searchItems: function(searchText) {
+					$.ajax({
+						type:"POST",
+						url:"http://61.136.146.172:8080/huangbaihe/WInsR/query",
+						dataType: "json",
+						data: {
+							address: searchText.address,
+							startDate: Date.parse(searchText.startdate).toString("yyyy年MM月dd日"),
+							endDate: Date.parse(searchText.enddate).toString("yyyy年MM月dd日"),
+							type: searchText.type
+						},
+						success: function(data) {
+							mainpageVM.items = data.rows;
+							mainpageVM.total = data.total;
+							mainpageVM.showPagination = false;
+						},
+						error: function() {
+							new $.nd2Toast({
+								message : "查询失败", // Required
+							});
+						}
+					}).done(function() {
+						$("#popupFilter").popup("close");
+					});
+				},
+				clearSearch: function() {
+					mainpageVM.showPagination = true;
+					mainpageVM.getItems(mainpageVM)
+				},
+				queryAddress: function(obj) {
+					$.ajax({
+						type:"post",
+						url:"http://61.136.146.172:8080/huangbaihe/WInsR/queryaddress",
+						dataType: "JSON",
+						success: function(data) {
+							obj.searchList = data.map(function(item) {
+								return item.text;
+							})
+						}
+					});
+				},
+				queryHcom: function(obj) {
+					$.ajax({
+						type: "post",
+						url: "http://61.136.146.172:8080/huangbaihe/WInsR/queryhcom",
+						dataType: "JSON",
+						success: function(data) {
+							OtherBg.prototype.hcomOptions = data.map(function(item) {
+								return item.text;
+							})
+						}
+					});
+				}
+			},
+			watch: {
+				selected_id: function (newId, oldId) {
+					$.ajax({
+						type: "post",
+						url: "http://61.136.146.172:8080/huangbaihe/WInsR/querybyid",
+						dataType: "json",
+						data: {
+							sz_id: newId
+						},
+						success: function (data) {
+							mainpageVM.detail = new OtherBg(data);
+						}
+					});
+				}
+			},
+			computed: {
+				previousPageEnable: function() {
+					return this.page > 0
+				},
+				nextPageEnable: function() {
+					return this.page < (this.totalPages - 1)
+				},
+				totalPages: function() {
+					return Math.ceil(this.total / 10)
+				}
+			},
+			created: function() {
+				this.getItems(this);
+				this.queryAddress(this);
+				this.queryHcom(this);
+				// 获取检查地址
+				// 获取检测单位
+			},
+			beforeCreate: function() {
+				if (window.location.href.split("#").pop() === "page_detail") {
+					window.location = "otherbg.html"
+				}
+			}
+		});
+
+		function back() {
+			window.location = "../index.html";
+		}
+	</script>
+
+</html>

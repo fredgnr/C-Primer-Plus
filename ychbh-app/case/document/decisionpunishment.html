@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+		<title>黄柏河流域综合执法信息管理系统</title>
+		<link rel="stylesheet" href="../../jquery.mobile-1.4.5/jquery.mobile-1.4.5.css">
+		<link rel="stylesheet" href="../../nativeDroid2/vendor/waves/waves.min.css" />
+		<link rel="stylesheet" href="../../nativeDroid2/vendor/wow/animate.css" />
+		<link rel="stylesheet" href="../../nativeDroid2/css/nativedroid2.css" />
+		<link rel="stylesheet" href="../../nativeDroid2/css/nativedroid2.color.green.css" />
+		<link rel="stylesheet" href="../../css/style.css">
+		<script src="../../jquery.mobile-1.4.5/jquery-2.1.4.min.js"></script>
+		<script src="../../nativeDroid2/jquery-ui.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../../jquery.mobile-1.4.5/jquery.mobile-1.4.5.js"></script>
+		<script src="../../nativeDroid2/vendor/waves/waves.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../../nativeDroid2/vendor/wow/wow.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../../nativeDroid2/js/nativedroid2.js"></script>
+		<script type="text/javascript" src="../../nativeDroid2/nd2settings.js"></script>
+		<script src="../../js/auth.js"></script>
+		<script>
+			auth("case", "read", null, 2);
+		</script>
+		<style>
+			.ui-checkbox {
+				margin: 0px 0px;
+			}
+
+			label.ui-checkbox-off, label.ui-checkbox-on {
+				padding-top: 0px;
+				padding-bottom: 0px;
+				font-size: 16px;
+			}
+
+			.card-supporting-text>ul>li>p.listview-aside {
+				font-size: 14px;
+				word-wrap: break-word;
+				white-space: normal;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div data-role="page" id="root">
+			<div data-role="header" data-position="fixed" data-tap-toggle="false">
+				<a href="#" class="ui-btn" onclick="back()">
+					<i class="zmdi zmdi-arrow-back"></i>
+				</a>
+				<h1>行政处罚决定书</h1>
+			</div>
+			<div id="detail-listview" data-role="main" class="ui-content">
+				<form action="#">
+					<ul data-role="listview" data-inset="true">
+						<li><b>文书编号</b><span class="listview-aside">{{ detail.document_id }}</span></li>
+						<li><b>当事人（单位）</b><span class="listview-aside">{{ detail.object_name }}</span></li>
+						<li><b>身份证号码/统一社会信用代码</b><span class="listview-aside">{{ detail.object_id }}</span></li>
+						<li><b>法定代表人</b><span class="listview-aside">{{ detail.responsible }}</span></li>
+						<li><b>地址</b><span class="listview-aside">{{ detail.address }}</span></li>
+					</ul>
+					<div class="nd2-card">
+						<div class="card-title has-supporting-text">
+							<h3 class="card-primary-title">案件调查终结报告</h3>
+						</div>
+						<div class="card-supporting-text">
+							<ul data-role="listview" data-inset="false">
+								<li><b>时间</b><span class="listview-aside">{{ detail.occur_date }}</span></li>
+								<li><b>地点</b><span class="listview-aside">{{ detail.occur_place }}</span></li>
+								<li><b>案由/案件名称</b><span class="listview-aside">{{ detail.case_name }}</span></li>
+								<li><b>违法事实</b><span class="listview-aside">{{ detail.event }}</span></li>
+								<li><b>违反规定</b><span class="listview-aside">{{ detail.violate_policy }}</span></li>
+								<li><b>有以下证据证明</b><span class="listview-aside">{{ detail.evidence }}</span></li>
+							</ul>
+						</div>
+					</div>
+					<div class="nd2-card">
+						<div class="card-title has-supporting-text">
+							<h3 class="card-primary-title">行政处罚事先告知书信息</h3>
+						</div>
+						<div class="card-supporting-text">
+							<ul data-role="listview" data-inset="false">
+								<li><b>告知日期</b><span class="listview-aside">{{ detail.pretell_date }}</span></li>
+								<li><b>告知书编号</b><span class="listview-aside">{{ detail.pretell_document_id }}</span></li>
+							</ul>
+						</div>
+					</div>
+					<div class="nd2-card">
+						<div class="card-title has-supporting-text">
+							<h3 class="card-primary-title">行政处罚听证告知书信息</h3>
+						</div>
+						<div class="card-supporting-text">
+							<ul data-role="listview" data-inset="false">
+								<li><b>告知日期</b><span class="listview-aside">{{ detail.notice_hearing_date }}</span></li>
+								<li><b>告知书编号</b><span class="listview-aside">{{ detail.notice_hearing_document_id }}</span></li>
+							</ul>
+						</div>
+					</div>
+					<div class="nd2-card">
+						<div class="card-title has-supporting-text">
+							<h3 class="card-primary-title">陈述、申辩、听证信息</h3>
+						</div>
+						<div class="card-supporting-text">
+							<ul data-role="listview" data-inset="false">
+								<li>
+									<input type="checkbox" name="solution1" id="solution1">
+									<label for="solution1">你（单位）在规定期限内未向本局提出陈述、申辩和要求举行听证 </label>
+								</li>
+								<li>
+									<input type="checkbox" name="solution2" id="solution2">
+									<label for="solution2">你（单位）向本局提出陈述、申辩，我局重大案件集体审议委员会研究讨论决定 </label>
+								</li>
+								<li>
+									<b>填写</b>
+									<p class="listview-aside">{{ detail.solution2 }}</p>
+								</li>
+								<li>
+									<input type="checkbox" name="solution3" id="solution3">
+									<label for="solution3">你（单位）向本局提出要求举行听证并形成了听证意见，经我局重大案件集体审议委员会研究讨论决定 </label>
+								</li>
+								<li>
+									<b>听证时间</b>
+									<span class="listview-aside">{{ detail.solution3time }}</span>
+								</li>
+								<li>
+									<b>填写</b>
+									<p class="listview-adise">{{ detail.solution3 }}</p>
+								</li>
+							</ul>
+						</div>
+					</div>
+					<div class="nd2-card">
+						<div class="card-title has-supporting-text">
+							<h3 class="card-primary-title">行政处罚的依据、种类</h3>
+						</div>
+						<div class="card-supporting-text has-title">
+							<ul data-role="listview" data-inset="false">
+								<li><b>处罚依据及原文</b><span class="listview-aside">{{ detail.accord_policy }}</span></li>
+								<li><b>自由裁量权</b><span class="listview-aside">{{ detail.justification }}</span></li>
+								<li><b>填写</b><p class="listview-aside">{{ detail.punishment }}</p></li>
+							</ul>
+						</div>
+					</div>
+					<ul data-role="listview" data-inset="true">
+						<li>
+							<b>处罚决定书填写日期</b>
+							<span class="listview-aside">{{ detail.publish_date }}</span>
+						</li>
+						<li>
+							<b>联系人</b>
+							<span class="listview-aside">{{ detail.contact }}</span>
+						</li>
+						<li>
+							<b>联系电话</b>
+							<span class="listview-aside">{{ detail.contact_phone }}</span>
+						</li>
+					</ul>
+				</form>
+				<div class="action-bar">
+					<a v-if="showUpdate" href="#" class="ui-btn clr-btn-teal ui-btn-icon-left ui-btn-raised ui-btn-inline" @click="update()">
+						<i class="md zmdi zmdi-edit"></i>修改 </a>
+					<a v-if="showSubmit" href="#" class="ui-btn clr-btn-light-green ui-btn-icon-left ui-btn-raised ui-btn-inline"
+					 @click="submit()">
+						<i class="md zmdi zmdi-mail-send"></i>提交 </a>
+					<a v-if="showExam" href="#" class="ui-btn clr-btn-orange ui-btn-icon-left ui-btn-raised ui-btn-inline"
+					 @click="exam()">
+						<i class="md zmdi zmdi-eye"></i>审核 </a>
+					<a v-if="showReExam" href="#" class="ui-btn clr-btn-deep-orange ui-btn-icon-left ui-btn-raised ui-btn-inline"
+					 @click="reExam()">
+						<i class="md zmdi zmdi-check"></i>审批 </a>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript" src="../../vuejs/vue.min.js"></script>
+	<script type="text/javascript" src="../../datejs/date-zh-CN.js"></script>
+	<!-- Vue Model -->
+	<script type="text/javascript" src="model/DecisionPunishment.js"></script>
+	<script type="text/javascript">
+		var mainpageVM = new Vue({
+			el: "#root",
+			data: {
+				selected_id: localStorage.getItem("caseID"),
+				detail: new DecisionPunishment(),
+				au: JSON.parse(localStorage.getItem("au")),
+				options: {
+					leader: []
+				}
+			},
+			methods: {
+				queryItem: async function(caseID, obj) {
+					var registercase, invastigate, commoncase, punishment, ghearing, decision;
+					var caseinfo = await new Promise(function (resolve, reject) {
+						$.ajax({
+							type: "post",
+							url: "http://huyg.site:8080/huangbaihe/getInfoCaseController/getCaseInfo",
+							dataType: "JSONP",
+							data: ({
+								caseID: caseID
+							}),
+							success: function (data) { resolve(data) }
+						});
+					});
+					if (caseinfo.formRegisterCaseSate == 0) {
+						new nd2Toast({
+							message: "请填写立案呈批表！"
+						})
+					} else {
+						registercase = await new Promise(function (resolve, reject) {
+							$.ajax({
+								type: "post",
+								url: "http://huyg.site:8080/huangbaihe/formRegisterCase/getOneForm",
+								dataType: "JSONP",
+								data: ({
+									caseID: caseID
+								}),
+								success: function (data) { resolve(data) }
+							});
+						});
+					}
+					if (caseinfo.reportEndInvestigateSate == 0) {
+						new nd2Toast({
+							message: "请填写调查终结报告！"
+						})
+					} else {
+						invastigate = await new Promise(function (resolve, reject) {
+							$.ajax({
+								type: "post",
+								url: "http://huyg.site:8080/huangbaihe/reportEndInvastigate/getDoc",
+								dataType: "JSONP",
+								data: ({
+									caseID: caseID
+								}),
+								success: function (data) { resolve(data) }
+							});
+						});
+						commoncase = await new Promise(function (resolve, reject) {
+							$.ajax({
+								type: "post",
+								url: "http://61.136.146.172:8080/huangbaihe/Lcommoncase/querycaseid",
+								data: {
+									case_name: registercase.brief
+								},
+								success: function (data) { resolve(data) }
+							});
+						})
+					}
+					if (caseinfo.noticePunishmentPretellState == 0) {
+						new nd2Toast({
+							message: "请填写行政处罚事先告知书报告！"
+						})
+					} else {
+						punishment = await new Promise(function (resolve, reject) {
+							$.ajax({
+								type: "post",
+								url: "http://huyg.site:8080/huangbaihe/noticePunishmentPretell/getDoc",
+								dataType: "JSONP",
+								data: ({
+									caseID: caseID
+								}),
+								success: function (data) { resolve(data) }
+							});
+						});
+					}
+					if (caseinfo.noticeGHearingPunishmentState == 0) {
+						new nd2Toast({
+							message: "请填写行政处罚事先告知书报告！"
+						})
+					} else {
+						ghearing = await new Promise(function (resolve, reject) {
+							$.ajax({
+								type: "post",
+								url: "http://huyg.site:8080/huangbaihe/noticeGHearingPunishment/getDoc",
+								dataType: "JSONP",
+								data: ({
+									caseID: caseID
+								}),
+								success: function (data) { resolve(data) }
+							});
+						});
+					}
+					if (caseinfo.decisionPunishmentState == 0) {
+						new nd2Toast({
+							message: "请填写行政处罚事先告知书报告！"
+						})
+					} else {
+						decision = await new Promise(function (resolve, reject) {
+							$.ajax({
+								type: "post",
+								url: "http://huyg.site:8080/huangbaihe/decisionPunishment/getDoc",
+								dataType: "JSONP",
+								data: ({
+									caseID: caseID
+								}),
+								success: function (data) { resolve(data) }
+							});
+						});
+					}
+					obj.detail = new DecisionPunishment(caseinfo, registercase, commoncase, invastigate, punishment, ghearing, decision);
+				},
+				submit: function () {
+
+				},
+				update: function () {
+
+				},
+				exam: function () {
+
+				},
+				reExam: function () {
+
+				},
+				queryLeaders: function (context) {
+					$.ajax({
+						method: "GET",
+						url: "http://61.136.146.172:8080/huangbaihe/login/getAllUser",
+						dataType: "JSON",
+						success: function (data) {
+							var leaders = data.filter(function (value, index) {
+								return value.role && value.role === "局内负责人";
+							});
+							context.options.leader = leaders.map(function (item) {
+								return {
+									value: item.uid,
+									text: item.realname
+								}
+							})
+						},
+						error: function () {
+							new $.nd2Toast({
+								message : "查询主管领导失败", // Required
+							});
+						}
+					})
+				}
+			},
+			computed: {
+				showSubmit: function () {
+					return false;
+				},
+				showUpdate: function () {
+					return false;
+				},
+				showExam: function () {
+					return false;
+				},
+				showReExam: function () {
+					return false;
+				}
+			},
+			created: function() {
+				var obj = this;
+				if (!this.selected_id) {
+					// back();
+				}
+				this.queryLeaders(this);
+				this.queryItem(this.selected_id, this)
+			}
+		});
+
+		function back() {
+			window.location = "../caseindex.html#page_document";
+		}
+	</script>
+
+</html>

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+		<title>黄柏河流域综合执法信息管理系统</title>
+		<link rel="stylesheet" href="../jquery.mobile-1.4.5/jquery.mobile-1.4.5.css">
+		<link rel="stylesheet" href="../jquery-mobile-datepicker-wrapper/jquery.mobile.datepicker.css">
+		<link rel="stylesheet" href="../jquery-mobile-datepicker-wrapper/jquery.mobile.datepicker.theme.css">
+		<script src="../jquery.mobile-1.4.5/jquery-2.1.4.min.js"></script>
+		<script src="../jquery.mobile-1.4.5/jquery.mobile-1.4.5.js"></script>
+		<script src="../jquery.mobile-1.4.5/jquery.ui.datepicker.js"></script>
+		<script src="../jquery-mobile-datepicker-wrapper/jquery.mobile.datepicker.js"></script>
+		<script type="text/javascript" src="../vuejs/vue.min.js"></script>
+		<script type="text/javascript" src="../datejs/date-zh-CN.js"></script>
+		<script type="text/javascript3" src="../datejs/date-zh-CN.js"></script>
+		<link rel="stylesheet" href="../nativeDroid2/css/nativedroid2.css" />
+		<link rel="stylesheet" href="../nativeDroid2/css/nativedroid2.color.green.css" />
+		<script src="../nativeDroid2/js/nativedroid2.js"></script>
+		<style type="text/css">
+			.ui-field-contain {
+				border-bottom-width: 0px;
+			}
+		</style>
+		<script src="../js/auth.js"></script>
+		<script>
+			auth("daily", "add", window.location.pathname.replace("add", "").substr(1));
+		</script>
+	</head>
+
+	<body>
+		<div data-role="page">
+			<div data-role="header" data-position="fixed" data-tap-toggle="false">
+				<a href="#" onclick="back()" class="ui-btn"><i class="zmdi zmdi-arrow-back"></i></a>
+				<h1>新建问题</h1>
+			</div>
+			<div id="main" data-role="main" class="ui-content">
+				<h4>编号：{{ form.id }}</h4>
+				<form action="#">
+					<div class="ui-field-contain">
+						<label for="zone">片区</label>
+						<input type="text" name="zone" id="zonee" v-model="form.zone">
+					</div>
+					<div class="ui-field-contain">
+						<label for="region">项目</label>
+						<input type="text" name="project" id="project" v-model="form.project">
+					</div>
+					<div class="ui-field-contain">
+						<label for="date">发现时间</label>
+						<input type="date" name="datect" id="date" v-model="form.date">
+					</div>
+					<div class="ui-field-contain">
+						<label for="content">存在问题</label>
+						<textarea name="content" id="content" v-model="form.content"></textarea>
+					</div>
+					<div class="ui-field-contain">
+						<label for="request">纠正要求</label>
+						<textarea name="request" id="request" v-model="form.request"></textarea>
+					</div>
+					<div class="ui-field-contain">
+						<label for="person">网络员</label>
+						<input type="text" name="person" id="person" v-model="form.person">
+					</div>
+				</form>
+				<div class="align-center">
+					<a href="#" class="ui-btn ui-btn-inline ui-btn-raised clr-primary" onclick="submit()">提交</a>
+					<a href="#" class="ui-btn ui-btn-inline" onclick="clean()">清空</a>
+				</div>
+			</div>
+		</div>
+		
+		<script type="text/javascript">
+			var content = new Vue({
+				el: "#main",
+				data: {
+					form: {
+						id: "wt-" + new Date().toString("yyyyMMddHHmmss"),
+						zone: "",
+						project: "",
+						date: Date.today().toString("yyyy-MM-dd"),
+						content: "",
+						request: "",
+						person: ""
+					},
+					submit_status: ""
+				}
+			})
+
+			function back() {
+				window.location = "problem.html";
+			}
+
+			function gotomain(name) {
+				window.location = "../company/main.html" + name;
+			}
+
+			function submit() {
+				content.form.date = Date.parse(content.form.date).toString("yyyy年MM月dd日")
+				$.ajax({
+					type: "post",
+					url: "http://61.136.146.172:8080/huangbaihe/InsProb/save",
+					data: content.form,
+					success: function() {
+						new $.nd2Toast({
+							message : "提交成功", // Required
+						});
+					},
+					error: function() {
+						new $.nd2Toast({
+							message : "提交失败", // Required
+						});
+					}
+				});
+			}
+
+			function clean() {
+				for(key in content.form) {
+					if(content.form.hasOwnProperty(key)) {
+						content.form[key] = ""
+					}
+				}
+			}
+		</script>
+	</body>
+
+</html>

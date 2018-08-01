@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+        <title>黄柏河流域综合执法信息管理系统</title>
+        <link rel="stylesheet" href="../jquery.mobile-1.4.5/jquery.mobile-1.4.5.css">
+        <link rel="stylesheet" href="../nativeDroid2/vendor/waves/waves.min.css" />
+        <link rel="stylesheet" href="../nativeDroid2/vendor/wow/animate.css" />
+        <link rel="stylesheet" href="../nativeDroid2/css/nativedroid2.css" />
+        <link rel="stylesheet" href="../nativeDroid2/css/nativedroid2.color.green.css" />
+        <script src="../jquery.mobile-1.4.5/jquery-2.1.4.min.js"></script>
+        <script src="../nativeDroid2/jquery-ui.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../jquery.mobile-1.4.5/jquery.mobile-1.4.5.js"></script>
+        <script src="../nativeDroid2/vendor/waves/waves.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../nativeDroid2/vendor/wow/wow.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../nativeDroid2/js/nativedroid2.js"></script>
+        <script type="text/javascript" src="../nativeDroid2/nd2settings.js"></script>
+        <script src="../js/auth.js"></script>
+        <script>
+            auth("case", null, "index.html", 1);
+        </script> </head>
+
+    <body>
+        <div id="root">
+            <div data-role="page" id="page-main">
+                <div data-role="header" data-position="fixed" data-tap-toggle="false">
+                    <a href="#" onclick="back()" class="ui-btn">
+                        <i class="zmdi zmdi-arrow-back"></i>
+                    </a>
+                    <h1>执法统计图表</h1>
+                    <ul data-role="nd2tabs" data-swipe="true">
+                        <li data-tab="stateStatistics" data-tab-active="true">按办理状态统计</li>
+                        <li data-tab="sourceStatistics" onclick="source_statistics_click();">按案件来源统计</li>
+                        <li data-tab="dateStatistics" onclick="date_statistics_click();">按录入时间统计</li>
+                    </ul>
+                </div>
+                <div data-role="main" class="ui-content">
+                    <div data-role="nd2tab" data-tab="stateStatistics">
+                        <div id="stateStatistics-chart" style="height: 300px;width: 100%;"></div>
+                    </div>
+                    <div data-role="nd2tab" data-tab="sourceStatistics" style="text-align:center">
+                        <div id="sourceStatistics-chart" style="height: 300px;width: 100%;"></div>
+                    </div>
+                    <div data-role="nd2tab" data-tab="dateStatistics">
+                        <div id="dateStatistics-chart" style="height: 300px;width: 100%;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+    <script src="../echarts/echarts.js"></script>
+    <script type="text/javascript">
+        var sourceStatisticsChart;
+        var stateStatisticsChart;
+        var dateStatisticsChart;
+
+        function back() {
+            window.location = "../index.html";
+        }
+
+        function source_statistics_click() {
+            setTimeout(() => {
+                sourceStatisticsChart.resize();
+            }, 300);
+        }
+
+        function date_statistics_click() {
+            setTimeout(() => {
+                dateStatisticsChart.resize();
+            }, 300);
+        }
+
+        var flag = 1;
+
+        function initAllStatisticCharts() {
+            $.ajax({
+                async: false,
+                type: 'get',
+                url: 'http://localhost:8080/huangbaihe/getInfoCaseController/sourceStatistic',
+                dataType: "JSON",
+                success: function (data) {
+                    initSourceStatisticsChart(data);
+                },
+                error: function(){
+                    new $.nd2Toast({
+                        message: "获取检查笔录列表失败"
+                    });
+                }
+            });
+
+            $.ajax({
+                async: false,
+                type: 'get',
+                url: 'http://localhost:8080/huangbaihe/getInfoCaseController/caseStateStatistic',
+                dataType: "JSON",
+                success: function (data) {
+                    initStateStatisticsChart(data);
+                },
+                error: function(){
+                    new $.nd2Toast({
+                        message: "获取检查笔录列表失败"
+                    });
+                }
+            });
+            
+            /*测试代码开始标记 CS-Tao*/
+            // $.ajax({
+            //     async: false,
+            //     type: 'get',
+            //     url: '此处未填写 CS-Tao',
+            //     dataType: "JSON",
+            //     success: function (data) {
+            //         initDateStatisticsChart(data);
+            //     },
+            //     error: function(){
+            //         new $.nd2Toast({
+            //             message: "获取检查笔录列表失败"
+            //         });
+            //     }
+            // });
+
+            initDateStatisticsChart([5, 20, 36, 10, 10, 20, 5, 20, 36, 10, 10, 20]);
+            /*测试代码结束标记 CS-Tao*/
+        }
+
+        function initSourceStatisticsChart(sourceMap) {
+            sourceStatisticsChart = echarts.init(document.getElementById('sourceStatistics-chart'));
+            sourceStatisticsChart.setOption({
+                legend: {
+                    orient: 'vertical',
+                    left: 'left',
+                    data: ['群众举报', '巡查发现', '媒体发现', '部门转办']
+                }, 
+                series: {
+                    type: 'pie',
+                    data: [
+                        { name: '群众举报', value: sourceMap["src1"] },
+                        { name: '巡查发现', value: sourceMap["src2"] },
+                        { name: '媒体发现', value: sourceMap["src3"] },
+                        { name: '部门转办', value: sourceMap["src4"] }
+                    ],
+                    label: {
+                        show: false
+                    }
+                }
+            })
+        }
+
+        function initStateStatisticsChart(stateMap) {
+            echarts.init(document.getElementById('stateStatistics-chart')).setOption({
+                legend: {
+                    orient: 'vertical',
+                    left: 'left',
+                    data: ['在办线索', '办结线索', '未立案线索']
+                }, 
+                series: {
+                    type: 'pie',
+                    data: [
+                        { name: '在办线索', value: stateMap["state1"] },
+                        { name: '办结线索', value: stateMap["state2"] },
+                        { name: '未立案线索', value: stateMap["state3"] }
+                    ],
+                    label: {
+                        show: false
+                    }
+                }
+            });
+        }
+
+        function initDateStatisticsChart(dateStatisticsChartData) {
+            dateStatisticsChart = echarts.init(document.getElementById('dateStatistics-chart'));
+            var option = {
+                title: {
+                    text: '按录入时间统计'
+                },
+                tooltip: {},
+                legend: {
+                    data: ['案件数']
+                },
+                xAxis: {
+                    data: ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"]
+                },
+                yAxis: {},
+                series: [{
+                    name: '案件数',
+                    type: 'bar',
+                    data: dateStatisticsChartData
+                }]
+            };
+
+            dateStatisticsChart.setOption(option);
+        }
+
+        $(function () {
+            initAllStatisticCharts();
+            sourceStatisticsChart.resize();
+            dateStatisticsChart.resize();
+        })
+    </script>
+
+</html>

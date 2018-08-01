@@ -1,0 +1,16 @@
+POST http://39.106.145.68:8080/huangbaihe/Cprobasic/showProbasic HTTP/1.1
+Accept: application/json, text/javascript, */*; q=0.01
+Accept-Encoding: gzip, deflate
+Accept-Language: zh-Hans-CN, zh-Hans; q=0.8, en-US; q=0.5, en; q=0.3
+Cache-Control: no-cache
+Connection: Keep-Alive
+Content-Length: 14
+Content-Type: application/x-www-form-urlencoded; charset=UTF-8
+Cookie: JSESSIONID=70127B45703B358F5EF88DD0EEFA1F06; au=%7B%22a_case_read%22%3A%221%22%2C%22passWord%22%3A%22%22%2C%22a_case_reexam%22%3A%221%22%2C%22a_daily_del%22%3A%221%22%2C%22role%22%3A%22%u7BA1%u7406%u5458%22%2C%22mail%22%3A%22admin@163.com%22%2C%22a_inf_manage%22%3A%221%22%2C%22a_lawsystem%22%3A%221%22%2C%22a_company_page%22%3A%221%22%2C%22point%22%3A%22%u6848%u4EF6%u7BA1%u7406%u90E8%u95E8%22%2C%22a_database_manage%22%3A%221%22%2C%22a_case_exam%22%3A%221%22%2C%22a_daily_add%22%3A%221%22%2C%22a_daily_up%22%3A%221%22%2C%22class%22%3A%22com.isip.samtbd.entity.User%22%2C%22a_case_submit%22%3A%221%22%2C%22a_map_browse%22%3A%221%22%2C%22a_lawsystem_edit%22%3A%221%22%2C%22identiNumber%22%3A%2200000000000%22%2C%22userName%22%3A%22admin%22%2C%22a_user_manage%22%3A%221%22%2C%22realname%22%3A%22%u7BA1%u7406%u5458%22%2C%22UID%22%3A%229efdb517-77a5-48f9-9946-6abf1876c385%22%2C%22phoneNumber%22%3A%2214390876754%22%2C%22a_sign_manage%22%3A%221%22%2C%22a_daily%22%3A%221%22%2C%22job%22%3A%22%u7BA1%u7406%u5458%22%7D
+Host: 39.106.145.68:8080
+Origin: http://39.106.145.68:8080
+Referer: http://39.106.145.68:8080/huangbaihe/company/project.html
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36 Edge/16.16299
+X-Requested-With: XMLHttpRequest
+
+page=1&rows=10

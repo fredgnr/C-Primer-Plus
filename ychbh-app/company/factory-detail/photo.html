@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+		<title>黄柏河流域综合执法信息管理系统</title>
+		<link rel="stylesheet" href="../../jquery.mobile-1.4.5/jquery.mobile-1.4.5.css">
+		<!--<link rel="stylesheet" href="../../jquery-mobile-datepicker-wrapper/jquery.mobile.datepicker.css">
+		<link rel="stylesheet" href="../../jquery-mobile-datepicker-wrapper/jquery.mobile.datepicker.theme.css">-->
+		<script src="../../jquery.mobile-1.4.5/jquery-2.1.4.min.js"></script>
+		<script src="../../jquery.mobile-1.4.5/jquery.mobile-1.4.5.js"></script>
+		<script src="../../jquery.mobile-1.4.5/jquery.ui.datepicker.js"></script>
+		<script src="../../jquery-mobile-datepicker-wrapper/jquery.mobile.datepicker.js"></script>
+		<script type="text/javascript" src="../../vuejs/vue.min.js"></script>
+		<script type="text/javascript" src="../../datejs/date-zh-CN.js"></script>
+		<link rel="stylesheet" href="../../nativeDroid2/css/nativedroid2.css" />
+		<link rel="stylesheet" href="../../nativeDroid2/css/nativedroid2.color.green.css" />
+		<link rel="stylesheet" href="../../nativeDroid2/vendor/waves/waves.min.css" />
+		<link rel="stylesheet" type="text/css" href="../../nativeDroid2/vendor/wow/animate.css"/>
+		<script src="../../nativeDroid2/js/nativedroid2.js"></script>
+		<style type="text/css">
+			span.listview-aside {
+				font-size: 14px;
+				position: relative;
+				float: right;
+				margin: 0px auto;
+			}
+			
+			ul li p.listview-aside {
+				font-size: 14px;
+				word-wrap: break-word;
+				white-space: normal;
+			}
+			
+			.ui-field-contain {
+				border-bottom-width: 0px;
+			}
+			
+			.item-title {
+				font-weight: bold;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="root">
+			<div data-role="page" id="page_main">
+				<div data-role="header" data-position="fixed" data-tap-toggle="false">
+					<a href="#" onclick="back()" class="ui-btn">
+						<i class="zmdi zmdi-arrow-back"></i>
+					</a>
+					<h1>照片管理</h1>
+					<a href="#page_new" v-on:click.capture="createForm()" class="ui-btn">
+						<i class="zmdi zmdi-plus"></i>
+					</a>
+				</div>
+				<div data-role="main" class="ui-content">
+					<div class="nd2-card" v-for="(item, index) in items">
+						<div class="card-media">
+							<img v-bind:src="'http://61.136.146.172:8080/huangbaihe/Cphoto/showbyid?index=' + item.photoID" v-bind:alt="item.photoName">
+						</div>
+						<div class="card-supporting-text has-action">
+							{{ item.photoName.split(".")[0] }}
+						</div>
+						<div class="card-action">
+							<div class="row between-xs">
+								<div class="col-xs-12 align-right">
+									<a href="#" class="ui-btn ui-btn-inline clr-primary">删除</a>
+								</div>
+							</div>
+						</div>
+					</div>
+					<h6 class="align-right">共{{ items.length }}条记录</h6>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script src="../../nativeDroid2/vendor/waves/waves.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../../nativeDroid2/vendor/wow/wow.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../../nativeDroid2/jquery-ui.min.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript" src="../../nativeDroid2/nd2settings.js" ></script>
+	<script src="../../js/auth.js"></script>
+	<!-- Vue Model -->
+	<script type="text/javascript" src="model/Photo.js" ></script>
+	<script type="text/javascript">
+		function getURLParameter(name) {  
+			return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search)||[,""])[1].replace(/\+/g, '%20'))||null;  
+		} 
+		
+		var mainpageVM = new Vue({
+			el: "#root",
+			data: {
+                items: [],
+                project_id: localStorage.getItem("factoryID"),
+				selected_id: localStorage.getItem("factory"),
+				form: new Photo(),
+				detail: new Photo()
+			},
+			methods: {
+				getItems: function (obj) {
+					$.ajax({
+						type: "POST",
+						url: "http://61.136.146.172:8080/huangbaihe/Cphoto/query",
+						dataType: "JSON",
+						data: {
+							index: obj.project_id
+						},
+						success: function(data) {
+							obj.items = data.rows.map(function(item) {
+								return new Photo(item);
+							});
+                        },
+                        error: function () {
+                            new $.nd2Toast({
+								message : "查询失败", // Required
+							});
+                        }
+					});
+				},
+				submit: function () {
+					$.ajax({
+						type: "POST",
+						url: "http://61.136.146.172:8080/huangbaihe/Cphoto/add",
+						data: mainpageVM.form.toForm(mainpageVM.project_id).substr(1),
+						success: function() {
+							new $.nd2Toast({
+								message : "提交成功", // Required
+							});
+						},
+						error: function() {
+							new $.nd2Toast({
+								message : "提交失败", // Required
+							});
+						}
+					});
+				},
+				delete: function (index) {
+					$.ajax({
+						type: "POST",
+						url: "http://61.136.146.172:8080/huangbaihe/Cphoto/add",
+						data: {
+							index: index
+						},
+						dataType: "JSON",
+						success: function(data) {
+							if (data.status) {
+								new $.nd2Toast({
+									message : "提交成功", // Required
+								});
+							} else {
+								new $.nd2Toast({
+									message : "提交失败", // Required
+								});
+							}
+						},
+						error: function() {
+							new $.nd2Toast({
+								message : "提交失败", // Required
+							});
+						}
+					});
+				}
+			},
+			created: function() {
+				var obj = this;
+				this.getItems(obj);
+				// 获取检查地址
+				// 获取检测单位
+			},
+			beforeCreate: function() {
+				if (window.location.href.split("#").pop() === "page_detail") {
+					window.location = "#"
+				}
+			}
+		});
+
+		function back() {
+			window.location = "../factoryinfo.html#page_detail";
+		}
+	</script>
+
+</html>

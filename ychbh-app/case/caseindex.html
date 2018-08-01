@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+		<title>黄柏河流域综合执法信息管理系统</title>
+		<link rel="stylesheet" href="../jquery.mobile-1.4.5/jquery.mobile-1.4.5.css">
+		<link rel="stylesheet" href="../nativeDroid2/vendor/waves/waves.min.css" />
+		<link rel="stylesheet" href="../nativeDroid2/vendor/wow/animate.css"/>
+		<link rel="stylesheet" href="../nativeDroid2/css/nativedroid2.css" />
+		<link rel="stylesheet" href="../nativeDroid2/css/nativedroid2.color.green.css" />
+		<link rel="stylesheet" href="../../css/style.css">
+		<script src="../jquery.mobile-1.4.5/jquery-2.1.4.min.js"></script>
+		<script src="../nativeDroid2/jquery-ui.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../jquery.mobile-1.4.5/jquery.mobile-1.4.5.js"></script>
+		<script src="../nativeDroid2/vendor/waves/waves.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../nativeDroid2/vendor/wow/wow.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../nativeDroid2/js/nativedroid2.js"></script>
+		<script type="text/javascript" src="../nativeDroid2/nd2settings.js" ></script>
+		<script src="../js/auth.js"></script>
+        <script>
+            auth("case", null, "index.html", 1);
+        </script>
+	</head>
+
+	<body>
+		<div id="root">
+			<div data-role="page" id="page_main">
+				<div data-role="header" data-position="fixed" data-tap-toggle="false">
+					<a href="#" onclick="back()" class="ui-btn">
+						<i class="zmdi zmdi-arrow-back"></i>
+					</a>
+					<h1>案件列表</h1>
+				</div>
+				<div data-role="main" class="ui-content">
+					<div class="row between-xs">
+						<div class="col-xs-12">
+							<a class="ui-btn clr-primary ui-btn-inline ui-btn-icon-left" href="#popupFilter" data-rel="popup" data-position-to="window" data-transition="slideup">
+								<i class="md zmdi zmdi-search"></i> 搜索
+							</a>
+							<a v-show="!showPagination" class="ui-btn ui-btn-inline" href="#" v-on:click="clearSearch()">清除筛选</a>
+							<span v-show="!showPagination" class="align-right">查询到{{ total }}条记录</span>							
+						</div>
+					</div>
+					<div class="ui-corner-all" id="popupFilter" data-role="popup" data-dismissible="false">
+						<div data-role="header">
+							<h1 class="nd-title">修改筛选条件</h1>
+						</div>
+						<div data-role="content">
+							<form v-on:submit.prevent>
+								<div class="ui-field-contain">
+									<label for="sourceId">线索来源</label>
+									<select name="sourceId" v-model="searchText.sourceId" id="sourceId">
+										<option value="">请选择</option>
+										<option v-for="(source, key) in CaseIndex.prototype.sourceTypesText" v-bind:value="key">{{ source }}</option>
+									</select>
+								</div>
+								<div class="ui-field-contain">
+									<label for="iLlegalId">违法类型</label>
+									<select name="iLlegalId" v-model="searchText.iLlegalId" id="iLlegalId">
+										<option value="">请选择</option>
+										<option v-for="(type, key) in CaseIndex.prototype.illegalTypesText" v-bind:value="key">{{ type }}</option>
+									</select>
+								</div>
+								<div class="ui-field-contain">
+									<label for="placeId">区域代码</label>
+									<select name="placeId" v-model="searchText.placeId" id="placeId">
+										<option value="">请选择</option>
+										<option v-for="(place, key) in CaseIndex.prototype.placesText" v-bind:value="key">{{ place }}</option>
+									</select>
+								</div>
+							</form>
+							<div class="row between-xs">
+								<div class="col-xs-6">
+									<a href="#" class="ui-btn clr-primary" data-rel="back" v-on:click="searchItems()">搜索</a>
+								</div>
+								<div class="col-xs-6">
+									<a href="#" class="ui-btn" data-rel="back" data-role="button">取消</a>																
+								</div>
+							</div>
+						</div>
+					</div>
+					<ul data-role="listview" data-inset="true">
+						<li v-for="(item, index) in items">
+							<a href="#page_document" v-on:click="selected_id = item.caseID" class="ui-btn ui-icon-eye ui-btn-icon-right">
+								<h2>
+									<span class="nd2-label nd2-label-left" v-bind:class="{
+										'nd2-label-deep-orange': item.getCaseState() == 0,
+										'nd2-label-orange': item.getCaseState() == 1,
+										'nd2-label-green': item.getCaseState() == 2
+									}">{{ CaseIndex.prototype.stateText[item.getCaseState()] }}</span>
+									<!-- <span class="nd2-label nd2-label-left nd2-label-light-blue">已办结</span> -->
+									{{ item.caseDescription }}
+								</h2>
+								<p class="listview-aside">{{ item.reportTime }}</p>
+							</a>
+						</li>
+					</ul>
+					<div v-show="showPagination">
+						<button class="ui-btn ui-corner-all ui-btn-inline" v-bind:class="{ 'ui-state-disabled' : !previousPageEnable }" v-on:click="previousPage()">
+							<i class="zmdi zmdi-chevron-left"></i>
+						</button>
+						<button class="ui-btn ui-corner-all ui-btn-inline" v-on:click="refresh()">
+							<i class="zmdi zmdi-refresh"></i>
+						</button>
+						<button class="ui-btn ui-corner-all ui-icon-arrow-r ui-btn-inline" v-bind:class="{ 'ui-state-disabled' : !nextPageEnable }" v-on:click="nextPage()">
+							<i class="zmdi zmdi-chevron-right"></i>
+						</button>
+						<span>第{{page + ((totalPages === 0) ? 0 : 1)}}页，共{{ totalPages }}页，{{ total }}条记录。</span>
+					</div>
+				</div>
+			</div>
+			<div data-role="page" id="page_document">
+				<div data-role="header" data-position="fixed" data-tap-toggle="false">
+					<a href="#" v-on:click="showMain()" class="ui-btn">
+						<i class="zmdi zmdi-arrow-back"></i>
+					</a>
+					<h1>文书列表</h1>
+				</div>
+				<div id="document-listview" data-role="main" class="ui-content">
+					<ul data-role="listview" data-inset="true">
+						<li>
+							<a href="#" v-on:click="gotoDetail('casedetail')">案件详情</a>
+						</li>
+						<template v-for="group in detail.docMap">
+							<li data-role="list-divider">
+								<h3>{{ group.name }}</h3>
+							</li>
+							<li v-for="doc in group.docs">
+								<a href="#" v-on:click="gotoDetail(doc.link, doc.state(detail), doc.name)">
+									<span class="nd2-label nd2-label-left" v-if="doc.state(detail)" v-bind:class="{
+										'nd2-label-grey': doc.state(detail) == '0',
+										'nd2-label-amber': doc.state(detail) == '1',
+										'nd2-label-orange': doc.state(detail) == '2',
+										'nd2-label-green': doc.state(detail) == '3'
+									}">{{ CaseIndex.prototype.docStateText[doc.state(detail)] }}</span>
+									{{ doc.name }}
+								</a>
+							</li>
+						</template>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript" src="../vuejs/vue.min.js"></script>
+	<script type="text/javascript" src="../datejs/date-zh-CN.js"></script>
+	<script src="../js/auth.js"></script>
+	<!-- Vue Model -->
+	<!-- <script type="text/javascript" src="document/model/CaseIndex.js" ></script> -->
+	<script type="text/javascript" src="model/CaseIndex.js" ></script>
+	<script type="text/javascript">
+		var mainpageVM = new Vue({
+			el: "#root",
+			data: {
+				items: [],
+				selected_id: localStorage.getItem("caseID"),
+				total: 0,
+				page: 0,
+				form: new CaseIndex(),
+				showPagination: true,
+				detail: new CaseIndex(),
+				searchText: {
+					sourceId: "",
+					iLlegalId: "",
+					placeId: ""
+				}
+			},
+			methods: {
+				getItems: function(obj) {
+					$.ajax({
+						type: "POST",
+						url: "http://61.136.146.172:8080/huangbaihe/showCaseList/caseList",
+						dataType: "JSON",
+						data: {
+							page: obj.page + 1,
+							rows: 10
+						},
+						success: function(data) {
+							obj.items = data.rows.map(function(item) {
+								return new CaseIndex(item);
+							});
+							obj.total = data.total;
+						},
+                        error: function () {
+                            new $.nd2Toast({
+								message : "查询失败",
+							});
+                        }
+					});
+				},
+				previousPage: function() {
+					mainpageVM.page -= 1;
+					mainpageVM.getItems();
+				},
+				nextPage: function() {
+					mainpageVM.page += 1;
+					mainpageVM.getItems();
+				},
+				refresh: function() {
+					mainpageVM.getItems(mainpageVM);
+				},
+				clean: function() {
+					mainpageVM.form.clean();
+				},
+				createForm: function() {
+					if (auth("inf", "manage")) {
+						mainpageVM.form = new CaseIndex();
+					}
+				},
+				queryItem: function(caseID, obj) {
+					$.ajax({
+						method: "POST",
+						url:"http://huyg.site:8080/huangbaihe/getInfoCaseController/getCaseInfo",
+						dataType: "JSONP",
+						data: ({
+							caseID: caseID
+						}),
+						success: function(data) {
+							obj.detail = new CaseIndex(data);
+						},
+						error: function(req, status, err) {
+							new $.nd2Toast({
+								message : "查询失败", // Required
+							});
+						}
+					});
+				},
+				searchItems: function() {
+					$.ajax({
+						type:"POST",
+						url:"http://huyg.site:8080/huangbaihe/showCaseList/query",
+						dataType: "JSONP",
+						data: mainpageVM.searchText,
+						success: function(data) {
+							mainpageVM.items = data.rows.map(function (item) {
+								return new CaseIndex(item);
+							});
+							mainpageVM.total = data.rows.length;
+							mainpageVM.showPagination = false;
+						},
+						error: function() {
+							new $.nd2Toast({
+								message : "查询失败", // Required
+							});
+						}
+					}).done(function() {
+						$("#popupFilter").popup("close");
+					});
+				},
+				clearSearch: function() {
+					mainpageVM.showPagination = true;
+					mainpageVM.getItems(mainpageVM)
+				},
+				gotoDetail: function (page, state, docname) {
+					if (state == 0) {
+						new $.nd2Toast({
+							message: "未填写" + docname
+						});
+					} else {
+						window.location = ["document/", page, ".html"].join("");
+					}
+				},
+				showMain: function () {
+					localStorage.removeItem("caseID");
+					mainpageVM.refresh();
+					window.location = "#";
+				}
+			},
+			watch: {
+				selected_id: function (newId, oldId) {
+					localStorage.setItem("caseID", newId);
+					mainpageVM.queryItem(newId, mainpageVM);
+				}
+			},
+			computed: {
+				previousPageEnable: function() {
+					return this.page > 0
+				},
+				nextPageEnable: function() {
+					return this.page < (this.totalPages - 1)
+				},
+				totalPages: function() {
+					return Math.ceil(this.total / 10)
+				}
+			},
+			created: function() {
+				var obj = this;
+				this.getItems(obj);
+				if (this.selected_id) {
+					this.queryItem(this.selected_id, this)
+				}
+			}
+		});
+
+		function back() {
+			localStorage.removeItem("caseID");
+			window.location = "../index.html";
+		}
+	</script>
+
+</html>

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+		<title>黄柏河流域综合执法信息管理系统</title>
+		<link rel="stylesheet" href="../jquery.mobile-1.4.5/jquery.mobile-1.4.5.css">
+		<link rel="stylesheet" href="../nativeDroid2/css/nativedroid2.css" />
+		<link rel="stylesheet" href="../nativeDroid2/css/nativedroid2.color.green.css" />
+		<link rel="stylesheet" type="text/css" href="../nativeDroid2/vendor/waves/waves.min.css" />
+		<link rel="stylesheet" type="text/css" href="../nativeDroid2/vendor/wow/animate.css" />
+		<script src="../jquery.mobile-1.4.5/jquery-2.1.4.min.js"></script>
+		<script src="../jquery.mobile-1.4.5/jquery.mobile-1.4.5.js"></script>
+		<script src="../nativeDroid2/js/nativedroid2.js"></script>
+		<script src="../autosizejs/autosize.min.js"></script>
+		<script src="../js/auth.js"></script>
+		<script>
+			auth("lawsystem", "edit", null);
+		</script>
+	</head>
+
+	<body>
+		<div data-role="page">
+			<div data-role="header" data-position="fixed" data-tap-toggle="false">
+				<a href="#" onclick="back()" class="ui-btn">
+					<li class="zmdi zmdi-arrow-back"></li>
+				</a>
+				<h1>案由详情</h1>
+				<a href="#comfirmDel" data-rel="popup" data-position-to="window" class="ui-btn ui-btn-inline">
+					<li class="zmdi zmdi-delete"></li>
+				</a>
+				<div data-role="popup" id="comfirmDel">
+					<div data-role="header">
+						<h1 class='nd-title'>确定删除本条案由？</h1>
+					</div>
+					<div data-role="content" style="text-align: center;">
+						<a data-role="button" data-inline="true" onclick="deletecase()" class="ui-btn ui-btn-inline ui-btn-raised clr-primary" style="margin-right: 5px;">确认</a>
+						<a href="#" data-rel="back" data-role="button" data-inline="true" class="ui-btn ui-btn-inline ui-btn-raised ui-btn-primary">取消</a>
+					</div>
+				</div>
+			</div>
+			<div id="main" data-role="main" class="ui-content">
+				<div>
+					<label for="iclass"><strong>行业类别</strong></label>
+					<textarea readonly id="iclass" style="margin-top: 20px;font-size: 16px;
+						padding: 5px;min-height: 0px; border: solid 1px #cccccc;"></textarea>
+					<!--<input type="text" name="iclass" id="iclass" readonly></input>-->
+				</div>
+				<div>
+					<label for="cclass"><strong>案由类别</strong></label>
+					<textarea readonly id="cclass" style="margin-top: 20px;font-size: 16px;
+						padding: 5px; border: solid 1px #cccccc;"></textarea>
+					<!--<input type="text" name="cclass" id="cclass" readonly></input>-->
+				</div>
+				<div>
+					<label for="cname"><strong>案由名称</strong></label>
+					<textarea readonly id="cname" style="margin-top: 20px;font-size: 16px;
+						padding: 5px; border: solid 1px #cccccc;"></textarea>
+					<!--<input type="text" name="cname" id="cname" readonly></input>-->
+				</div>
+				<div>
+					<label for="bitem"><strong>违反条款</strong></label>
+					<textarea readonly id="bitem" style="margin-top: 20px;font-size: 16px;
+						padding: 5px; border: solid 1px #cccccc;"></textarea>
+					<!--<input type="text" name="bitem" id="bitem" readonly></input>-->
+				</div>
+				<div>
+					<label for="pbasis"><strong>处罚依据</strong></label>
+					<textarea readonly id="pbasis" style="margin-top: 20px;font-size: 16px;
+						padding: 5px; border: solid 1px #cccccc;"></textarea>
+					<!--<input type="text" name="pbasis" id="pbasis" readonly></input>-->
+				</div>
+				<div style="text-align: center;">
+					<a class="ui-btn ui-corner-all ui-btn-inline ui-btn-icon-left ui-icon-edit 
+						ui-btn-raised clr-primary" onclick="modify();">
+						修改案由
+					</a>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script src="../nativeDroid2/vendor/wow/wow.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../nativeDroid2/vendor/waves/waves.min.js" type="text/javascript" charset="utf-8"></script>
+	<script>
+		function getURLParameter(name) {
+			return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search) || [, ""])[1].replace(/\+/g, '%20')) || null;
+		}
+
+		$(document).ready(function() {
+			var case_name = getURLParameter("case_name");
+			$.ajax({
+				type: "post",
+				url: "http://61.136.146.172:8080/huangbaihe/Lcommoncase/editcase",
+				async: true,
+				data: {
+					case_name: case_name
+				},
+				dataType: 'json',
+				success: function(json) {
+					if(json.rows) {
+						$("#iclass").val(json.rows.industrytype);
+						$("#cclass").val(json.rows.casetype_name);
+						$("#cname").val(json.rows.case_name);
+						$("#bitem").val(json.rows.case_clause);
+						$("#pbasis").val(json.rows.case_punish);
+						autosize($('textarea'));
+					}
+				},
+				error: function() {
+					new $.nd2Toast({
+						message: "获取案由信息失败" // Required
+					});
+				}
+			});
+		});
+
+		function back() {
+			window.location = "commoncase.html";
+		}
+
+		function modify() {
+			var case_name = getURLParameter("case_name");
+			window.location = "commoncasemodify.html?case_name=" + case_name;
+		}
+
+		function deletecase() {
+			var case_name = getURLParameter("case_name");
+			$.ajax({
+				type: "post",
+				url: "http://61.136.146.172:8080/huangbaihe/Lcommoncase/delcase",
+				async: false,
+				dataType: 'json',
+				data: {
+					case_name: case_name
+				},
+				success: function(json) {
+					if(!json.status) {
+						new $.nd2Toast({
+							message: "删除失败"
+						});
+					} else {
+						back();
+						new $.nd2Toast({
+							message: "删除成功"
+						});
+					}
+				},
+				error: function() {
+					new $.nd2Toast({
+						message: "删除失败" // Required
+					});
+				}
+			});
+		}
+	</script>
+
+</html>

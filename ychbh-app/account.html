@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+		<title>黄柏河流域综合执法信息管理系统</title>
+		<link rel="stylesheet" href="./jquery.mobile-1.4.5/jquery.mobile-1.4.5.css">
+		<link rel="stylesheet" href="./nativeDroid2/vendor/waves/waves.min.css" />
+		<link rel="stylesheet" href="./nativeDroid2/vendor/wow/animate.css"/>
+		<link rel="stylesheet" href="./nativeDroid2/css/nativedroid2.css" />
+		<link rel="stylesheet" href="./nativeDroid2/css/nativedroid2.color.green.css" />
+		<script src="./jquery.mobile-1.4.5/jquery-2.1.4.min.js"></script>
+        <script src="./nativeDroid2/jquery-ui.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="./jquery.mobile-1.4.5/jquery.mobile-1.4.5.js"></script>
+        <script src="./nativeDroid2/vendor/waves/waves.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="./nativeDroid2/vendor/wow/wow.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="./nativeDroid2/js/nativedroid2.js"></script>
+        <script type="text/javascript" src="./nativeDroid2/nd2settings.js" ></script>
+        <style type="text/css">
+			span.listview-aside {
+				font-size: 14px;
+				position: relative;
+				float: right;
+				margin: 0px auto;
+			}
+			
+			ul li p.listview-aside {
+				font-size: 14px;
+				word-wrap: break-word;
+				white-space: normal;
+			}
+			
+			.ui-field-contain {
+				border-bottom-width: 0px;
+			}
+			
+			.item-title {
+				font-weight: bold;
+			}
+		</style>
+		<script src="../js/auth.js"></script>
+		<script>
+			auth("account", null, "index.html", 0);
+		</script>
+	</head>
+
+	<body>
+		<div id="page" data-role="page">
+			<div data-role="header" data-position="fixed" data-tap-toggle="false">
+				<a href="#" onclick="back()" class="ui-btn">
+					<i class="zmdi zmdi-arrow-back"></i>
+				</a>
+				<h1>用户信息</h1>
+			</div>
+			<div class="ui-content" data-role="main">
+				<div class="nd2-card">
+                    <div class="card-title has-anatar">
+                        <img src="./img/user.png" class="card-avatar">
+                        <h3 class="card-primary-title">{{ user.userName }}</h3>
+                        <h5 class="card-subtitle">{{ user.job }}</h5>
+                    </div>
+                    <div class="card-supporting-text has-action">
+                        <ul class="ui-listview" data-role="listview">
+                            <li data-role="list-divider">
+								<b>待办事项</b>
+								<span class="listview-aside">共{{ task_list.length }}条</span>
+							</li>
+                            <li v-for="task in task_list">
+                                <h3>{{ task.case_name }}</h3>
+                                <span class="listview-aside">{{ task.case_type }}</span>
+                                <p class="listview-aside">{{ task.document_name }}</p>
+                            </li>
+                        </ul>
+                    </div>
+				</div>
+				<a href="#" onclick="logout()" class="ui-btn ui-btn-raised clr-primary">退出登录</a>
+			</div>
+		</div>
+    </body>
+	<script type="text/javascript" src="../vuejs/vue.min.js"></script>
+    <script type="text/javascript">
+        var vm = new Vue({
+            el: "#page",
+            data: {
+                task_list: [],
+                user: {}
+            },
+            methods: {
+                queryTasks: function (obj) {
+                    $.getJSON("http://61.136.146.172:8080/huangbaihe/login/getusermission", {
+                        id: obj.user.UID
+                    }, function (data) {
+                        obj.task_list = data
+                    })
+                }
+            },
+            created: function () {
+                this.user = JSON.parse(localStorage.getItem("au"));
+                this.queryTasks(this);
+            }
+        })
+
+		function logout() {
+			window.localStorage.clear();
+			window.sessionStorage.clear();
+			window.location = "login.html";
+		}
+
+		function back() {
+			window.location = "index.html";
+		}
+
+		function relogin() {
+			window.location = "index.html"
+		}
+	</script>
+</html>

@@ -1,0 +1,1 @@
+GET http://39.106.145.68:8080/huangbaihe/Pool/querybypage?page=1&rows=10 HTTP/1.1

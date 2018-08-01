@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+		<title>黄柏河流域综合执法信息管理系统</title>
+		<link rel="stylesheet" href="../../jquery.mobile-1.4.5/jquery.mobile-1.4.5.css">
+		<!--<link rel="stylesheet" href="../../jquery-mobile-datepicker-wrapper/jquery.mobile.datepicker.css">
+		<link rel="stylesheet" href="../../jquery-mobile-datepicker-wrapper/jquery.mobile.datepicker.theme.css">-->
+		<script src="../../jquery.mobile-1.4.5/jquery-2.1.4.min.js"></script>
+		<script src="../../jquery.mobile-1.4.5/jquery.mobile-1.4.5.js"></script>
+		<script src="../../jquery.mobile-1.4.5/jquery.ui.datepicker.js"></script>
+		<script src="../../jquery-mobile-datepicker-wrapper/jquery.mobile.datepicker.js"></script>
+		<script type="text/javascript" src="../../vuejs/vue.min.js"></script>
+		<script type="text/javascript" src="../../datejs/date-zh-CN.js"></script>
+		<link rel="stylesheet" href="../../nativeDroid2/css/nativedroid2.css" />
+		<link rel="stylesheet" href="../../nativeDroid2/css/nativedroid2.color.green.css" />
+		<link rel="stylesheet" href="../../nativeDroid2/vendor/waves/waves.min.css" />
+		<link rel="stylesheet" type="text/css" href="../../nativeDroid2/vendor/wow/animate.css"/>
+		<script src="../../nativeDroid2/js/nativedroid2.js"></script>
+		<style type="text/css">
+			span.listview-aside {
+				font-size: 14px;
+				position: relative;
+				float: right;
+				margin: 0px auto;
+			}
+			
+			ul li p.listview-aside {
+				font-size: 14px;
+				word-wrap: break-word;
+				white-space: normal;
+			}
+			
+			.ui-field-contain {
+				border-bottom-width: 0px;
+			}
+			
+			.item-title {
+				font-weight: bold;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="root">
+			<div data-role="page" id="page_main">
+				<div data-role="header" data-position="fixed" data-tap-toggle="false">
+					<a href="#" onclick="back()" class="ui-btn">
+						<i class="zmdi zmdi-arrow-back"></i>
+					</a>
+					<h1>通讯录信息</h1>
+					<a href="#page_new" v-on:click.capture="createForm()" class="ui-btn">
+						<i class="zmdi zmdi-plus"></i>
+					</a>
+				</div>
+				<div data-role="main" class="ui-content">
+					<ul data-role="listview" data-inset="true">
+						<li v-for="(item, index) in items">
+							<a href="#page_detail" v-on:click="selected_id = item.personID" class="ui-btn ui-icon-eye ui-btn-icon-right">
+								<h2>{{ item.personName }}</h2>
+							</a>
+						</li>
+					</ul>
+					<h6 class="align-right">共{{ items.length }}条记录</h6>
+				</div>
+			</div>
+			<div data-role="page" id="page_detail">
+				<div data-role="header" data-position="fixed" data-tap-toggle="false">
+					<a href="#" v-on:click="showMain()" class="ui-btn">
+						<i class="zmdi zmdi-arrow-back"></i>
+					</a>
+					<h1>联系人详细信息</h1>
+				</div>
+				<div id="detail-listview" data-role="main" class="ui-content">
+					<ul data-role="listview" data-inset="true">
+						<li v-for="(dommap, index) in detail.domMap" v-if="!dommap.hidden && !dommap.hidden.listview">
+							<b>{{ dommap.name }}</b>
+							<p v-if="dommap.type === 'textarea'" class="listview-aside">{{ detail[dommap.key] }}</p>
+							<span v-else class="listview-aside">{{ detail[dommap.key] }}</span>
+                        </li>
+					</ul>
+				</div>
+			</div>
+			<div data-role="page" id="page_new">
+				<div data-role="header" data-position="fixed" data-tap-toggle="false">
+					<a href="#" v-on:click="showMain()" class="ui-btn">
+						<i class="zmdi zmdi-arrow-back"></i>
+					</a>
+					<h1>新建联系人信息</h1>
+				</div>
+				<div data-role="main" class="ui-content">
+					<form id="newitem">
+						<div class="ui-field-contain" v-for="(dommap, index) in form.domMap" v-if="!dommap.hidden && !dommap.hidden.form">
+							<label v-bind:for="dommap.key">{{ dommap.name }}</label>
+							<textarea v-if="dommap.type === 'textarea'" v-bind:name="dommap.key" v-bind:id="dommap.key" v-model="form[dommap.key]"></textarea>
+							<input v-else v-bind:type="dommap.type" v-bind:name="dommap.key" v-bind:id="dommap.key" v-model="form[dommap.key]"/>
+						</div>
+					</form>
+					<div class="row between-xs">
+						<div class="col-xs-12 align-center">
+							<button href="#" class="ui-btn ui-btn-icon-left ui-btn-inline" v-on:click="clean()">清空 </button>
+							<button class="ui-btn ui-btn-icon-left ui-btn-inline ui-btn-raised clr-primary" v-on:click="submit()"> 提交 </button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script src="../../nativeDroid2/vendor/waves/waves.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../../nativeDroid2/vendor/wow/wow.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../../nativeDroid2/jquery-ui.min.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript" src="../../nativeDroid2/nd2settings.js" ></script>
+	<script src="../../js/auth.js"></script>
+	<!-- Vue Model -->
+	<script type="text/javascript" src="model/Person.js" ></script>
+	<script type="text/javascript">
+		function getURLParameter(name) {  
+			return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search)||[,""])[1].replace(/\+/g, '%20'))||null;  
+		}
+
+		var mainpageVM = new Vue({
+			el: "#root",
+			data: {
+                items: [],
+                project_id: localStorage.getItem("projectID"),
+				selected_id: localStorage.getItem("projectPersonID"),
+				form: new Person(),
+				detail: new Person()
+			},
+			methods: {
+				getItems: function(obj) {
+					$.ajax({
+						type: "POST",
+						url: "http://61.136.146.172:8080/huangbaihe/Caddress/query",
+						dataType: "JSON",
+						data: {
+							index: obj.project_id
+						},
+						success: function(data) {
+							obj.items = data.rows.map(function(item) {
+								return new Person(item);
+							});
+                        },
+                        error: function () {
+                            new $.nd2Toast({
+								message : "查询失败", // Required
+							});
+                        }
+					});
+				},
+				submit: function() {
+					$.ajax({
+						type: "POST",
+						url: "http://61.136.146.172:8080/huangbaihe/Caddress/add",
+						data: mainpageVM.form.toForm(mainpageVM.project_id).substr(1),
+						success: function() {
+							new $.nd2Toast({
+								message : "提交成功", // Required
+							});
+						},
+						error: function() {
+							new $.nd2Toast({
+								message : "提交失败", // Required
+							});
+						}
+					});
+				},
+				clean: function() {
+					mainpageVM.form.clean();
+				},
+				createForm: function() {
+					if (auth("inf", "manage", null, 2)) {
+						mainpageVM.form = new Person();
+					}
+				},
+				showMain: function () {
+					localStorage.removeItem("projectApprovalID");
+					mainpageVM.refresh();
+					window.location = "#";
+				},
+				queryItem: function (newId, obj) {
+					$.ajax({
+						type: "post",
+						url: "http://61.136.146.172:8080/huangbaihe/Caddress/edit",
+						dataType: "json",
+						data: {
+							index: newId
+						},
+						success: function (data) {
+							obj.detail = new Person(data.rows);
+						}
+					});
+				},
+				refresh: function () {
+					mainpageVM.getItems(mainpageVM);
+				}
+			},
+			watch: {
+				selected_id: function (newId, oldId) {
+					localStorage.getItem("projectPersonID");
+					mainpageVM.queryItem(newId, mainpageVM);
+				}
+			},
+			created: function() {
+				var obj = this;
+				this.getItems(obj);
+				if (this.selected_id) {
+					this.queryItem(this.selected_id, this);
+				}
+			}
+		});
+
+		function back() {
+			localStorage.removeItem("projectPersonID")
+			window.location = "../projectbasic.html#page_detail"
+		}
+	</script>
+
+</html>

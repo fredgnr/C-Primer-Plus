@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+		<title>黄柏河流域综合执法信息管理系统</title>
+		<link rel="stylesheet" href="../jquery.mobile-1.4.5/jquery.mobile-1.4.5.css">
+		<link rel="stylesheet" href="../nativeDroid2/vendor/waves/waves.min.css" />
+		<link rel="stylesheet" href="../nativeDroid2/vendor/wow/animate.css"/>
+		<link rel="stylesheet" href="../nativeDroid2/css/nativedroid2.css" />
+		<link rel="stylesheet" href="../nativeDroid2/css/nativedroid2.color.green.css" />
+		<script src="../jquery.mobile-1.4.5/jquery-2.1.4.min.js"></script>
+		<script src="../nativeDroid2/jquery-ui.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../jquery.mobile-1.4.5/jquery.mobile-1.4.5.js"></script>
+		<script src="../nativeDroid2/vendor/waves/waves.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../nativeDroid2/vendor/wow/wow.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../nativeDroid2/js/nativedroid2.js"></script>
+		<script type="text/javascript" src="../nativeDroid2/nd2settings.js" ></script>
+		<style type="text/css">
+			span.listview-aside {
+				font-size: 14px;
+				position: relative;
+				float: right;
+				margin: 0px auto;
+			}
+			
+			ul li p.listview-aside {
+				font-size: 14px;
+				word-wrap: break-word;
+				white-space: normal;
+			}
+			
+			.ui-field-contain {
+				border-bottom-width: 0px;
+			}
+			
+			.item-title {
+				font-weight: bold;
+			}
+		</style>
+		<script src="../js/auth.js"></script>
+		<script>
+			auth("daily", null, "index.html");
+		</script>
+	</head>
+
+	<body>
+		<div id="root">
+			<div data-role="page" id="page_main">
+				<div data-role="header" data-position="fixed" data-tap-toggle="false">
+					<a href="#" onclick="back()" class="ui-btn">
+						<i class="zmdi zmdi-arrow-back"></i>
+					</a>
+					<h1>河流水质报告</h1>
+					<a href="#page_new" v-on:click.capture="createForm()" class="ui-btn">
+						<i class="zmdi zmdi-plus"></i>
+					</a>
+				</div>
+				<div data-role="main" class="ui-content">
+					<!-- BEGIN: 河流水质报告筛选按钮 -->
+					<div class="row between-xs">
+						<div class="col-xs-12">
+							<a class="ui-btn clr-primary ui-btn-inline" href="#popupFilter" data-rel="popup" data-position-to="window" data-transition="slideup">
+								<i class="zmdi zmdi-filter-list"></i> 筛选
+							</a>						
+							<a v-show="!showPagination" class="ui-btn ui-btn-inline" href="#" v-on:click="clearSearch()">清除筛选</a>
+							<span v-show="!showPagination" class="align-right">查询到{{ total }}条记录</span>							
+						</div>
+					</div>
+					<div class="ui-corner-all" id="popupFilter" data-role="popup" style="padding: 10px 20px;min-width: 240px;" data-dismissible="false">
+						<form v-on:submit.prevent>
+							<div class="row between-xs">
+								<div class="col-xs-6">
+									<div class="ui-field-contain">
+										<label for="searchText-year">年</label>
+										<select name="searchText_year" id="searchText-year" v-model="searchText.year">
+											<option v-for="i in 100" v-bind:value="1970 + i">{{ 1970 + i }}</option>
+										</select>
+									</div>
+								</div>
+								<div class="col-xs-6">
+									<div class="ui-field-contain">
+										<label for="searchText-month">月</label>
+										<select name="searchText—_onth" id="searchText-month" v-model="searchText.month">
+											<option v-for="i in 12" v-bind:value="i">{{ i }}</option>
+										</select>
+									</div>
+								</div>
+							</div>
+							<div class="ui-field-contain">
+								<label for="enddate">旬</label>
+								<select name="xun" v-model="searchText.xun" id="searchText.xun">
+									<option value="" disabled>请选择</option>
+									<option value="上旬">上旬</option>
+									<option value="中旬">中旬</option>
+									<option value="下旬">下旬</option>
+								</select>
+							</div>
+						</form>
+						<div class="row between-xs">
+							<div class="col-xs-6">
+								<a href="#" class="ui-btn clr-primary" v-on:click="searchItems(searchText)">搜索</a>
+							</div>
+							<div class="col-xs-6">
+								<a href="#" class="ui-btn" data-rel="back" data-role="button">取消</a>																
+							</div>
+						</div>
+					</div>
+					<!-- END -->
+					<!-- BEGIN: 水质报告列表 -->
+					<ul data-role="listview" data-inset="true">
+						<li v-for="(item, index) in items">
+							<a href="#page_detail" v-on:click="selected_id = item.tx_id" class="ui-btn ui-icon-eye ui-btn-icon-right">{{ item.yearm }}，{{ item.xun }}
+								<p class="listview-aside" style="margin: 0px;">{{ item.tx_id }}</p>
+							</a>
+						</li>
+					</ul>
+					<!-- END -->
+					<div v-show="showPagination">
+						<button class="ui-btn ui-corner-all ui-btn-inline" v-bind:class="{ 'ui-state-disabled' : !previousPageEnable }" v-on:click="previousPage()">
+							<i class="zmdi zmdi-chevron-left"></i>
+						</button>
+						<button class="ui-btn ui-corner-all ui-btn-inline" v-on:click="refresh()">
+							<i class="zmdi zmdi-refresh"></i>
+						</button>
+						<button class="ui-btn ui-corner-all ui-icon-arrow-r ui-btn-inline" v-bind:class="{ 'ui-state-disabled' : !nextPageEnable }" v-on:click="nextPage()">
+							<i class="zmdi zmdi-chevron-right"></i>
+						</button>
+						<span>第{{page + ((totalPages === 0) ? 0 : 1)}}页，共{{ totalPages }}页，{{ total }}条记录。</span>
+					</div>
+				</div>
+			</div>
+			<div data-role="page" id="page_detail">
+				<div data-role="header" data-position="fixed" data-tap-toggle="false">
+					<a href="#page_main" v-on:click.capture="if (showPagination) refresh()" class="ui-btn">
+						<i class="zmdi zmdi-arrow-back"></i>
+					</a>
+					<h1>河流水质报告</h1>
+				</div>
+				<div data-role="main" class="ui-content">
+					<h4>填写编号：{{ detail.tx_id }}</h4>
+					<ul data-role="listview" data-inset="true">
+						<li><b>填写人</b><span class="listview-aside">{{ detail.wperson }}</span></li>
+						<li><b>填写时间</b><span class="listview-aside">{{ detail.date }}</span></li>
+						<li><b>年月</b><span class="listview-aside">{{ detail.yearm }}</span></li>
+						<li><b>旬</b><span class="listview-aside">{{ detail.xun }}</span></li>
+						<template v-for="(river, i) in detail.riverZshus">
+							<li class="ui-li-divider ui-bar-inherit" data-role="list-divider"><h3>河流{{ i + 1 }}</h3></li>							
+							<li class="ui-li-static ui-body-inherit"><b>水库</b><span class="listview-aside">{{ river.sk }}</span></li>
+							<li class="ui-li-static ui-body-inherit"><b>河流名称</b><span class="listview-aside">{{ river.hl }}</span></li>
+							<li class="ui-li-static ui-body-inherit"><b>采样点位置</b><span class="listview-aside">{{ river.point }}</span></li>
+							<li class="ui-li-static ui-body-inherit"><b>经度</b><span class="listview-aside">{{ river.lon }}</span></li>
+							<li class="ui-li-static ui-body-inherit"><b>纬度</b><span class="listview-aside">{{ river.lat }}</span></li>
+							<li class="ui-li-static ui-body-inherit"><b>水质等级</b><span class="listview-aside">{{ river.sz }}</span></li>
+							<li class="ui-li-static ui-body-inherit"><b>高锰酸盐</b><span class="listview-aside">{{ river.kmo }}</span></li>
+							<li class="ui-li-static ui-body-inherit"><b>氨氮</b><span class="listview-aside">{{ river.nhn }}</span></li>
+							<li class="ui-li-static ui-body-inherit"><b>总磷</b><span class="listview-aside">{{ river.sp }}</span></li>
+							<li class="ui-li-static ui-body-inherit"><b>悬浮物</b><span class="listview-aside">{{ river.xfw }}</span></li>
+						</template>
+					</ul>
+				</div>
+			</div>
+			<div data-role="page" id="page_new">
+				<div data-role="header" data-position="fixed" data-tap-toggle="false">
+					<a href="#page_main" v-on:click.capture="if (showPagination) refresh()" class="ui-btn">
+						<i class="zmdi zmdi-arrow-back"></i>
+					</a>
+					<h1>新建河流水质报告</h1>
+				</div>
+				<div data-role="main" class="ui-content">
+					<h4>填写编号：{{ form.tx_id }}</h4>
+					<form id="newitem">
+						<div class="ui-field-contain">
+							<label for="wperson">填写人</label>
+							<input type="text" name="wperson" id="wperson" v-model="form.wperson" />
+						</div>
+						<div class="ui-field-contain">
+							<label for="date">填写时间</label>
+							<input type="date" name="date" id="date" v-model="form.date" />
+						</div>
+						<div class="row between-xs">
+							<div class="col-xs-6">
+								<div class="ui-field-contain">
+									<label for="year">年</label>
+									<select name="year" id="year" v-model="form.year">
+										<option v-for="i in 100" v-bind:value="1970 + i">{{ 1970 + i }}</option>
+									</select>
+								</div>
+							</div>
+							<div class="col-xs-6">
+								<div class="ui-field-contain">
+									<label for="month">月</label>
+									<select name="month" id="month" v-model="form.month">
+										<option v-for="i in 12" v-bind:value="i">{{ i }}</option>
+									</select>
+								</div>
+							</div>
+						</div>
+						<div class="ui-field-contain">
+							<label for="xun">旬</label>
+							<select type="text" name="xun" id="xun" v-model="form.xun" >
+								<option v-for="xun in form.xunList" v-bind:value="xun">{{ xun }}</option>
+							</select>
+						</div>
+						<div v-for="(river, index) in form.riverZshus" class="nd2-card">
+							<div class="card-title has-supporting-text">
+								<h3 class="card-primary-title">河流{{ index + 1}}</h3>
+							</div>
+							<div class="card-supporting-text has-action has-title">
+								<div class="ui-field-contain">
+									<label for="">水库名称</label>
+									<select name="" id="" value="" v-model="river.sk">
+										<option value="" disabled>请选择</option>
+										<option v-for="pool in river.poolList" v-bind:value="pool">{{ pool }}</option>
+									</select>
+								</div>
+								<div class="ui-field-contain">
+									<label for="">河流名称</label>
+									<select name="" id="" value="" v-model="river.hl">
+										<option value="" disabled>请选择</option>
+										<option v-for="name in river.nameList" v-bind:value="name">{{ name }}</option>
+									</select>
+								</div>
+								<div class="ui-field-contain">
+									<label v-bind:for="'point' + index">采样点</label>
+									<input type="text" name="point" v-bind:id="'point_' + index" v-model="river.point"/>
+								</div>
+								<div class="ui-field-contain">
+									<label v-bind:for="'lon' + index">经度</label>
+									<input type="text" name="lon" v-bind:id="'lon_' + index" v-model="river.lon"/>
+								</div>
+								<div class="ui-field-contain">
+									<label v-bind:for="'lat' + index">纬度</label>
+									<input type="text" name="lat" v-bind:id="'lat_' + index" v-model="river.lat"/>
+								</div>
+								<div class="ui-field-contain">
+									<label v-bind:for="'sz_' + index">水质等级</label>
+									<select name="sz" v-bind:id="'sz_' + index" v-model="river.sz">
+										<option v-for="indicate in river.indicateList" v-bind:value="indicate">{{ indicate }}</option>
+									</select>
+								</div>
+								<div class="ui-field-contain">
+									<label v-bind:for="'kmo' + index">高锰酸盐</label>
+									<input type="text" name="kmo" v-bind:id="'kmo_' + index" v-model="river.kmo"/>
+								</div>
+								<div class="ui-field-contain">
+									<label v-bind:for="'nhn' + index">氨氮</label>
+									<input type="text" name="nhn" v-bind:id="'nhn_' + index" v-model="river.nhn"/>
+								</div>
+								<div class="ui-field-contain">
+									<label v-bind:for="'sp' + index">总磷</label>
+									<input type="text" name="sp" v-bind:id="'sp_' + index" v-model="river.sp"/>
+								</div>
+								<div class="ui-field-contain">
+									<label v-bind:for="'xfw' + index">悬浮物</label>
+									<input type="text" name="xfw" v-bind:id="'xfw_' + index" v-model="river.xfw"/>
+								</div>
+							</div>
+							<div class="card-action">
+								<div class="row between-xs">
+									<div class="col-xs-12 align-right">
+										<a href="#" class="ui-btn clr-primary ui-btn-inline" v-on:click="minusInticator(index)">删除</a>
+									</div>
+								</div>
+							</div>
+						</div>
+					</form>
+					<div class="row between-xs">
+						<div class="col-xs-12 align-center">
+							<button href="#" class="ui-btn ui-btn-icon-left ui-btn-inline clr-primary" v-on:click="addRiver()">添加河流</button>
+							<button href="#" class="ui-btn ui-btn-icon-left ui-btn-inline" v-on:click="clean()">清空</button>
+							<button href="#" class="ui-btn ui-btn-icon-left ui-btn-inline ui-btn-raised clr-primary" v-on:click="submit()">提交</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript" src="../vuejs/vue.min.js"></script>
+	<script type="text/javascript" src="../datejs/date-zh-CN.js"></script>
+	<script type="text/javascript" src="model/River.js" ></script>
+	<script type="text/javascript" src="model/OtherW.js" ></script>
+	<script type="text/javascript">
+		var mainpageVM = new Vue({
+			el: "#root",
+			data: {
+				items: [],
+				selected_id: 0,
+				total: 0,
+				page: 0,
+				form: new OtherW(),
+				searchText: {
+					year: new Date().toString("yyyy"),
+					month: new Date().toString("M"),
+					xun: ""
+				},
+				showPagination: true,
+				detail: new OtherW(),
+				submit_status: ""
+			},
+			methods: {
+				getItems: function(obj) {
+					$.ajax({
+						type: "get",
+						url: "http://61.136.146.172:8080/huangbaihe/River/querybypage",
+						dataType: "JSON",
+						data: {
+							page: obj.page + 1,
+							rows: 10
+						},
+						success: function(data) {
+							obj.items = data.rows.map(function(item) {
+								return new OtherW(item);
+							});
+							obj.total = data.total;
+						}
+					});
+				},
+				previousPage: function() {
+					mainpageVM.page -= 1;
+					mainpageVM.getItems();
+				},
+				nextPage: function() {
+					mainpageVM.page += 1;
+					mainpageVM.getItems();
+				},
+				refresh: function() {
+					mainpageVM.getItems(mainpageVM);
+				},
+				addRiver: function() {
+					this.form.riverZshus.push(new River());
+					setTimeout(function() {
+						$("form").trigger("create")
+					}, 10)
+				},
+				submit: function() {
+					$.ajax({
+						type: "POST",
+						url: "http://61.136.146.172:8080/huangbaihe/River/save",
+						data: mainpageVM.form.toForm().substr(1),
+						success: function() {
+							mainpageVM.submit_status = "提交成功";
+							new $.nd2Toast({
+								message : "提交成功", // Required
+							});
+						},
+						error: function() {
+							mainpageVM.submit_status = "提交失败";
+							new $.nd2Toast({
+								message : "提交失败", // Required
+							});
+						}
+					});
+				},
+				clean: function() {
+					mainpageVM.form = new OtherW();
+				},
+				createForm: function() {
+					if (auth("daily", "add")) {
+						mainpageVM.form = new OtherW();
+					}
+				},
+				minusInticator: function(index) {
+					mainpageVM.form.riverZshus.splice(index, 1);
+				},
+				searchItems: function(searchText) {
+					$.ajax({
+						type:"POST",
+						url:"http://61.136.146.172:8080/huangbaihe/River/query",
+						dataType: "json",
+						data: {
+							yearm: mainpageVM.searchText.year + "年" + mainpageVM.searchText.month + "月",
+							xun: mainpageVM.searchText.xun
+						},
+						success: function(data) {
+							mainpageVM.items = data.rows;
+							mainpageVM.total = data.total;
+							mainpageVM.showPagination = false;
+						},
+						error: function() {
+							new $.nd2Toast({
+								message : "查询失败", // Required
+							});
+						}
+					}).done(function() {
+						$("#popupFilter").popup("close");
+					});
+				},
+				clearSearch: function() {
+					mainpageVM.showPagination = true;
+					mainpageVM.getItems(mainpageVM)
+				},
+				queryRiver: function () {
+					$.ajax({
+						type: "POST",
+						url: "http://61.136.146.172:8080/huangbaihe/River/queryhl",
+						dataType: "JSON",
+						success: function (data) {
+							River.prototype.nameList = data;
+						}
+					})
+				}
+			},
+			watch: {
+				selected_id: function (newId, oldId) {
+					$.ajax({
+						type: "post",
+						url: "http://61.136.146.172:8080/huangbaihe/River/querybyid",
+						dataType: "json",
+						data: {
+							tx_id: newId
+						},
+						success: function (data) {
+							mainpageVM.detail = new OtherW(data);
+						}
+					});
+				}
+			},
+			computed: {
+				previousPageEnable: function() {
+					return this.page > 0
+				},
+				nextPageEnable: function() {
+					return this.page < (this.totalPages - 1)
+				},
+				totalPages: function() {
+					return Math.ceil(this.total / 10)
+				}
+			},
+			created: function() {
+				var obj = this;
+				this.getItems(obj);
+				// this.queryRiver();
+			}
+		});
+
+		function back() {
+			window.location = "../index.html";
+		}
+	</script>
+
+</html>

@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+		<title>黄柏河流域综合执法信息管理系统</title>
+		<link rel="stylesheet" href="../../jquery.mobile-1.4.5/jquery.mobile-1.4.5.css">
+		<link rel="stylesheet" href="../../nativeDroid2/vendor/waves/waves.min.css" />
+		<link rel="stylesheet" href="../../nativeDroid2/vendor/wow/animate.css"/>
+		<link rel="stylesheet" href="../../nativeDroid2/css/nativedroid2.css" />
+		<link rel="stylesheet" href="../../nativeDroid2/css/nativedroid2.color.green.css" />
+		<script src="../../jquery.mobile-1.4.5/jquery-2.1.4.min.js"></script>
+		<script src="../../nativeDroid2/jquery-ui.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../../jquery.mobile-1.4.5/jquery.mobile-1.4.5.js"></script>
+		<script src="../../nativeDroid2/vendor/waves/waves.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../../nativeDroid2/vendor/wow/wow.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../../nativeDroid2/js/nativedroid2.js"></script>
+		<script type="text/javascript" src="../../nativeDroid2/nd2settings.js" ></script>
+		<script src="../../js/auth.js"></script>
+		<script>
+			auth("case", "read", null, 2);
+		</script>
+		<style type="text/css">
+			span.listview-aside {
+				font-size: 14px;
+				position: relative;
+				float: right;
+				margin: 0px auto;
+			}
+			
+			ul li p.listview-aside {
+				font-size: 14px;
+				word-wrap: break-word;
+				white-space: normal;
+			}
+			
+			.ui-field-contain {
+				border-bottom-width: 0px;
+			}
+			
+			.item-title {
+				font-weight: bold;
+			}
+
+			#action-bar {
+				display: flex;
+				display: -webkit-flex;
+				-webkit-justify-content: center;
+				justify-content: center;
+				margin: 0px -16px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div data-role="page" id="root">
+			<div data-role="header" data-position="fixed" data-tap-toggle="false">
+				<a href="#" class="ui-btn" onclick="back()">
+					<i class="zmdi zmdi-arrow-back"></i>
+				</a>
+				<h1>陈述申辩笔录</h1>
+			</div>
+			<div id="detail-listview" data-role="main" class="ui-content">
+                <form action="#" @submit.prevent="">
+                    <ul data-role="listview" data-inset="true">
+                        <li v-for="(dommap, index) in detail.domMap" v-if="dommap.show(au)">
+                            <b>{{ dommap.name }}</b>
+                            <span v-if="dommap.type === 'span' " class="listview-aside">{{ dommap.get(detail) }}</span>
+                            <p v-else-if="dommap.type === 'p' " class="listview-aside">{{ dommap.get(detail) }}</p>
+                            <textarea v-else-if="dommap.type === 'textarea' " v-bind:name="dommap.key" v-bind:id="dommap.key" v-model="detail[dommap.key]"></textarea>
+                            <select v-else-if="dommap.type === 'select' " v-bind:name="dommap.key" v-bind:id="dommap.key" v-model="detail[dommap.key]">
+                                <option v-for="(opt, i) in dommap.options" v-bind:value="opt.value">{{ opt.text }}</option>
+                            </select>
+                            <input v-else v-bind:type="dommap.type" v-bind:name="dommap.key" v-bind:id="dommap.key" v-model="detail[dommap.key]">
+                        </li>
+                    </ul>
+				</form>
+				<div class="row between-xs" id="action-bar">
+					<a v-if="showUpdate" href="#" class="ui-btn clr-btn-teal ui-btn-icon-left ui-btn-raised ui-btn-inline" @click="update()">
+						<i class="md zmdi zmdi-edit"></i>修改
+					</a>
+					<a v-if="showSubmit" href="#" class="ui-btn clr-btn-light-green ui-btn-icon-left ui-btn-raised ui-btn-inline" @click="submit()">
+						<i class="md zmdi zmdi-mail-send"></i>提交
+					</a>
+					<a v-if="showExam" href="#" class="ui-btn clr-btn-orange ui-btn-icon-left ui-btn-raised ui-btn-inline" @click="exam()">
+						<i class="md zmdi zmdi-eye"></i>审核
+					</a>
+					<a v-if="showReExam" href="#" class="ui-btn clr-btn-deep-orange ui-btn-icon-left ui-btn-raised ui-btn-inline" @click="reExam()">
+						<i class="md zmdi zmdi-check"></i>审批
+					</a>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript" src="../../vuejs/vue.min.js"></script>
+	<script type="text/javascript" src="../../datejs/date-zh-CN.js"></script>
+	<!-- Vue Model -->
+	<script type="text/javascript" src="model/StateDefendNote.js" ></script>
+    <script type="text/javascript">
+		var mainpageVM = new Vue({
+			el: "#root",
+			data: {
+				caseId: localStorage.getItem("caseID"),
+				detail: new StateDefendNote(),
+				au: JSON.parse(localStorage.getItem("au"))
+			},
+			methods: {
+				queryDoc: function(caseId, obj) {
+					$.ajax({
+						type: "post",
+						url: "http://localhost:8080/huangbaihe/notePleadSubmit/getOneForm",
+                        dataType: "jsonp",
+                        contentType: "application/x-www-form-urlencoded;charset=UTF-8",
+						data: {
+							caseID: caseId
+						},
+						success: function (data) {
+							obj.detail = new StateDefendNote(data);
+						},
+						error: function (){
+							new $.nd2Toast({
+								message: "获取陈述申辩笔录失败"
+							})
+						}
+					});
+				},
+				submit: function () {
+					
+				},
+				update: function () {
+					
+				},
+				exam: function () {
+					
+				},
+				reExam: function () {
+					
+				}
+
+			},
+			computed: {
+				showSubmit: function () {
+					return true;
+				},
+				showUpdate: function () {
+					return true;
+				},
+				showExam: function () {
+					return false;
+				},
+				showReExam: function () {
+					return true;
+				}
+			},
+			created: function() {
+                var obj = this;
+				if (!this.caseId) {
+					// back();
+				}
+				this.queryDoc(this.caseId, this)
+			}
+		});
+
+		function back() {
+			window.location = "../caseindex.html#page_document";
+		}
+	</script>
+
+</html>

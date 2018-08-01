@@ -1,0 +1,29 @@
+span.listview-aside {
+    font-size: 14px;
+    position: relative;
+    float: right;
+    margin: 0px auto;
+}
+
+ul li p.listview-aside {
+    font-size: 14px;
+    word-wrap: break-word;
+    white-space: normal;
+}
+
+.ui-field-contain {
+    border-bottom-width: 0px;
+}
+
+.item-title {
+    font-weight: bold;
+}
+
+.action-bar {
+    text-align: center;
+    margin: 0 -16px;
+}
+
+.ui-li-static > textarea.ui-input-text {
+    margin-bottom: 0px;
+}

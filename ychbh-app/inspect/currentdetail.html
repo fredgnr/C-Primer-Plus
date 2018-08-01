@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+		<title>黄柏河流域综合执法信息管理系统</title>
+		<link rel="stylesheet" href="../jquery.mobile-1.4.5/jquery.mobile-1.4.5.css">
+		<link rel="stylesheet" href="../jquery-mobile-datepicker-wrapper/jquery.mobile.datepicker.css">
+		<link rel="stylesheet" href="../jquery-mobile-datepicker-wrapper/jquery.mobile.datepicker.theme.css">
+		<script src="../jquery.mobile-1.4.5/jquery-2.1.4.min.js"></script>
+		<script src="../jquery.mobile-1.4.5/jquery.mobile-1.4.5.js"></script>
+		<script src="../jquery.mobile-1.4.5/jquery.ui.datepicker.js"></script>
+		<script src="../jquery-mobile-datepicker-wrapper/jquery.mobile.datepicker.js"></script>
+		<script type="text/javascript" src="../vuejs/vue.min.js"></script>
+		<script type="text/javascript" src="../datejs/date-zh-CN.js"></script>
+		<link rel="stylesheet" href="../nativeDroid2/css/nativedroid2.css" />
+		<link rel="stylesheet" href="../nativeDroid2/css/nativedroid2.color.green.css" />
+		<script src="../nativeDroid2/js/nativedroid2.js"></script>
+		<style type="text/css">
+			span.listview-aside {
+				font-size: 14px;
+				position: relative;
+				float: right;
+				margin: 0px auto;
+				vertical-align: middle;
+			}
+			
+			ul li p.listview-aside {
+				font-size: 14px;
+				word-wrap: break-word;
+				white-space: normal;
+			}
+		</style>
+		<script src="../js/auth.js"></script>
+		<script>
+			auth("daily", null, window.location.pathname.replace("detail", ""));
+		</script>
+	</head>
+
+	<body>
+		<div data-role="page">
+			<div data-role="header" data-position="fixed" data-tap-toggle="false">
+				<a href="#" onclick="back()" class="ui-btn"><i class="zmdi zmdi-arrow-back"></i></a>
+				<h1>监察记录详情详情</h1>
+			</div>
+			<div id="main" data-role="main" class="ui-content">
+				<h4>编号：{{ item.ins_id }}</h3>
+			<ul id="content" data-role="listview" data-inset="false">
+				<li>
+					<b>被监察单位</b>
+					<span class="listview-aside">{{ item.factory_name }}</span>
+				</li>
+				<li>
+					<b>项目名称</b>
+					<span class="listview-aside">{{ item.project_name }}</span>
+				</li>
+				<li>
+					<b>公司地址</b>
+					<span class="listview-aside">{{ item.factory_location }}</span>
+				</li>
+				<li>
+					<b>项目地址</b>
+					<p class="listview-aside">{{ item.project_location }}</p>
+				</li>
+				<li>
+					<b>所属河段</b>
+					<p class="listview-aside">{{ item.dis_river }}</p>
+				</li>
+				<li>
+					<b>法人代表</b>
+					<span class="listview-aside">{{ item.law_person }}</span>
+				</li>
+				<li>
+					<b>法人电话</b>
+					<span class="listview-aside">{{ item.law_tell }}</span>
+				</li>
+				<li>
+					<b>现场负责人</b>
+					<span class="listview-aside">{{ item.principal }}</span>
+				</li>
+				<li>
+					<b>职务</b>
+					<span class="listview-aside">{{ item.person_type }}</span>
+				</li>
+				<li>
+					<b>负责人电话</b>
+					<span class="listview-aside">{{ item.person_tell }}</span>
+				</li>
+				<li data-role="list-divider"><h3>项目情况</h3></li>
+				<li>
+					<b>项目类别</b>
+					<span class="listview-aside">{{ item.project_type == "其他" ? item.project_type_other : item.project_type }}</span>
+				</li>
+				<li>
+					<b>项目状态</b>
+					<span class="listview-aside">{{ item.project_state }}</span>
+				</li>
+				<li>
+					<b>其他情况</b>
+					<p class="listview-aside">{{ item.project_other }}</p>
+				</li>
+				<li data-role="list-divider"><h3>行政审批及许可</h3></li>
+				<li>
+					<div class="ui-grid-b">
+						<div class="ui-block-a"><b>环评</b></div>
+						<div class="ui-block-b">需办理：{{ item.environment_n }}</div>
+						<div class="ui-block-c">是否办：{{ item.environment }}</div>
+					</div>
+				</li>
+				<li>
+					<div class="ui-grid-b">
+						<div class="ui-block-a"><b>防洪</b>	</div>
+						<div class="ui-block-b">需办理：{{ item.flood_n }}</div>
+						<div class="ui-block-c">是否办：{{ item.flood }}</div>
+					</div>
+				</li>
+				<li>
+					<div class="ui-grid-b">
+						<div class="ui-block-a"><b>水保</b>	</div>
+						<div class="ui-block-b">需办理：{{ item.waterp_n }}</div>
+						<div class="ui-block-c">是否办：{{ item.waterp }}</div>
+					</div>
+				</li>
+				<li>
+					<div class="ui-grid-b">
+						<div class="ui-block-a"><b>取水</b>	</div>
+						<div class="ui-block-b">需办理：{{ item.water_n }}</div>
+						<div class="ui-block-c">是否办：{{ item.water }}</div>
+					</div>
+				</li>
+				<li>
+					<div class="ui-grid-b">
+						<div class="ui-block-a"><b>排污口</b>	</div>
+						<div class="ui-block-b">需办理：{{ item.pollutionset_n }}</div>
+						<div class="ui-block-c">是否办：{{ item.pollutionset }}</div>
+					</div>
+				</li>
+				<li>
+					<div class="ui-grid-b">
+						<div class="ui-block-a"><b>排污</b>	</div>
+						<div class="ui-block-b">需办理：{{ item.pollution_n }}</div>
+						<div class="ui-block-c">是否办：{{ item.pollution }}</div>
+					</div>
+				</li>
+				<li>
+					<div class="ui-grid-b">
+						<div class="ui-block-a"><b>采砂</b>	</div>
+						<div class="ui-block-b">需办理：{{ item.sand_n }}</div>
+						<div class="ui-block-c">是否办：{{ item.sand }}</div>
+					</div>
+				</li>
+				<li>
+					<b>其他</b>
+					<span class="listview-aside">{{ item.perother }}</span>
+				</li>
+				<li data-role="list-divider"><h3>主污染防治——环评情况</h3></li>
+				<li>
+					<b>建设与环评一致性</b>
+					<span class="listview-aside">{{ item.en_constent }}</span>
+				</li>
+				<li>
+					<b>未经环评审批的新建项目</b>
+					<span class="listview-aside">{{ item.en_project }}</span>
+				</li>
+				<li>
+					<b>问题描述</b>
+					<p class="listview-aside">{{ item.en_problem }}</p>
+				</li>
+				<li data-role="list-divider"><h3>主污染防治——排污口及排污情况 </h3></li>
+				<li>
+					<b>排污口设置规范性</b>
+					<span class="listview-aside">{{ item.po_set }}</span>
+				</li>
+				<li>
+					<b>排污总量 </b>
+					<span class="listview-aside">{{ item.po_num }}</span>
+				</li>
+				<li>
+					<b>违法设置排污口</b>
+					<span class="listview-aside">{{ item.po_ill_set }}</span>
+				</li>
+				<li>
+					<b>私设暗管</b>
+					<span class="listview-aside">{{ item.po_pipe }}</span>
+				</li>
+				<li>
+					<b>违规排污</b>
+					<span class="listview-aside">{{ item.po_illeg }}</span>
+				</li>
+				<li>
+					<b>问题描述</b>
+					<p class="listview-aside">{{ item.po_problem }}</p>
+				</li>
+				<li data-role="list-divider"><h3>水污染防治——“三同时”执行</h3></li>
+				<li>
+					<b>未执行“三同时”建设项目</b>
+					<span class="listview-aside">{{ item.thr_project }}</span>
+				</li>
+				<li>
+					<b>问题描述</b>
+					<p class="listview-aside">{{ item.thr_problem }}</p>
+				</li>
+				<li data-role="list-divider"><h3>水污染防治———设施建设、运行及管理 </h3></li>
+				<li>
+					<b>沉淀池</b>
+					<span class="listview-aside">{{ item.pool }}</span>
+				</li>
+				<li>
+					<b>使用凝絮剂</b>
+					<span class="listview-aside">{{ item.flocculant }}{{ item.flocculant == "有" ? "：" + item.flocculant_name : "" }}</span>
+				</li>
+				<li>
+					<b>生活污水微动力处理</b>
+					<span class="listview-aside">{{ item.life_mp }}</span>
+				</li>
+				<li>
+					<b>设施运管台账</b>
+					<span class="listview-aside">{{ item.equip_record }}</span>
+				</li>
+				<li>
+					<b>问题描述</b>
+					<p class="listview-aside">{{ item.equip_problem }}</p>
+				</li>
+				<li data-role="list-divider"><h3>水污染防治——自动在线监控  </h3></li>
+				<li>
+					<b>自动监控设备状态</b>
+					<span class="listview-aside">{{ item.auto_monit }}</span>
+				</li>
+				<li>
+					<b>在线监测数据</b>
+					<span class="listview-aside">{{ item.online_data }}</p>
+				</li>
+				<li>
+					<b>问题描述</b>
+					<p class="listview-aside">{{ item.auto_problem }}</p>
+				</li>
+				<li data-role="list-divider"><h3>水污染防治——固体废物</h3></li>
+				<li>
+					<b>一般固废-管理规范</b>
+					<span class="listview-aside">{{ item.normal_solid }}</span>
+				</li>
+				<li>
+					<b>危险废物-符合要求</b>
+					<span class="listview-aside">{{ item.danger_solid }}</span>
+				</li>
+				<li>
+					<b>问题描述</b>
+					<p class="listview-aside">{{ item.solid_problem }}</p>
+				</li>
+				<li data-role="list-divider"><h3>水污染防治——取水许可情况 </h3></li>
+				<li>
+					<b>取水许可情况-符合取水许可规定</b>
+					<span class="listview-aside">{{ item.water_per }}</span>
+				</li>
+				<li>
+					<b>未经许可取水口</b>
+					<span class="listview-aside">{{ item.water_noper }}</span>
+				</li>
+				<li>
+					<b>问题描述</b>
+					<p class="listview-aside">{{ item.water_problem }}</p>
+				</li>
+				<li data-role="list-divider"><h3>水土保持  </h3></li>
+				<li>
+					<b>存在法律禁止的开垦、开发活动<br />或可能造成水土流失的活动</b>
+					<span class="listview-aside">{{ item.ws_activity }}</span>
+				</li>
+				<li>
+					<b>建设与水保方案一致性</b>
+					<span class="listview-aside">{{ item.ws_constent }}</span>
+				</li>
+				<li>
+					<b>未执行“三同时”建设项目</b>
+					<span class="listview-aside">{{ item.ws_three }}</span>
+				</li>
+				<li>
+					<b>未经水保方案审批的新建项目</b>
+					<span class="listview-aside">{{ item.ws_project }}</span>
+				</li>
+				<li>
+					<b>问题描述</b>
+					<p class="listview-aside">{{ item.ws_problem }}</p>
+				</li>
+				<li data-role="list-divider"><h3>河道及水工程</h3></li>
+				<li>
+					<b>建设符合防洪评价</b>
+					<span class="listview-aside">{{ item.rp_constent }}</span>
+				</li>
+				<li>
+					<b>未经防洪影响评价审批的新建项目</b>
+					<span class="listview-aside">{{ item.rp_project }}</span>
+				</li>
+				<li>
+					<b>是否属于水工程管理和保护范围</b>
+					<span class="listview-aside">{{ item.rp_zone }}</span>
+				</li>
+				<li>
+					<b>河道采砂</b>
+					<span class="listview-aside">{{ item.r_sand }}</span>
+				</li>
+				<li>
+					<b>阻碍行洪</b>
+					<span class="listview-aside">{{ item.hinder_flood }}</span>
+				</li>
+				<li>
+					<b>问题描述</b>
+					<p class="listview-aside">{{ item.rp_problem }}</p>
+				</li>
+				<li data-role="list-divider"><h3>其他</h3></li>
+				<li>
+					<b>其他问题 </b>
+					<p class="listview-aside">{{ item.other }}</p>
+				</li>
+				<li data-role="list-divider"><h3>结论</h3>li>
+				<li>
+					<b>检查结论 </b>
+					<p class="listview-aside">{{ item.result }}</p>
+				</li>
+				<li>
+					<b>处理意见 </b>
+					<p class="listview-aside">{{ item.advice }}</p>
+				</li>
+				<li>
+					<b>检查人</b>
+					<span class="listview-aside">{{ item.personone + "(" + item.tellone +")" }}</span>
+				</li>
+				<li>
+					<b>记录人</b>
+					<span class="listview-aside">{{ item.record_sign }}</span>
+				</li>
+				<li>
+					<b>被检查单位现场负责人</b>
+					<span class="listview-aside">{{ item.person_sign }}</span>
+				</li>
+				<li>
+					<b>检查单位</b>
+					<span class="listview-aside">{{ item.department }}</span>
+				</li>
+				<li>
+					<b>完成时间</b>
+					<span class="listview-aside">{{ item.insdate }}</span>
+				</li>
+			</ul>
+			
+		</div>
+	</div>
+</body>
+
+<script>
+	var content = new Vue({
+		el: "#main",
+		data: {
+			item: {}
+		}
+	})
+	
+	/**
+	 * 获取GET参数
+	 * @param {String} name 参数名
+	 */
+	function getURLParameter(name) {  
+	    return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search)||[,""])[1].replace(/\+/g, '%20'))||null;  
+	}
+	
+	$(document).ready(function() {
+		var id = getURLParameter("index");
+		// $.ajax({
+		// 	id: id
+		// }, function(data) {
+		// 	content.item = data
+		// })
+		$.ajax({
+			method: "POST",
+			url: "http://61.136.146.172:8080/huangbaihe/CruIns/querybyid",
+			data: {
+				id: id
+			},
+			success: function (data) {
+				content.item = data
+			}
+		})
+	});
+	function back() {
+		window.location = "current.html";
+	}
+	function gotomain(name) {
+		window.location = "../company/main.html" + name;
+	}
+</script>
+</html>

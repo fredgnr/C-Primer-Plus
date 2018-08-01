@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <link rel="stylesheet" type="text/css" href="../statics/jquery-easyui-1.5.3/themes/icon.css">
+        <link rel="stylesheet" type="text/css" href="../statics/jquery-easyui-1.5.3/themes/gray/easyui.css">
+        <script src="http://cdn.static.runoob.com/libs/jquery/2.1.1/jquery.min.js"></script>
+        <script src="../statics/jquery-easyui-1.5.3/jquery.easyui.min.js"></script>
+        <title>Insert title here</title>
+        <style type="text/css">
+            .table_select {
+                font-size: 10;
+            }
+
+            .table_select td {
+                text-align: right;
+            }
+
+            #mainframe {
+                height: 100%;
+                width: 100%;
+                overflow-x: none;
+            }
+        </style>
+    </head>
+
+    <body onload="initialDetails()">
+        <div id="mainlayout" class="easyui-layout" data-options="fit:true">
+            <div region="west" split="true" title="案件文书" style="width:240px;overflow-x:hidden">
+                <a href="#" plain="true" style="width: 100%;" class="easyui-linkbutton" iconCls="icon-help" onclick="initialDetails()">案件详情</a>
+                <ul id="allTree" class="easyui-tree">
+                    <li>
+                        <span>案源管理文书</span>
+                        <ul>
+                            <li>
+                                <span>
+                                    <a id="formRegistration" onclick="writeFormRegistration()">《案源登记表》</a>
+                                </span>
+                            </li>
+                            <li>
+                                <span>
+                                    <a id="formUnRegisterCase" onclick="writeFormUnRegisterCase()">《不予立案呈批表》</a>
+                                </span>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <span>移送立案文书</span>
+                        <ul>
+                            <li>
+                                <span>
+                                    <a id="formRegisterCase" onclick="writeFormRegisterCase()">《立案呈批表》</a>
+                                </span>
+                            </li>
+                            <li>
+                                <span>
+                                    <a id="formTransferCase" onclick="writeFormTransferCase()">《案件移送呈批表》</a>
+                                </span>
+                            </li>
+                            <li>
+                                <span>
+                                    <a id="" onclick="">《案件移送函》</a>
+                                </span>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <span>调查取证文书</span>
+                        <ul>
+                            <li>
+                                <span>
+                                    <a id="formDetainEvidence" onclick="writeFormDetainEvidence()">《扣押物品呈批表》</a>
+                                </span>
+                                <li>
+                                    <span>
+                                        <a id="formKeepEvidence" onclick="writeFormKeepEvidence()">《先行登记保存物品呈批表》</a>
+                                    </span>
+                                    <li>
+                                        <span>
+                                            <a id="noteSurvey" onclick="writeNoteSurvey()">《勘验笔录》</a>
+                                        </span>
+                                    </li>
+                                    <li>
+                                        <span>
+                                            <a id="noteInspect" onclick="writeNoteInspect()">《检查笔录》</a>
+                                        </span>
+                                    </li>
+                                    <li>
+                                        <span>
+                                            <a id="noteExam" onclick="writeNoteExam()">《询问笔录》</a>
+                                        </span>
+                                    </li>
+                                    <li>
+                                        <span>
+                                            <a id="reportEndInvestigate" onclick="writeReportEndInvestigate()">《案件调查终结报告》</a>
+                                        </span>
+                                    </li>
+                                    <li>
+                                        <span>
+                                            <a id="discussionCase" onclick="writeDiscussionCase()">《案件集体讨论记录》</a>
+                                        </span>
+                                    </li>
+                        </ul>
+                        </li>
+                        <li>
+                            <span>行政命令文书</span>
+                            <ul>
+                                <li>
+                                    <span>
+                                        <a id="noticeStop" onclick="">《责令停止涉嫌违法行为告知书》</a>
+                                    </span>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <span>行政处罚文书</span>
+                            <ul>
+                                <li>
+                                    <span>
+                                        <a id="formWithdrawCase" onclick="writeFormWithdrawCase()">《撤案呈批表》</a>
+                                    </span>
+                                </li>
+                                <li>
+                                    <span>
+                                        <a id="formPunishment" onclick="writeFormPunishment()">《行政处罚呈批表》</a>
+                                    </span>
+                                </li>
+                                <li>
+                                    <span>
+                                        <a id="noticePunishmentPretell" onclick="writeNoticePunishmentPretell()">《行政处罚事先告知书》</a>
+                                    </span>
+                                </li>
+                                <li>
+                                    <span>
+                                        <a id="decisionPunishmentInSpot" onclick="writeDecisionPunishmentInSpot()">《当场行政处罚决定书》</a>
+                                    </span>
+                                </li>
+                                <li>
+                                    <span>
+                                        <a id="noticeGHearingPunishment" onclick="writeNoticeGHearingPunishment()">《行政处罚听证告知书》</a>
+                                    </span>
+                                </li>
+                                <li>
+                                    <span>
+                                        <a id="noticeHearingPunishment" onclick="writeNoticeHearingPunishment()">《行政处罚听证通知书》</a>
+                                    </span>
+                                </li>
+                                <li>
+                                    <span>
+                                        <a id="notePlead" onclick="writeNotePlea()">《陈述申辩笔录》</a>
+                                    </span>
+                                </li>
+                                <li>
+                                    <span>
+                                        <a id="noteHearingPunishment" onclick="writeNoteHearingPunishment()">《行政处罚听证笔录》</a>
+                                    </span>
+                                </li>
+                                <li>
+                                    <span>
+                                        <a id="opinionHearingPunishment" onclick="writeOpinionHearingPunishment()">《行政处罚听证意见书》</a>
+                                    </span>
+                                </li>
+                                <li>
+                                    <span>
+                                        <a id="discussionImportantCase" onclick="writeDiscussionImportantCase()">《重大案件集体讨论记录》</a>
+                                    </span>
+                                </li>
+                                <li>
+                                    <span>
+                                        <a id="formPunishmentDecisionExam" onclick="writeFormPunishmentDecisionExam()">《行政处罚决定审批表》</a>
+                                    </span>
+                                </li>
+                                <li>
+                                    <span>
+                                        <a id="decisionPunishment" onclick="writeDecisionPunishment()">《行政处罚决定书》</a>
+                                    </span>
+                                </li>
+                                <li>
+                                    <span>
+                                        <a id="formNotPunishmentDecisionExam" onclick="writeFormNotPunishmentDecisionExam()">《不予行政处罚决定审批表》</a>
+                                    </span>
+                                </li>
+                                <li>
+                                    <span>
+                                        <a id="reportEndCasePunishment" onclick="writeReportEndCasePunishment()">《行政处罚结案报告》</a>
+                                    </span>
+                                </li>
+                            </ul>
+                        </li>
+                </ul>
+            </div>
+            <div id="content" region="center" title="案件详情" style="padding:5px; overflow:hidden">
+                <iframe id="mainframe" frameborder="no" border="0" style="height:100%;width:100%" marginwidth="0" marginheight="0"
+                    allowtransparency="yes"> </iframe>
+            </div>
+        </div>
+        <input type="hidden" id="transferCaseID"></input>
+        <div>
+            <script>
+
+                var thisURL = document.URL;
+                var caseId = thisURL.split('?')[1];
+                //alert(caseId);
+                var caseInfoMap;
+                var au = getCookie('au');
+                var user = JSON.parse(au);
+
+                function initialDetails() {
+                    $("#mainframe").attr("src", "CaseDetail.html?" + caseId);
+                    console.log(user);
+                    /*  $("#allTree").tree("collapseAll");  */
+                    var testMap = {
+                        "caseID": caseId
+                    };
+
+                    $.ajax({
+                        async: false,
+                        cache: false,
+                        type: 'POST',
+                        url: '../getInfoCaseController/getCaseInfo',
+                        data: JSON.stringify(testMap),
+                        contentType: 'application/json;charset=utf-8',
+                        dataType: 'json',
+                        success: function (data) {
+                            //alert("peace");
+                            caseInfoMap = data;
+                            //alert(caseInfoMap["reportDate"]);
+                        }
+                    });
+                    switch (caseInfoMap["discussionImportantCaseState"]) {
+                        case "0": document.getElementById("discussionImportantCase").style.color = "red"; break;
+                        case "1": document.getElementById("discussionImportantCase").style.color = "green"; break;
+                        default: break;
+                    }
+                    switch (caseInfoMap["noticeGHearingPunishmentState"]) {
+                        case "0": document.getElementById("noticeGHearingPunishment").style.color = "red"; break;
+                        case "1": document.getElementById("noticeGHearingPunishment").style.color = "green"; break;
+                        default: break;
+                    }
+                    switch (caseInfoMap["noticeHearingPunishmentState"]) {
+                        case "0": document.getElementById("noticeHearingPunishment").style.color = "red"; break;
+                        case "1": document.getElementById("noticeHearingPunishment").style.color = "green"; break;
+                        default: break;
+                    }
+                    switch (caseInfoMap["decisionPunishmentState"]) {
+                        case "0": document.getElementById("decisionPunishment").style.color = "red"; break;
+                        case "1": document.getElementById("decisionPunishment").style.color = "green"; break;
+                        default: break;
+                    }
+                    switch (caseInfoMap["opinionHearingPunishmentState"]) {
+                        case "0": document.getElementById("opinionHearingPunishment").style.color = "red"; break;
+                        case "1": document.getElementById("opinionHearingPunishment").style.color = "green"; break;
+                        default: break;
+                    }
+                    switch (caseInfoMap["noteHearingPunishmentState"]) {
+                        case "0": document.getElementById("noteHearingPunishment").style.color = "red"; break;
+                        case "1": document.getElementById("noteHearingPunishment").style.color = "green"; break;
+                        default: break;
+                    }
+                    switch (caseInfoMap["decisionPunishmentInSpotState"]) {
+                        case "0": document.getElementById("decisionPunishmentInSpot").style.color = "red"; break;
+                        case "1": document.getElementById("decisionPunishmentInSpot").style.color = "green"; break;
+                        default: break;
+                    }
+                    switch (caseInfoMap["discussionCaseState"]) {
+                        case "0": document.getElementById("discussionCase").style.color = "red"; break;
+                        case "1": document.getElementById("discussionCase").style.color = "green"; break;
+                        default: break;
+                    }
+                    switch (caseInfoMap["noticePunishmentPretellState"]) {
+                        case "0": document.getElementById("noticePunishmentPretell").style.color = "red"; break;
+                        case "1": document.getElementById("noticePunishmentPretell").style.color = "green"; break;
+                        default: break;
+                    }
+                    switch (caseInfoMap["reportEndInvestigateSate"]) {
+                        case "0": document.getElementById("reportEndInvestigate").style.color = "red"; break;
+                        case "1": document.getElementById("reportEndInvestigate").style.color = "green"; break;
+                        default: break;
+                    }
+                    switch (caseInfoMap["formRegistrationState"]) {
+                        case "0": document.getElementById("formRegistration").style.color = "red"; break;
+                        case "1": document.getElementById("formRegistration").style.color = "yellow"; break;
+                        case "2": document.getElementById("formRegistration").style.color = "green"; break;
+                        default: break;
+                    }
+                    switch (caseInfoMap["formRegisterCaseSate"]) {
+                        case "0": document.getElementById("formRegisterCase").style.color = "red"; break;
+                        case "1": document.getElementById("formRegisterCase").style.color = "yellow"; break;
+                        case "2": document.getElementById("formRegisterCase").style.color = "yellow"; break;
+                        case "3": document.getElementById("formRegisterCase").style.color = "green"; break;
+                        default: break;
+                    }
+                    switch (caseInfoMap["formUnRegisterCaseSate"]) {
+                        case "0": document.getElementById("formUnRegisterCase").style.color = "red"; break;
+                        case "1": document.getElementById("formUnRegisterCase").style.color = "yellow"; break;
+                        case "2": document.getElementById("formUnRegisterCase").style.color = "yellow"; break;
+                        case "3": document.getElementById("formUnRegisterCase").style.color = "green"; break;
+                        default: break;
+                    }
+                    switch (caseInfoMap["reportEndCasePunishmentState"]) {
+                        case "0": document.getElementById("reportEndCasePunishment").style.color = "red"; break;
+                        case "1": document.getElementById("reportEndCasePunishment").style.color = "yellow"; break;
+                        case "2": document.getElementById("reportEndCasePunishment").style.color = "yellow"; break;
+                        case "3": document.getElementById("reportEndCasePunishment").style.color = "green"; break;
+                        default: break;
+                    }
+                    switch (caseInfoMap["formPunishmentState"]) {
+                        case "0": document.getElementById("formPunishment").style.color = "red"; break;
+                        case "1": document.getElementById("formPunishment").style.color = "yellow"; break;
+                        case "2": document.getElementById("formPunishment").style.color = "yellow"; break;
+                        case "3": document.getElementById("formPunishment").style.color = "green"; break;
+                        default: break;
+                    }
+                    switch (caseInfoMap["formPunishmentDecisionExamSate"]) {
+                        case "0": document.getElementById("formPunishmentDecisionExam").style.color = "red"; break;
+                        case "1": document.getElementById("formPunishmentDecisionExam").style.color = "yellow"; break;
+                        case "2": document.getElementById("formPunishmentDecisionExam").style.color = "yellow"; break;
+                        case "3": document.getElementById("formPunishmentDecisionExam").style.color = "green"; break;
+                        default: break;
+                    }
+                    switch (caseInfoMap["formNotPunishmentDecisionExamSate"]) {
+                        case "0": document.getElementById("formNotPunishmentDecisionExam").style.color = "red"; break;
+                        case "1": document.getElementById("formNotPunishmentDecisionExam").style.color = "yellow"; break;
+                        case "2": document.getElementById("formNotPunishmentDecisionExam").style.color = "yellow"; break;
+                        case "3": document.getElementById("formNotPunishmentDecisionExam").style.color = "green"; break;
+                        default: break;
+                    }
+
+                    /////////调查取证
+                    switch (caseInfoMap["reportEndInvestigateSate"]) {
+                        case "0": document.getElementById("reportEndInvestigate").style.color = "red"; break;
+                        case "1": document.getElementById("reportEndInvestigate").style.color = "green"; break;
+                        default: break;
+                    }
+                    switch (caseInfoMap["noteInspectState"]) {
+                        case "0": document.getElementById("noteInspect").style.color = "red"; break;
+                        case "1": document.getElementById("noteInspect").style.color = "green"; break;
+                        default: break;
+                    }
+                    switch (caseInfoMap["notePleadState"]) {
+                        case "0": document.getElementById("notePlead").style.color = "red"; break;
+                        case "1": document.getElementById("notePlead").style.color = "green"; break;
+                        default: break;
+                    }
+                    switch (caseInfoMap["noteExamState"]) {
+                        case "0": document.getElementById("noteExam").style.color = "red"; break;
+                        case "1": document.getElementById("noteExam").style.color = "green"; break;
+                        default: break;
+                    }
+                    switch (caseInfoMap["noteSurveyState"]) {
+                        case "0": document.getElementById("noteSurvey").style.color = "red"; break;
+                        case "1": document.getElementById("noteSurvey").style.color = "green"; break;
+                        default: break;
+                    }
+
+                    switch (caseInfoMap["formWithdrawCaseState"]) {
+                        case "0": document.getElementById("formWithdrawCase").style.color = "red"; break;
+                        case "1": document.getElementById("formWithdrawCase").style.color = "yellow"; break;
+                        case "2": document.getElementById("formWithdrawCase").style.color = "yellow"; break;
+                        case "3": document.getElementById("formWithdrawCase").style.color = "green"; break;
+                        default: break;
+                    }
+
+                    switch (caseInfoMap["formKeepEvidenceSate"]) {
+                        case "0": document.getElementById("formKeepEvidence").style.color = "red"; break;
+                        case "1": document.getElementById("formKeepEvidence").style.color = "yellow"; break;
+                        case "2": document.getElementById("formKeepEvidence").style.color = "yellow"; break;
+                        case "3": document.getElementById("formKeepEvidence").style.color = "green"; break;
+                        default: break;
+                    }
+
+                    switch (caseInfoMap["formDetainEvidenceSate"]) {
+                        case "0": document.getElementById("formDetainEvidence").style.color = "red"; break;
+                        case "1": document.getElementById("formDetainEvidence").style.color = "yellow"; break;
+                        case "2": document.getElementById("formDetainEvidence").style.color = "yellow"; break;
+                        case "3": document.getElementById("formDetainEvidence").style.color = "green"; break;
+                        default: break;
+                    }
+
+                    //FormTransferCaseState
+                    switch (caseInfoMap["formTransferCaseState"]) {
+                        case "0": document.getElementById("formTransferCase").style.color = "red"; break;
+                        case "1": document.getElementById("formTransferCase").style.color = "yellow"; break;
+                        case "2": document.getElementById("formTransferCase").style.color = "yellow"; break;
+                        case "3": document.getElementById("formTransferCase").style.color = "green"; break;
+                        default: break;
+                    }
+
+                    switch (caseInfoMap["noticeStopState"]) {
+                        case "0": document.getElementById("noticeStop").style.color = "red"; break;
+                        case "1": document.getElementById("noticeStop").style.color = "yellow"; break;
+                        case "2": document.getElementById("noticeStop").style.color = "yellow"; break;
+                        case "3": document.getElementById("noticeStop").style.color = "green"; break;
+                        default: break;
+                    }/*
+		switch(caseInfoMap[""])
+		{
+				  case  "0":document.getElementById("").style.color="red";break;
+				  case  "1":document.getElementById("").style.color="yellow";break;
+				  case  "2":document.getElementById("").style.color="yellow";break;
+				  case  "3":document.getElementById("").style.color="green";break;
+				  default:break;
+		}
+		*/
+
+
+                }
+
+
+
+                function writeNotePlea() {
+                    $("#mainframe").attr("src", "addDocument/addNotePleaView.html?" + caseId);
+                }
+
+
+
+
+
+
+                ////////////////立案呈批表：提交-审核-审批
+                function writeFormRegisterCase() {
+                    $("#mainframe").attr("src", "addDocument/addFormRegisterCase.html?" + caseId);
+                }
+                function examFormRegisterCase() {
+                    $("#mainframe").attr("src", "addDocument/examFormRegisterCase.html?" + caseId);
+                }
+                function reExamFormRegisterCase() {
+                    $("#mainframe").attr("src", "addDocument/reExamFormRegisterCase.html?" + caseId);
+                }
+
+
+
+
+
+
+
+
+
+                /////////////////撤案呈批表：提交-审核-审批
+                function writeFormWithdrawCase() {
+                    $("#mainframe").attr("src", "addDocument/addFormWithdrawCase.html?" + caseId);
+                }
+
+
+
+
+                /////////先行登记保存物品呈批表：提交-审核-审批
+                function writeFormKeepEvidence() {
+                    $("#mainframe").attr("src", "addDocument/addFormKeepEvidence.html?" + caseId);
+                }
+
+
+                ///////////////扣押物品呈批表-提交-审核-审批
+                function writeFormDetainEvidence() {
+                    $("#mainframe").attr("src", "addDocument/addFormDetainEvidence.html?" + caseId);
+                }
+
+
+
+
+                function writeNoteInspect() {
+                    $("#mainframe").attr("src", "addDocument/listNoteInspect.html?" + caseId);
+
+                }
+
+                function writeNoteExam() {
+                    $("#mainframe").attr("src", "addDocument/listNoteExamView.html?" + caseId);
+
+                }
+
+                function writeNoteSurvey() {
+                    $("#mainframe").attr("src", "addDocument/listNoteSurvey.html?" + caseId);
+
+                }
+
+                function writeFormTransferCase() {
+                    $("#mainframe").attr("src", "addDocument/addFormTransferCase.html?" + caseId);
+                }
+                function writeFormUnRegisterCase() {
+                    $("#mainframe").attr("src", "addDocument/addFormUnRegisterCase.html?" + caseId);
+                }
+
+                function writeNoteHearingPunishment() {
+                    $("#mainframe").attr("src", "addDocument/addNoteHearingPunishment.html?" + caseId);
+                }
+
+                function writeDecisionPunishmentInSpot() {
+                    $("#mainframe").attr("src", "addDocument/addDecisionPunishmentInSpot.html?" + caseId);
+                }
+                function writeOpinionHearingPunishment() {
+                    $("#mainframe").attr("src", "addDocument/addOpinionHearingPunishment.html?" + caseId);
+                }
+                function writeDiscussionImportantCase() {
+                    $("#mainframe").attr("src", "addDocument/addDiscussionImportantCase.html?" + caseId);
+                }
+                function writeFormPunishmentDecisionExam() {
+                    $("#mainframe").attr("src", "addDocument/addFormPunishmentDecisionExam.html?" + caseId);
+                }
+                function writeReportEndCasePunishment() {
+                    $("#mainframe").attr("src", "addDocument/addReportEndCasePunishment.html?" + caseId);
+                }
+                function writeDecisionPunishment() {
+                    $("#mainframe").attr("src", "addDocument/addDecisionPunishment.html?" + caseId);
+                }
+                function writeFormNotPunishmentDecisionExam() {
+                    $("#mainframe").attr("src", "addDocument/addFormNotPunishmentDecisionExam.html?" + caseId);
+                }
+                function writeFormRegistration() {
+                    $("#mainframe").attr("src", "addCaseView.html?" + caseId);
+                }
+
+                function writeFormPunishment() {
+                    $("#mainframe").attr("src", "addDocument/addFormPunishment.html?" + caseId);
+                }
+                function writeReportEndInvestigate() {
+                    $("#mainframe").attr("src", "addDocument/addReportEndInvestigate.html?" + caseId);
+                }
+                function writeDiscussionCase() {
+                    $("#mainframe").attr("src", "addDocument/addDiscussionCase.html?" + caseId);
+                }
+                function writeNoticePunishmentPretell() {
+                    $("#mainframe").attr("src", "addDocument/addNoticePunishmentPretell.html?" + caseId);
+                }
+                function writeNoticeGHearingPunishment() {
+                    $("#mainframe").attr("src", "addDocument/addNoticeGHearingPunishment.html?" + caseId);
+                }
+                function writeNoticeHearingPunishment() {
+                    $("#mainframe").attr("src", "addDocument/addNoticeHearingPunishment.html?" + caseId);
+                }
+
+                //设置cookie
+                function setCookie(name, value) {
+                    var Days = 1;
+                    var exp = new Date();
+                    exp.setTime(exp.getTime() + Days * 24 * 60 * 60 * 1000);
+                    document.cookie = name + "=" + escape(value) + ";expires=" + exp.toGMTString();
+                }
+
+                //读取cookies 
+                function getCookie(name) {
+                    var arr, reg = new RegExp("(^| )" + name + "=([^;]*)(;|$)");
+
+                    if (arr = document.cookie.match(reg))
+
+                        return unescape(arr[2]);
+                    else
+                        return null;
+                }
+
+                //删除cookies 
+                function delCookie(name) {
+                    var exp = new Date();
+                    exp.setTime(exp.getTime() - 1);
+                    var cval = getCookie(name);
+                    if (cval != null)
+                        document.cookie = name + "=" + cval + ";expires=" + exp.toGMTString();
+                }
+
+
+
+            </script> </div>
+    </body>
+
+</html>

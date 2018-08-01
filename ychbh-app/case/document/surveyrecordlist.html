@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+		<title>黄柏河流域综合执法信息管理系统</title>
+		<link rel="stylesheet" href="../../jquery.mobile-1.4.5/jquery.mobile-1.4.5.css">
+		<script src="../../jquery.mobile-1.4.5/jquery-2.1.4.min.js"></script>
+		<script src="../../jquery.mobile-1.4.5/jquery.mobile-1.4.5.js"></script>
+		<script type="text/javascript" src="../../vuejs/vue.min.js"></script>
+		<link rel="stylesheet" href="../../nativeDroid2/css/nativedroid2.css" />
+		<link rel="stylesheet" href="../../nativeDroid2/css/nativedroid2.color.green.css" />
+		<link rel="stylesheet" type="text/css" href="../../nativeDroid2/vendor/waves/waves.min.css" />
+		<link rel="stylesheet" type="text/css" href="../../nativeDroid2/vendor/wow/animate.css" />
+		<script src="../../nativeDroid2/js/nativedroid2.js"></script>
+		<script src="../../js/auth.js"></script>
+		<script>
+			auth("case", "read", null, 2);
+		</script>
+	</head>
+
+	<body>
+		<div data-role="page" id="main">
+			<div data-role="header" data-position="fixed" data-tap-toggle="false">
+				<a href="#" onclick="back()" class="ui-btn"><i class="zmdi zmdi-arrow-back"></i></a>
+				<h1>勘验笔录</h1>
+			</div>
+			<div data-role="main" class="ui-content">
+				<input data-type="search" id="filterControlgroup-input" placeholder="搜索..." data-clear-btn>
+				<ul id="content" data-role="listview" data-inset="true" class="ui-li-has-alt ui-first-child" data-filter="true" data-input="#filterControlgroup-input">
+					<li v-for="item in items" :key="item.noteId">
+						<a class="ui-btn ui-icon-eye ui-btn-icon-right" v-on:click="detail(item.noteId)">
+                            <h2>勘察内容：{{item.content}}</h2>
+                            <p>案由：{{item.brief}}</p>
+						</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</body>
+	<script src="../../nativeDroid2/vendor/wow/wow.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../../nativeDroid2/vendor/waves/waves.min.js" type="text/javascript" charset="utf-8"></script>
+	<script>
+		var content = new Vue({
+			el: "#main",
+			data: {
+				items: [],
+                caseId: localStorage.getItem("caseID"),
+			},
+			methods: {
+				showList: function(caseId) {
+					$.ajax({
+						type: "POST",
+						url: "http://61.136.146.172:8080/huangbaihe/noteSurvey/getDocList",
+						dataType: 'json',
+						data: {caseID: caseId},
+						success: function(json) {
+							content.items = json.rows;
+						},
+						error: function() {
+							new $.nd2Toast({
+								message: "获取勘验笔录列表失败"
+							});
+						}
+					});
+				},
+				detail: function(index) {
+					window.location = "surveyrecorddetail.html?noteId=" + index;
+				}
+			}
+		});
+
+		$(document).ready(function() {
+            content.showList(content.caseId);
+		});
+
+		function back() {
+			window.location = "../caseindex.html#page_document";
+		}
+	</script>
+
+</html>

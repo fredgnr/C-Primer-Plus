@@ -1,0 +1,13 @@
+POST http://39.106.145.68:8080/huangbaihe/getInfoCaseController/getCaseInfo HTTP/1.1
+Host: 39.106.145.68:8080
+Proxy-Connection: keep-alive
+Content-Length: 49
+Accept: application/json, text/javascript, */*; q=0.01
+Origin: http://127.0.0.1:5500
+User-Agent: Mozilla/5.0 (iPhone; CPU iPhone OS 10_3 like Mac OS X) AppleWebKit/602.1.50 (KHTML, like Gecko) CriOS/56.0.2924.75 Mobile/14E5239e Safari/602.1
+Content-Type: application/x-www-form-urlencoded; charset=UTF-8
+Referer: http://127.0.0.1:5500/case/document/casedetail.html
+Accept-Encoding: gzip, deflate
+Accept-Language: zh-CN,zh;q=0.9
+
+{"caseID":"37f8709f-13f1-4540-9e79-ee3df4eaf12f"}

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta  http-equiv="Content-Type" content="text/html;charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" >
+<title>黄柏河流域综合执法信息管理系统</title>
+<link rel=stylesheet href='../jquery.mobile-1.4.5/jquery.mobile-1.4.5.css'>  
+<script src='../jquery.mobile-1.4.5/jquery-2.1.4.min.js'></script>  
+<script src='../jquery.mobile-1.4.5/jquery.mobile-1.4.5.js'></script> 
+<style>
+	span.listview-aside {
+	font-size: 14px;
+	position: relative;
+	float: right;
+	margin: 0px auto;
+}
+</style>
+</head>
+<body>
+<div data-role="page">
+		<div data-role="header" data-position="fixed"  data-tap-toggle="false">
+			<a href="#" onclick="back(SlectproID)" class="ui-btn ui-icon-back ui-btn-icon-left">返回</a>
+			<h1 id="approvalname"></h1>
+		</div>
+		<div data-role="main" class="ui-content">
+			<h1>行政审批信息</h1>
+			<ul id="content" data-role="listview" data-inset="true">
+			<li>
+					<b>审批类型:</b>
+					<span class="listview-aside" id="approvaltype"/></span>
+				</li>
+				<li>
+					<b>审批内容:</b>
+					<span class="listview-aside" id="approvalcontent"/></span>
+				</li>
+				<li>
+					<b>审批公司:</b>
+					<span class="listview-aside" id="approvalcompany"/></span>
+				</li>
+				<li>
+					<b>审批文号:</b>
+					<span class="listview-aside" id="approvalnumber"/></span>
+				</li>
+				<li>
+					<b>审批时间:</b>
+					<span class="listview-aside" id="approvaltime"/></span>
+				</li>
+				<li>
+					<b>审批截至时间:</b>
+					<span class="listview-aside" id="approvalendline"/></span>
+				</li>
+			</table>
+		</div>
+		<div style="text-align:center;" data-role="footer" data-position="fixed" data-tap-toggle="false">
+			<div data-role="controlgroup" data-type="horizontal">
+		    <a href="#" onclick="gotomain('#page_main')" class="ui-btn ui-icon-home ui-btn-icon-left">主页</a>
+		    <a href="#" onclick="gotomain('#page_company')" class="ui-btn ui-icon-bullets ui-btn-icon-left">企业</a>
+		    <a href="#" onclick="gotomain('#page_inspect')" class="ui-btn ui-icon-edit ui-btn-icon-left">巡查</a>
+		    <a href="#" onclick="gotomain('#page_case')" class="ui-btn ui-icon-calendar ui-btn-icon-left">案件</a>
+		 	</div>
+		</div>
+  	</div>
+</body>
+<script type="text/javascript">
+function getURLParameter(name) {  
+    return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search)||[,""])[1].replace(/\+/g, '%20'))||null;  
+} 
+var SlectapproID = null;
+var SlectproID = null;
+$(document).ready(function() {
+	SlectapproID = getURLParameter("index");
+	$.ajax({
+		type : "POST",
+		url : "http://61.136.146.172:8080/huangbaihe/Capproval/edit",
+		data : {
+			'index' : SlectapproID
+		},
+		dataType : 'json',
+		success : function(json) {
+			var data = json.rows;
+			$("#approvaltype").html( data.approvalType);
+			$("#approvalname").html( data.approvalName);
+			$("#approvalcontent").html( data.approvalContent);
+			$("#approvalcompany").html( data.approvalCompany);
+			$("#approvalnumber").html( data.approvalNumber);
+			$("#approvaltime").html( data.approvalTime);
+			$("#approvalendline").html( data.approvalEndline);
+			SlectproID = data.projectID;
+		}
+	});
+});
+function back(index){
+	window.location="propage.html?index="+index;
+}
+function gotomain(name){
+	window.location="main.html"+name;
+}
+</script>
+</html>

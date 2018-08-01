@@ -1,0 +1,3 @@
+POST http://39.106.145.68:8080/huangbaihe/login/logincheck HTTP/1.1
+
+userName=李四&password=123

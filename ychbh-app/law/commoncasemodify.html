@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+		<title>黄柏河流域综合执法信息管理系统</title>
+		<link rel="stylesheet" href="../jquery.mobile-1.4.5/jquery.mobile-1.4.5.css">
+		<link rel="stylesheet" href="../nativeDroid2/css/nativedroid2.css" />
+		<link rel="stylesheet" href="../nativeDroid2/css/nativedroid2.color.green.css" />
+		<link rel="stylesheet" type="text/css" href="../nativeDroid2/vendor/waves/waves.min.css" />
+		<link rel="stylesheet" type="text/css" href="../nativeDroid2/vendor/wow/animate.css" />
+		<script src="../jquery.mobile-1.4.5/jquery-2.1.4.min.js"></script>
+		<script src="../jquery.mobile-1.4.5/jquery.mobile-1.4.5.js"></script>
+		<script src="../nativeDroid2/js/nativedroid2.js"></script>
+		<script src="../js/auth.js"></script>
+		<script>
+			auth("lawsystem", "edit", null);
+		</script>
+		<style type="text/css">
+			.ui-field-contain {
+				border-bottom-width: 0px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div data-role="page">
+			<div data-role="header" data-position="fixed" data-tap-toggle="false">
+				<a href="#" onclick="back()" class="ui-btn">
+					<li class="zmdi zmdi-arrow-back"></li>
+				</a>
+				<h1>更改案由</h1>
+				<a href="#" onclick="save()" class="ui-btn">
+					<li class="zmdi zmdi-save"></li>
+				</a>
+			</div>
+			<div data-role="main" class="ui-content">
+				<form method="post" action="demoform.php">
+					<div class="ui-field-contain">
+						<label for="iclass">行业类别</label>
+						<input type="text" name="iclass" id="iclass"></input>
+					</div>
+					<div class="ui-field-contain">
+						<label for="cclass">案由类别</label>
+						<input type="text" name="cclass" id="cclass"></input>
+					</div>
+					<div class="ui-field-contain">
+						<label for="cname">案由名称</label>
+						<input name="cname" id="cname"></input>
+					</div>
+					<div class="ui-field-contain">
+						<label for="bitem">违反条款</label>
+						<input name="bitem" id="bitem"></input>
+					</div>
+					<div class="ui-field-contain">
+						<label for="pbasis">处罚依据</label>
+						<input name="pbasis" id="pbasis"></input>
+					</div>
+					<div style="text-align: center;">
+						<a href="#popupAddBItem" data-rel="popup" data-position-to="window" class="ui-btn ui-corner-all 
+							ui-shadow ui-btn-inline ui-btn-b ui-btn-icon-left ui-icon-plus ui-btn-raised clr-primary" data-transition="pop">添加案由条款和处罚依据</a>
+						<div data-role="popup" data-theme="a" id="popupAddBItem" class="ui-corner-all" style="width: 300px;">
+							<a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a 
+								ui-icon-delete ui-btn-icon-notext ui-btn-right ui-btn-raised clr-primary"></a>
+							<form id="lawinfo">
+								<div style="padding:10px 20px;">
+									<h3>添加违反条款</h3>
+									<select name="lawtype" id="lawtype" onchange="getlawname()">
+										<option disabled selected>法律类型</option>
+									</select>
+									<select name="lawname" id="lawname" onchange="getlawparagraph()">
+										<option disabled selected>法律名称</option>
+									</select>
+									<select name="paragraph" id="paragraph" onchange="getlawitem()">
+										<option disabled selected>条</option>
+									</select>
+									<select name="item" id="item">
+										<option disabled selected>款</option>
+									</select>
+									<button type="submit" onclick="return submitlawitem(0);" class="ui-btn ui-corner-all ui-shadow
+										ui-btn-b ui-btn-icon-left ui-icon-plus ui-btn-raised clr-primary" style="margin-top: 10px; margin-bottom: 5px;">
+										添加违反条例
+									</button>
+									<button type="submit" onclick="return submitlawitem(1);" class="ui-btn ui-corner-all ui-shadow
+										ui-btn-b ui-btn-icon-left ui-icon-plus ui-btn-raised clr-primary">
+										添加处罚依据
+									</button>
+								</div>
+							</form>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+		<script src="../nativeDroid2/vendor/wow/wow.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../nativeDroid2/vendor/waves/waves.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="lawinfoadd.js"></script>
+		<script>
+			function back() {
+				//window.location = "commoncase.html";
+				window.history.back(-1);
+			}
+
+			function getURLParameter(name) {
+				return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search) || [, ""])[1].replace(/\+/g, '%20')) || null;
+			}
+
+			var case_id = -1;
+
+			$(document).ready(function() {
+				var case_name = getURLParameter("case_name");
+				$.ajax({
+					type: "post",
+					url: "http://61.136.146.172:8080/huangbaihe/Lcommoncase/editcase",
+					async: true,
+					data: {
+						case_name: case_name
+					},
+					dataType: 'json',
+					success: function(json) {
+						if(json.rows) {
+							case_id = json.rows.case_id;
+							$("#iclass").val(json.rows.industrytype);
+							$("#cclass").val(json.rows.casetype_name);
+							$("#cname").val(json.rows.case_name);
+							$("#bitem").val(json.rows.case_clause);
+							$("#pbasis").val(json.rows.case_punish);
+						}
+					},
+					error: function() {
+						new $.nd2Toast({
+							message: "获取案由信息失败" // Required
+						});
+					}
+				});
+			});
+
+			function save() {
+				if($("#iclass").val() == "") {
+					new $.nd2Toast({
+						message: "请输入行业类别"
+					});
+					return;
+				}
+				if($("#cclass").val() == "") {
+					new $.nd2Toast({
+						message: "请输入案由类别"
+					});
+					return;
+				}
+				if($("#cname").val() == "") {
+					new $.nd2Toast({
+						message: "请输入案由名称"
+					});
+					return;
+				}
+				if($("#bitem").val() == "") {
+					new $.nd2Toast({
+						message: "请输入违反条款"
+					});
+					return;
+				}
+				if($("#pbasis").val() == "") {
+					new $.nd2Toast({
+						message: "请输入处罚依据"
+					});
+					return;
+				}
+				// 添加案由基本信息
+				var param = {
+					"case_id": case_id,
+					"industrytype": $("#iclass").val(),
+					"case_name": $("#cname").val(),
+					"casetype_name": $("#cclass").val(),
+					"case_clause": $("#bitem").val(),
+					"case_punish": $("#pbasis").val()
+				};
+				$.ajax({
+					type: "POST",
+					url: "http://61.136.146.172:8080/huangbaihe/Lcommoncase/updatecase",
+					data: param,
+					dataType: 'json',
+					success: function(json) {
+						if(!json.status) {
+							new $.nd2Toast({
+								message: "修改失败"
+							});
+						} else {
+							new $.nd2Toast({
+								message: "修改成功"
+							});
+						}
+					},
+					error: function() {
+						new $.nd2Toast({
+							message: "修改失败" // Required
+						});
+					}
+				});
+			}
+		</script>
+	</body>
+
+</html>

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta  http-equiv="Content-Type" content="text/html;charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" >
+<title>黄柏河流域综合执法信息管理系统</title>
+<link rel=stylesheet href='../jquery.mobile-1.4.5/jquery.mobile-1.4.5.css'>  
+<script src='../jquery.mobile-1.4.5/jquery-2.1.4.min.js'></script>  
+<script src='../jquery.mobile-1.4.5/jquery.mobile-1.4.5.js'></script> 
+</head>
+<body>
+
+	<div data-role="page" id="page_main">
+	  <div data-role="header" data-position="fixed"  data-tap-toggle="false">
+			<h1>主页</h1>
+		</div>
+		<div data-role="main" class="ui-content">
+			<a href="project.html">外部连接其他页面</a>
+		</div>
+	<div style="text-align:center;"data-role="footer" data-position="fixed" data-tap-toggle="false">
+		<div data-role="controlgroup" data-type="horizontal">
+		    <a href="#page_main" class="ui-btn ui-icon-home ui-btn-icon-left">主页</a>
+		    <a href="#page_company" class="ui-btn ui-icon-bullets ui-btn-icon-left">企业</a>
+		    <a href="#page_inspect" class="ui-btn ui-icon-edit ui-btn-icon-left">巡查</a>
+		    <a href="#page_case" class="ui-btn ui-icon-calendar ui-btn-icon-left">案件</a>
+		 	</div>
+	</div>
+	</div>
+	
+	<div data-role="page" id="page_company">
+		<div data-role="header" data-position="fixed"  data-tap-toggle="false">
+			<h1>信息管理</h1>
+		</div>
+		<div data-role="main" class="ui-content">
+			<ul data-role="listview">
+			 <li data-role="list-divider">信息聚合</li>
+			  <li><a href="#" onclick="gotopro()">矿业项目</a></li>
+			  <li><a href="#">养殖/化工/石材项目</a></li>
+			  <li><a href="#">企业信息</a></li>
+			  <li data-role="list-divider">地图展示</li>
+			  <li><a href="#" onclick="gotomap()">地图展示</a></li>
+			</ul>
+		</div>
+		
+		<div style="text-align:center;" data-role="footer" data-position="fixed" data-tap-toggle="false">
+			<div data-role="controlgroup" data-type="horizontal">
+		    <a href="#page_main" class="ui-btn ui-icon-home ui-btn-icon-left">主页</a>
+		    <a href="#page_company" class="ui-btn ui-icon-bullets ui-btn-icon-left">企业</a>
+		    <a href="#page_inspect" class="ui-btn ui-icon-edit ui-btn-icon-left">巡查</a>
+		    <a href="#page_case" class="ui-btn ui-icon-calendar ui-btn-icon-left">案件</a>
+		 	</div>
+		</div>
+  	</div>
+	
+	<div data-role="page" id="page_inspect">
+	  	<div data-role="header" data-position="fixed"  data-tap-toggle="false">
+			<h1>日常巡查</h1>
+		</div>
+		<div data-role="main" class="ui-content">
+			<ul data-role="listview">
+				<li><a href="#" onclick="gotoinspectpage('daily')">日常巡查</a></li>
+				<li data-role="list-divider">现场监察</li>
+				<li><a href="#" onclick="gotoinspectpage('notice')">监察通知</a></li>
+				<li><a href="#" onclick="gotoinspectpage('current')">现场监察记录</a></li>
+				<li><a href="#" onclick="gotoinspectpage('renotice')">现场检查结果通知</a></li>
+				<li data-role="list-divider">问题清单</li>
+				<li><a href="#" onclick="gotoinspectpage('problem')">发现问题</a></li>
+				<li><a href="#" onclick="gotoinspectpage('dealproblem')">处理问题</a></li>
+				<li data-role="list-divider">水质监测</li>
+				<li><a href="#" onclick="gotowaterpage('otherw')">河流水质评价</a></li>
+				<li><a href="#" onclick="gotowaterpage('pool')">湖泊水质评价</a></li>
+				<li><a href="#" onclick="gotowaterpage('otherbg')">检测报告</a></li>
+				<!--<li><a href="#">案源线索登记</a></li>
+				<li><a href="#">清单查看</a></li>
+				<li><a href="#">地图</a></li>
+				<li><a href="#">在线自动检测</a></li>
+				<li><a href="#">手动监测</a></li>
+				<li><a href="#">数据统计</a></li>
+				<li><a href="#">标准设置</a></li>-->
+			</ul>
+		</div>
+	<div style="text-align:center; "data-role="footer" data-position="fixed" data-tap-toggle="false">
+		<div data-role="controlgroup" data-type="horizontal">
+		    <a href="#page_main" class="ui-btn ui-icon-home ui-btn-icon-left">主页</a>
+		    <a href="#page_company" class="ui-btn ui-icon-bullets ui-btn-icon-left">企业</a>
+		    <a href="#page_inspect" class="ui-btn ui-icon-edit ui-btn-icon-left">巡查</a>
+		    <a href="#page_case" class="ui-btn ui-icon-calendar ui-btn-icon-left">案件</a>
+		 	</div>
+	</div>
+	</div>
+	
+	<div data-role="page" id="page_case">
+	  <div data-role="header" data-position="fixed"  data-tap-toggle="false">
+			<h1>案件管理</h1>
+		</div>
+		<div data-role="main" class="ui-content">
+			<a href="project.html">外部连接案件信息页面</a>
+		</div>
+	<div style="text-align:center;"data-role="footer" data-position="fixed" data-tap-toggle="false">
+		<div data-role="controlgroup" data-type="horizontal">
+		    <a href="#page_main" class="ui-btn ui-icon-home ui-btn-icon-left">主页</a>
+		    <a href="#page_company" class="ui-btn ui-icon-bullets ui-btn-icon-left">企业</a>
+		    <a href="#page_inspect" class="ui-btn ui-icon-edit ui-btn-icon-left">巡查</a>
+		    <a href="#page_case" class="ui-btn ui-icon-calendar ui-btn-icon-left">案件</a>
+		 	</div>
+	</div>
+	</div>
+	
+	
+
+</body>
+<script type="text/javascript">
+	function gotopro(){
+		window.location="project.html";
+	}
+	function gotomap(){
+		window.location="view.html";
+	}
+	function gotoinspectpage(page_name) {
+		window.location = "../inspect/" + page_name + ".html";
+	}
+	function gotowaterpage(page_name) {
+		window.location = ["../water/", page_name, ".html"].join("");
+	}
+	
+	//获取User cookie
+	var au;
+	var user;
+	au = getCookie('au');
+	user = JSON.parse(au);	
+	//读取cookies 
+	function getCookie(name) 
+	{ 
+	    var arr,reg=new RegExp("(^| )"+name+"=([^;]*)(;|$)");
+	 
+	    if(arr=document.cookie.match(reg))
+	 
+	        return unescape(arr[2]); 
+	    else 
+	        return null; 
+	} 
+</script>
+</html>
